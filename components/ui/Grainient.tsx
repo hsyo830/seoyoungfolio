@@ -130,6 +130,38 @@ void main(){
 }
 `;
 
+// Precise uniform slot types (ogl declares uniforms as Record<string, any>
+// internally; we cast once and get full type-safety from here on).
+type F1 = { value: number };
+type F2 = { value: Float32Array };
+type F3 = { value: Float32Array };
+
+type GrainientUniforms = {
+  iTime:           F1;
+  iResolution:     F2;
+  uTimeSpeed:      F1;
+  uColorBalance:   F1;
+  uWarpStrength:   F1;
+  uWarpFrequency:  F1;
+  uWarpSpeed:      F1;
+  uWarpAmplitude:  F1;
+  uBlendAngle:     F1;
+  uBlendSoftness:  F1;
+  uRotationAmount: F1;
+  uNoiseScale:     F1;
+  uGrainAmount:    F1;
+  uGrainScale:     F1;
+  uGrainAnimated:  F1;
+  uContrast:       F1;
+  uGamma:          F1;
+  uSaturation:     F1;
+  uCenterOffset:   F2;
+  uZoom:           F1;
+  uColor1:         F3;
+  uColor2:         F3;
+  uColor3:         F3;
+};
+
 // Keep renderer/program alive across re-renders so Effect 2 can update
 // uniforms without ever rebuilding the WebGL context.
 type GrainientCtx = {
@@ -219,15 +251,16 @@ const Grainient: React.FC<GrainientProps> = ({
     const mesh = new Mesh(gl, { geometry, program });
     ctxMap.set(container, { renderer, program, mesh });
 
+    // Single cast — all subsequent uniform access is typed via GrainientUniforms
+    const u1 = program.uniforms as GrainientUniforms;
+
     const setSize = () => {
       const rect = container.getBoundingClientRect();
       const w = Math.max(1, Math.floor(rect.width));
       const h = Math.max(1, Math.floor(rect.height));
       renderer.setSize(w, h);
-      const res = (program.uniforms.iResolution as { value: Float32Array })
-        .value;
-      res[0] = gl.drawingBufferWidth;
-      res[1] = gl.drawingBufferHeight;
+      u1.iResolution.value[0] = gl.drawingBufferWidth;
+      u1.iResolution.value[1] = gl.drawingBufferHeight;
       renderer.render({ scene: mesh });
     };
 
@@ -241,7 +274,7 @@ const Grainient: React.FC<GrainientProps> = ({
     const t0 = performance.now();
 
     const loop = (t: number) => {
-      (program.uniforms.iTime as { value: number }).value = (t - t0) * 0.001;
+      u1.iTime.value = (t - t0) * 0.001;
       renderer.render({ scene: mesh });
       raf = requestAnimationFrame(loop);
     };
@@ -295,7 +328,7 @@ const Grainient: React.FC<GrainientProps> = ({
     const ctx = ctxMap.get(container);
     if (!ctx) return;
     const { program } = ctx;
-    const u = program.uniforms as Record<string, { value: any }>;
+    const u = program.uniforms as GrainientUniforms;
 
     u.uTimeSpeed.value = timeSpeed;
     u.uColorBalance.value = colorBalance;
