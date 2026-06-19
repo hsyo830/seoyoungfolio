@@ -1,15 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  /* Color tokens — also available as Tailwind utilities (bg-background, text-text-primary, etc.) */
-  --color-background: #e1ecf7;
-  --color-gradient-light: #aecbeb;
-  --color-gradient-mid: #83b0e1;
-  --color-gradient-deep: #71a5de;
-  --color-text-primary: #1a2b3c;
-  --color-text-secondary: #3d5a73;
+  --color-background: #f0ece6;
+  --color-text-primary: #0a0a0a;
+  --color-text-secondary: #3a3a3a;
 
-  /* Font tokens — maps to next/font CSS variables */
   --font-title: var(--font-space-grotesk);
   --font-body: var(--font-inter);
 }
