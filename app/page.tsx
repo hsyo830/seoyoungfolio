@@ -6,9 +6,9 @@ export default function Home() {
       {/* Fixed grainy gradient background */}
       <div className="fixed inset-0 -z-10">
         <Grainient
-          color1="#d8d2cb"
-          color2="#d8d6d0"
-          color3="#d8d3cc"
+          color1="#b3b3b3"
+          color2="#ccc0ff"
+          color3="#b497cf"
         />
       </div>
 
