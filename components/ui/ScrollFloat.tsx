@@ -11,6 +11,7 @@ interface ScrollFloatProps {
   scrollContainerRef?: RefObject<HTMLElement>;
   containerClassName?: string;
   textClassName?: string;
+  textStyle?: React.CSSProperties;
   animationDuration?: number;
   ease?: string;
   scrollStart?: string;
@@ -23,6 +24,7 @@ const ScrollFloat: React.FC<ScrollFloatProps> = ({
   scrollContainerRef,
   containerClassName = "",
   textClassName = "",
+  textStyle,
   animationDuration = 1,
   ease = "back.inOut(2)",
   scrollStart = "center bottom+=50%",
@@ -94,6 +96,7 @@ const ScrollFloat: React.FC<ScrollFloatProps> = ({
     >
       <span
         className={`inline-block text-[clamp(1.6rem,4vw,3rem)] leading-[1.5] ${textClassName}`}
+        style={textStyle}
       >
         {splitText}
       </span>
