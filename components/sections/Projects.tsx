@@ -1,6 +1,6 @@
 'use client';
 
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ScrollFloat from "@/components/ui/ScrollFloat";
@@ -46,24 +46,28 @@ const TEXT_CLASS =
   "font-normal tracking-tighter !text-[clamp(1.5rem,3vw,3.5rem)] !leading-none";
 
 export default function Projects() {
-  const pinRef  = useRef<HTMLDivElement>(null);
+  const pinRef   = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const pin   = pinRef.current;
     const track = trackRef.current;
     if (!pin || !track) return;
 
+    const dist = track.scrollWidth - window.innerWidth;
+    if (dist <= 0) return;
+
     const ctx = gsap.context(() => {
       gsap.to(track, {
-        x: () => -(track.scrollWidth - window.innerWidth),
+        x: -dist,
         ease: "none",
         scrollTrigger: {
           trigger: pin,
           pin: true,
+          pinSpacing: true,
           scrub: 1,
           start: "top top",
-          end: () => `+=${track.scrollWidth - window.innerWidth}`,
+          end: `+=${dist}`,
           invalidateOnRefresh: true,
         },
       });
@@ -93,7 +97,6 @@ export default function Projects() {
             SELECTED WORKS
           </ScrollFloat>
 
-          {/* ShinyText: mix-blend-mode screen으로 메탈 위에 광택 오버레이 */}
           <div
             className="absolute inset-0 flex items-center justify-center pointer-events-none"
             style={{ mixBlendMode: "screen" }}
@@ -111,14 +114,12 @@ export default function Projects() {
         </div>
       </section>
 
-      {/* ── 2. 수평 카드 트랙 (ScrollTrigger pin + translateX) ── */}
-      {/* overflow:hidden을 pin 컨테이너에 두면 GSAP position:fixed 전환 시 트랙 이동이 막힘
-          → body overflow-x:hidden (globals.css)으로 수평 스크롤바를 처리 */}
+      {/* ── 2. 수평 카드 트랙 ──
+          overflow:clip 래퍼 제거: pin spacer의 세로 확장을 막아
+          page height가 늘어나지 않고 start:"top top" 미충족 → 핀 미작동.
+          수평 스크롤바는 html { overflow-x:hidden } (globals.css)로 처리.
+      ── */}
       <div ref={pinRef} className="h-screen">
-        {/*
-          w-max → 카드 4개의 실제 너비 합산으로 트랙 크기 결정
-          GSAP: x = -(track.scrollWidth - viewport.width) 로 끝까지 이동
-        */}
         <div
           ref={trackRef}
           className="flex h-full w-max items-center gap-8 px-[10vw]"
