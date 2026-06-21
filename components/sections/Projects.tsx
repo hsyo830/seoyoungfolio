@@ -1,8 +1,15 @@
+'use client';
+
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ScrollFloat from "@/components/ui/ScrollFloat";
 import ShinyText from "@/components/ui/ShinyText";
+import ProjectCard from "@/components/cards/ProjectCard";
 import React from "react";
 
-// 세로 스트라이프 메탈 베이스 — ShinyText 광택이 위에서 screen 블렌딩으로 덧씌워짐
+gsap.registerPlugin(ScrollTrigger);
+
 const metalBaseStyle: React.CSSProperties = {
   color: "transparent",
   backgroundImage: [
@@ -35,48 +42,91 @@ const metalBaseStyle: React.CSSProperties = {
   filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.35))",
 };
 
-// ScrollFloat + ShinyText 에서 공유하는 텍스트 스타일 클래스
-const TEXT_CLASS = "font-normal tracking-tighter !text-[clamp(1.5rem,3vw,3.5rem)] !leading-none";
+const TEXT_CLASS =
+  "font-normal tracking-tighter !text-[clamp(1.5rem,3vw,3.5rem)] !leading-none";
 
 export default function Projects() {
-  return (
-    <section className="w-full min-h-screen flex items-center justify-center px-6">
-      <div
-        className="relative"
-        style={{ fontFamily: "'KblJumpExtended', sans-serif" }}
-      >
-        {/* 베이스: 세로 스트라이프 메탈 + text-shadow 입체감 */}
-        <ScrollFloat
-          animationDuration={1}
-          ease="back.inOut(2)"
-          scrollStart="top bottom"
-          scrollEnd="bottom center"
-          stagger={0.03}
-          containerClassName={`!font-normal !my-0`}
-          textClassName={TEXT_CLASS}
-          textStyle={metalBaseStyle}
-        >
-          SELECTED WORKS
-        </ScrollFloat>
+  const pinRef  = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
 
-        {/* 광택 오버레이: screen 블렌딩으로 메탈 위에서만 빛을 더함
-            color="#000000" → screen(검정, 아래) = 아래 그대로
-            shineColor="#ffffff" → screen(흰, 아래) = 밝게 → 흰 빛이 스쳐가는 효과 */}
+  useEffect(() => {
+    const pin   = pinRef.current;
+    const track = trackRef.current;
+    if (!pin || !track) return;
+
+    const ctx = gsap.context(() => {
+      gsap.to(track, {
+        x: () => -(track.scrollWidth - pin.offsetWidth),
+        ease: "none",
+        scrollTrigger: {
+          trigger: pin,
+          pin: true,
+          scrub: 1,
+          start: "top top",
+          // 가로 이동 거리만큼 추가 스크롤 공간 확보
+          end: () => `+=${track.scrollWidth - pin.offsetWidth}`,
+          invalidateOnRefresh: true,
+        },
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <>
+      {/* ── 1. SELECTED WORKS 타이틀 (ScrollFloat + ShinyText) ── */}
+      <section className="w-full min-h-screen flex items-center justify-center px-6">
         <div
-          className="absolute inset-0 flex items-center justify-center pointer-events-none"
-          style={{ mixBlendMode: "screen" }}
+          className="relative"
+          style={{ fontFamily: "'KblJumpExtended', sans-serif" }}
         >
-          <ShinyText
-            text="SELECTED WORKS"
-            className={TEXT_CLASS}
-            color="#000000"
-            shineColor="#ffffff"
-            speed={3}
-            spread={120}
-            direction="left"
-          />
+          <ScrollFloat
+            animationDuration={1}
+            ease="back.inOut(2)"
+            scrollStart="top bottom"
+            scrollEnd="bottom center"
+            stagger={0.03}
+            containerClassName="!font-normal !my-0"
+            textClassName={TEXT_CLASS}
+            textStyle={metalBaseStyle}
+          >
+            SELECTED WORKS
+          </ScrollFloat>
+
+          {/* ShinyText: mix-blend-mode screen으로 메탈 위에 광택 오버레이 */}
+          <div
+            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+            style={{ mixBlendMode: "screen" }}
+          >
+            <ShinyText
+              text="SELECTED WORKS"
+              className={TEXT_CLASS}
+              color="#000000"
+              shineColor="#ffffff"
+              speed={3}
+              spread={120}
+              direction="left"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ── 2. 수평 카드 트랙 (ScrollTrigger pin + translateX) ── */}
+      <div ref={pinRef} className="h-screen overflow-hidden">
+        {/*
+          w-max → 카드 4개의 실제 너비 합산으로 트랙 크기 결정
+          GSAP: x = -(track.scrollWidth - viewport.width) 로 끝까지 이동
+        */}
+        <div
+          ref={trackRef}
+          className="flex h-full w-max items-center gap-8 px-[10vw]"
+        >
+          {[0, 1, 2, 3].map((i) => (
+            <ProjectCard key={i} />
+          ))}
         </div>
       </div>
-    </section>
+    </>
   );
 }
