@@ -174,8 +174,29 @@ export default function MetalHeroText() {
         style={{ position: 'absolute', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }}
       />
 
-      {/* 아래 레이어: 흰색 텍스트 */}
-      <h1 style={{ ...sharedH1, color: '#ffffff' }}>
+      {/* 아래 레이어: 글래스/엠보 텍스트 */}
+      <h1
+        style={
+          {
+            ...sharedH1,
+            // 유리 표면 느낌: 위쪽 밝음 → 중간 살짝 어두움 → 아래 다시 밝음
+            color: 'transparent',
+            backgroundImage:
+              'linear-gradient(180deg, #ffffff 0%, #c6cad2 48%, #f2f2f4 78%, #ffffff 100%)',
+            WebkitBackgroundClip: 'text',
+            backgroundClip: 'text',
+            // 엠보싱: 위 하이라이트 + 아래 그림자로 두께감
+            textShadow: [
+              '0 1px 0 rgba(255,255,255,0.9)',
+              '0 -1px 1px rgba(0,0,0,0.15)',
+              '0 2px 2px rgba(0,0,0,0.08)',
+              '0 4px 6px rgba(0,0,0,0.10)',
+            ].join(', '),
+            // 외곽 글로우 — h1 자체 레이아웃에 영향 없음
+            filter: 'drop-shadow(0 2px 10px rgba(0,0,0,0.12))',
+          } as React.CSSProperties
+        }
+      >
         FRONTEND
         <br />
         DEVELOPER
