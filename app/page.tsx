@@ -1,5 +1,6 @@
 import Grainient from "@/components/ui/Grainient";
 import MetalHeroText from "@/components/ui/MetalHeroText";
+import ScrollIndicator from "@/components/ui/ScrollIndicator";
 
 export default function Home() {
   return (
@@ -14,7 +15,7 @@ export default function Home() {
       </div>
 
       {/* Hero */}
-      <main className="flex flex-col items-center justify-center min-h-screen px-6 text-center select-none">
+      <main className="relative flex flex-col items-center justify-center min-h-screen px-6 text-center select-none">
         <MetalHeroText />
 
         <p
@@ -30,6 +31,8 @@ export default function Home() {
         >
           Designing experiences, building interactions.
         </p>
+
+        <ScrollIndicator />
       </main>
     </>
   );
