@@ -1,4 +1,5 @@
 import Grainient from "@/components/ui/Grainient";
+import MetalHeroText from "@/components/ui/MetalHeroText";
 
 export default function Home() {
   return (
@@ -14,14 +15,7 @@ export default function Home() {
 
       {/* Hero */}
       <main className="flex flex-col items-center justify-center min-h-screen px-6 text-center select-none">
-        <h1
-          className="font-title font-bold leading-none tracking-tighter text-text-primary"
-          style={{ fontSize: "clamp(4rem, 14vw, 11rem)" }}
-        >
-          FRONTEND
-          <br />
-          DEVELOPER
-        </h1>
+        <MetalHeroText />
 
         <p
           className="mt-6 font-title font-medium tracking-widest uppercase text-text-secondary"
