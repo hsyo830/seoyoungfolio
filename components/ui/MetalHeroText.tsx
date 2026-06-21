@@ -63,8 +63,8 @@ export default function MetalHeroText() {
 
   return (
     <div
-      className="relative font-hero leading-none tracking-tighter"
-      style={{ fontSize: 'clamp(4rem, 14vw, 11rem)' }}
+      className="relative leading-none tracking-tighter"
+      style={{ fontSize: 'clamp(4rem, 14vw, 11rem)', fontFamily: "'KblJumpExtended', sans-serif" }}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
     >
