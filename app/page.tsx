@@ -1,6 +1,7 @@
 import Grainient from "@/components/ui/Grainient";
 import MetalHeroText from "@/components/ui/MetalHeroText";
 import ScrollIndicator from "@/components/ui/ScrollIndicator";
+import Projects from "@/components/sections/Projects";
 
 export default function Home() {
   return (
@@ -34,6 +35,8 @@ export default function Home() {
 
         <ScrollIndicator />
       </main>
+
+      <Projects />
     </>
   );
 }
