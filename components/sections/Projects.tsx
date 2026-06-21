@@ -1,19 +1,35 @@
 import ScrollFloat from "@/components/ui/ScrollFloat";
 import React from "react";
 
-const charcoalGlassStyle: React.CSSProperties = {
+const ironKnightStyle: React.CSSProperties = {
   color: "transparent",
-  backgroundImage:
-    "linear-gradient(180deg, #4a4a4a 0%, #2a2a2a 40%, #1a1a1a 60%, #3a3a3a 100%)",
+  // 세로 스트라이프 메탈 텍스처
+  backgroundImage: [
+    "repeating-linear-gradient(",
+    "  90deg,",
+    "  #1a1a1a 0%,",
+    "  #4a4a4a 8%,",
+    "  #e8e8e8 15%,",
+    "  #2a2a2a 22%,",
+    "  #6a6a6a 30%,",
+    "  #1a1a1a 38%,",
+    "  #d0d0d0 45%,",
+    "  #2a2a2a 52%,",
+    "  #5a5a5a 60%,",
+    "  #1a1a1a 100%",
+    ")",
+  ].join(""),
   WebkitBackgroundClip: "text",
   backgroundClip: "text",
+  // 적층 shadow로 금속 조각 두께감
   textShadow: [
-    "0 1px 0 rgba(180,180,180,0.4)",
-    "0 -1px 1px rgba(0,0,0,0.3)",
-    "0 2px 2px rgba(0,0,0,0.15)",
-    "0 4px 6px rgba(0,0,0,0.2)",
+    "0 1px 0 #888",
+    "0 2px 0 #666",
+    "0 3px 0 #444",
+    "0 4px 4px rgba(0,0,0,0.5)",
   ].join(", "),
-  filter: "drop-shadow(0 2px 10px rgba(0,0,0,0.18))",
+  // 밝은 배경 위에서 도드라지도록 외곽 그림자
+  filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.3))",
 };
 
 export default function Projects() {
@@ -28,7 +44,7 @@ export default function Projects() {
           stagger={0.03}
           containerClassName="!font-normal"
           textClassName="tracking-tighter !text-[clamp(2rem,4.5vw,5rem)] !leading-none"
-          textStyle={charcoalGlassStyle}
+          textStyle={ironKnightStyle}
         >
           SELECTED WORKS
         </ScrollFloat>
