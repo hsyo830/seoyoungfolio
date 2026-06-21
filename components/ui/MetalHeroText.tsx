@@ -12,7 +12,8 @@ export default function MetalHeroText() {
     const canvas = canvasRef.current;
     const video = videoRef.current;
     const h1 = h1Ref.current;
-    if (!canvas || !video || !h1) return;
+    const container = containerRef.current;
+    if (!canvas || !video || !h1 || !container) return;
 
     let raf: number;
 
@@ -20,8 +21,9 @@ export default function MetalHeroText() {
       raf = requestAnimationFrame(draw);
       if (video.readyState < 2) return;
 
-      const w = h1.offsetWidth;
-      const h = h1.offsetHeight;
+      // canvas 픽셀 크기 = container CSS 크기 (불일치 → 비트맵 스트레칭 방지)
+      const w = container.offsetWidth;
+      const h = container.offsetHeight;
 
       if (canvas.width !== w || canvas.height !== h) {
         canvas.width = w;
@@ -40,8 +42,12 @@ export default function MetalHeroText() {
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
       ctx.fillStyle = '#000';
-      ctx.fillText('FRONTEND', w / 2, 0);
-      ctx.fillText('DEVELOPER', w / 2, size);
+
+      // h1의 실제 위치(offsetLeft, offsetTop)를 기준으로 좌표 계산 → margin/padding 영향 제거
+      const cx = h1.offsetLeft + h1.offsetWidth / 2;
+      const cy = h1.offsetTop;
+      ctx.fillText('FRONTEND', cx, cy);
+      ctx.fillText('DEVELOPER', cx, cy + size);
 
       // 2단계: 텍스트 픽셀 안에만 비디오 합성
       ctx.globalCompositeOperation = 'source-in';
@@ -86,7 +92,7 @@ export default function MetalHeroText() {
       <h1
         ref={h1Ref}
         className="font-title font-bold leading-none tracking-tighter"
-        style={{ fontSize: 'clamp(4rem, 14vw, 11rem)', color: '#ffffff' }}
+        style={{ fontSize: 'clamp(4rem, 14vw, 11rem)', color: '#ffffff', margin: 0 }}
       >
         FRONTEND
         <br />
