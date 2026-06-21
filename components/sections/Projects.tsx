@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ScrollFloat from "@/components/ui/ScrollFloat";
@@ -49,22 +49,21 @@ export default function Projects() {
   const pinRef  = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const pin   = pinRef.current;
     const track = trackRef.current;
     if (!pin || !track) return;
 
     const ctx = gsap.context(() => {
       gsap.to(track, {
-        x: () => -(track.scrollWidth - pin.offsetWidth),
+        x: () => -(track.scrollWidth - window.innerWidth),
         ease: "none",
         scrollTrigger: {
           trigger: pin,
           pin: true,
           scrub: 1,
           start: "top top",
-          // 가로 이동 거리만큼 추가 스크롤 공간 확보
-          end: () => `+=${track.scrollWidth - pin.offsetWidth}`,
+          end: () => `+=${track.scrollWidth - window.innerWidth}`,
           invalidateOnRefresh: true,
         },
       });
@@ -113,7 +112,9 @@ export default function Projects() {
       </section>
 
       {/* ── 2. 수평 카드 트랙 (ScrollTrigger pin + translateX) ── */}
-      <div ref={pinRef} className="h-screen overflow-hidden">
+      {/* overflow:hidden을 pin 컨테이너에 두면 GSAP position:fixed 전환 시 트랙 이동이 막힘
+          → body overflow-x:hidden (globals.css)으로 수평 스크롤바를 처리 */}
+      <div ref={pinRef} className="h-screen">
         {/*
           w-max → 카드 4개의 실제 너비 합산으로 트랙 크기 결정
           GSAP: x = -(track.scrollWidth - viewport.width) 로 끝까지 이동
