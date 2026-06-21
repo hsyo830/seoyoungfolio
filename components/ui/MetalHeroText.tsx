@@ -4,9 +4,9 @@ import { useRef, useEffect, useCallback } from 'react';
 
 export default function MetalHeroText() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const h1Ref = useRef<HTMLHeadingElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const h1Ref = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -14,13 +14,10 @@ export default function MetalHeroText() {
     const h1 = h1Ref.current;
     if (!canvas || !video || !h1) return;
 
-    // 초기 상태: 마우스 미진입 → 메탈 효과 완전히 숨김
-    canvas.style.opacity = '0';
-
-    let animId = 0;
+    let raf: number;
 
     const draw = () => {
-      animId = requestAnimationFrame(draw);
+      raf = requestAnimationFrame(draw);
       if (video.readyState < 2) return;
 
       const w = h1.offsetWidth;
@@ -32,48 +29,47 @@ export default function MetalHeroText() {
       }
 
       const ctx = canvas.getContext('2d')!;
-      const computed = getComputedStyle(h1);
-      const fontSize = parseFloat(computed.fontSize);
+      const cs = getComputedStyle(h1);
+      const size = parseFloat(cs.fontSize);
 
       ctx.clearRect(0, 0, w, h);
 
-      ctx.font = `${computed.fontWeight} ${fontSize}px ${computed.fontFamily}`;
-      try { ctx.letterSpacing = computed.letterSpacing; } catch (_) {}
+      // 1단계: 텍스트 shape으로 마스크 픽셀 채우기 (background-clip: text 역할)
+      ctx.font = `${cs.fontWeight} ${size}px ${cs.fontFamily}`;
+      try { ctx.letterSpacing = cs.letterSpacing; } catch (_) {}
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
-      ctx.fillStyle = 'black';
-
-      // line-height: 1 → 각 줄 높이 = fontSize
+      ctx.fillStyle = '#000';
       ctx.fillText('FRONTEND', w / 2, 0);
-      ctx.fillText('DEVELOPER', w / 2, fontSize);
+      ctx.fillText('DEVELOPER', w / 2, size);
 
-      // 텍스트 픽셀에만 비디오 클리핑
+      // 2단계: 텍스트 픽셀 안에만 비디오 합성
       ctx.globalCompositeOperation = 'source-in';
       ctx.drawImage(video, 0, 0, w, h);
       ctx.globalCompositeOperation = 'source-over';
     };
 
-    animId = requestAnimationFrame(draw);
-    return () => cancelAnimationFrame(animId);
+    raf = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(raf);
   }, []);
 
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  const onMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
     if (!canvas || !container) return;
 
-    const rect = container.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const gradient = `radial-gradient(circle 150px at ${x}px ${y}px, black 0%, transparent 100%)`;
+    const { left, top } = container.getBoundingClientRect();
+    const x = e.clientX - left;
+    const y = e.clientY - top;
 
-    // CSS 변수 경유 없이 canvas 스타일 직접 업데이트
+    // 3단계: 마우스 위치 기준 radial-gradient mask로 reveal
+    const mask = `radial-gradient(circle 150px at ${x}px ${y}px, black, transparent)`;
+    canvas.style.maskImage = mask;
+    canvas.style.webkitMaskImage = mask;
     canvas.style.opacity = '1';
-    canvas.style.maskImage = gradient;
-    canvas.style.webkitMaskImage = gradient;
   }, []);
 
-  const handleMouseLeave = useCallback(() => {
+  const onMouseLeave = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     canvas.style.opacity = '0';
@@ -83,10 +79,10 @@ export default function MetalHeroText() {
     <div
       ref={containerRef}
       className="relative"
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
     >
-      {/* 아래 레이어: 검정 텍스트 */}
+      {/* 기본 레이어: 흰색 텍스트 */}
       <h1
         ref={h1Ref}
         className="font-title font-bold leading-none tracking-tighter"
@@ -97,7 +93,7 @@ export default function MetalHeroText() {
         DEVELOPER
       </h1>
 
-      {/* 숨겨진 비디오 소스 — display:none은 Safari에서 drawImage 불가 */}
+      {/* display:none 대신 1px 처리 — Safari에서 display:none은 drawImage 불가 */}
       <video
         ref={videoRef}
         src="/videos/metal-texture.mp4"
@@ -106,13 +102,14 @@ export default function MetalHeroText() {
         muted
         playsInline
         aria-hidden="true"
-        style={{ position: 'absolute', width: '1px', height: '1px', opacity: 0, pointerEvents: 'none' }}
+        style={{ position: 'absolute', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }}
       />
 
-      {/* 위 레이어: 메탈 캔버스 (mask는 이벤트 핸들러에서 직접 설정) */}
+      {/* 메탈 레이어: canvas로 텍스트 클리핑 + CSS mask로 radial reveal */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full pointer-events-none"
+        style={{ opacity: 0 }}
       />
     </div>
   );
