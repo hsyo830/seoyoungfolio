@@ -63,7 +63,7 @@ export default function MetalHeroText() {
 
   return (
     <div
-      className="relative font-title font-bold leading-none tracking-tighter"
+      className="relative font-hero leading-none tracking-tighter"
       style={{ fontSize: 'clamp(4rem, 14vw, 11rem)' }}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
