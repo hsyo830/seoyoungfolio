@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
@@ -46,11 +46,11 @@ const TEXT_CLASS =
   "font-normal tracking-tighter !text-[clamp(1.5rem,3vw,3.5rem)] !leading-none";
 
 export default function Projects() {
-  const pinRef   = useRef<HTMLDivElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const pin   = pinRef.current;
+    const pin = pinRef.current;
     const track = trackRef.current;
     if (!pin || !track) return;
 
@@ -78,7 +78,7 @@ export default function Projects() {
 
   return (
     <>
-      {/* ── 1. SELECTED WORKS 타이틀 (ScrollFloat + ShinyText) ── */}
+      {/* ── 1. PROJECTS 타이틀 (ScrollFloat + ShinyText) ── */}
       <section className="w-full min-h-screen flex items-center justify-center px-6">
         <div
           className="relative"
@@ -94,7 +94,7 @@ export default function Projects() {
             textClassName={TEXT_CLASS}
             textStyle={metalBaseStyle}
           >
-            SELECTED WORKS
+            PROJECTS
           </ScrollFloat>
 
           <div
@@ -102,7 +102,7 @@ export default function Projects() {
             style={{ mixBlendMode: "screen" }}
           >
             <ShinyText
-              text="SELECTED WORKS"
+              text="PROJECTS"
               className={TEXT_CLASS}
               color="#000000"
               shineColor="#ffffff"
