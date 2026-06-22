@@ -51,6 +51,7 @@ export default function Projects() {
           velocity={80}
           numCopies={4}
           className="text-[#3a3a3a]/60"
+          scrollerStyle={{ fontFamily: "'KblJumpExtended', sans-serif" }}
         />
       </div>
 
