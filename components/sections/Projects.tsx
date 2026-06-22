@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ScrollVelocity from "@/components/ui/ScrollVelocity";
+import ScrollFloat from "@/components/ui/ScrollFloat";
 import ProjectCard from "@/components/cards/ProjectCard";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -54,6 +55,26 @@ export default function Projects() {
           scrollerStyle={{ fontFamily: "'KblJumpExtended', sans-serif" }}
         />
       </div>
+
+      {/* SELECTED WORKS 타이틀 */}
+      <section className="w-full flex items-center justify-center px-6 py-20">
+        <div style={{ fontFamily: "'KblJumpExtended', sans-serif" }}>
+          <ScrollFloat
+            animationDuration={1.5}
+            ease="back.out(3)"
+            stagger={0.08}
+            yPercent={200}
+            scaleY={3.5}
+            scrollStart="center bottom+=20%"
+            scrollEnd="center center"
+            containerClassName="!font-normal !my-0"
+            textClassName="!text-7xl !leading-none tracking-tight"
+            textStyle={{ color: "white" }}
+          >
+            SELECTED WORKS
+          </ScrollFloat>
+        </div>
+      </section>
 
       {/* 수평 카드 트랙 (ScrollTrigger pin) */}
       <div ref={pinRef} className="h-screen relative pt-32">
