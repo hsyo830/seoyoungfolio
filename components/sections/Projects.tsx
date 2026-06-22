@@ -42,15 +42,17 @@ export default function Projects() {
   return (
     <>
       {/* Hero → 카드 섹션 전환 텍스트 */}
-      <ScrollVelocity
-        texts={[
-          'SELECTED WORKS · INTERACTIVE PROJECTS · FRONTEND EXPERIENCES ·',
-          'NEXT.JS · TYPESCRIPT · TAILWIND · GSAP · FRAMER MOTION ·',
-        ]}
-        velocity={80}
-        numCopies={4}
-        className="text-[#3a3a3a]/60"
-      />
+      <div className="min-h-[40vh] flex flex-col items-center justify-center">
+        <ScrollVelocity
+          texts={[
+            'SELECTED WORKS · INTERACTIVE PROJECTS · FRONTEND EXPERIENCES ·',
+            'NEXT.JS · TYPESCRIPT · TAILWIND · GSAP · FRAMER MOTION ·',
+          ]}
+          velocity={80}
+          numCopies={4}
+          className="text-[#3a3a3a]/60"
+        />
+      </div>
 
       {/* 수평 카드 트랙 (ScrollTrigger pin) */}
       <div ref={pinRef} className="h-screen relative">
