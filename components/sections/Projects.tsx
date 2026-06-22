@@ -9,14 +9,16 @@ import ProjectCard from "@/components/cards/ProjectCard";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const LABEL_FLOAT_PROPS = {
+const LABEL_FLOAT_SHARED = {
   animationDuration: 1.5,
   ease: "back.out(3)",
   stagger: 0.05,
-  scrollStart: "center bottom+=20%",
-  scrollEnd: "center center",
   containerClassName: "!font-normal !my-0",
 } as const;
+
+// SELECTED WORKS 먼저, 끝나는 지점에서 04 PROJECTS 시작
+const LABEL_FLOAT_FIRST  = { ...LABEL_FLOAT_SHARED, scrollStart: "center bottom+=50%", scrollEnd: "center bottom+=20%" } as const;
+const LABEL_FLOAT_SECOND = { ...LABEL_FLOAT_SHARED, scrollStart: "center bottom+=20%", scrollEnd: "center center"       } as const;
 
 export default function Projects() {
   const pinRef   = useRef<HTMLDivElement>(null);
@@ -73,14 +75,14 @@ export default function Projects() {
           style={{ fontFamily: "'KblJumpExtended', sans-serif" }}
         >
           <ScrollFloat
-            {...LABEL_FLOAT_PROPS}
+            {...LABEL_FLOAT_FIRST}
             textClassName="!text-sm uppercase"
             textStyle={{ color: '#ffffff', letterSpacing: '0.25em' }}
           >
             SELECTED WORKS
           </ScrollFloat>
           <ScrollFloat
-            {...LABEL_FLOAT_PROPS}
+            {...LABEL_FLOAT_SECOND}
             textClassName="!text-xs"
             textStyle={{ color: '#ffffff', letterSpacing: '0.15em' }}
           >
