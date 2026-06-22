@@ -1,56 +1,19 @@
-"use client";
+'use client';
 
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import ScrollFloat from "@/components/ui/ScrollFloat";
-import ShinyText from "@/components/ui/ShinyText";
+import ScrollVelocity from "@/components/ui/ScrollVelocity";
 import ProjectCard from "@/components/cards/ProjectCard";
-import React from "react";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const metalBaseStyle: React.CSSProperties = {
-  color: "transparent",
-  backgroundImage: [
-    "repeating-linear-gradient(",
-    "  90deg,",
-    "  #3a3a3a 0%,",
-    "  #888888 7%,",
-    "  #ffffff 13%,",
-    "  #c8c8c8 18%,",
-    "  #4a4a4a 26%,",
-    "  #adadad 34%,",
-    "  #ffffff 40%,",
-    "  #d8d8d8 46%,",
-    "  #5a5a5a 54%,",
-    "  #b0b0b0 63%,",
-    "  #f0f0f0 70%,",
-    "  #3a3a3a 80%,",
-    "  #7a7a7a 90%,",
-    "  #3a3a3a 100%",
-    ")",
-  ].join(""),
-  WebkitBackgroundClip: "text",
-  backgroundClip: "text",
-  textShadow: [
-    "0 1px 0 #888",
-    "0 2px 0 #666",
-    "0 3px 0 #444",
-    "0 4px 4px rgba(0,0,0,0.5)",
-  ].join(", "),
-  filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.35))",
-};
-
-const TEXT_CLASS =
-  "font-normal tracking-tighter !text-[clamp(1.5rem,3vw,3.5rem)] !leading-none";
-
 export default function Projects() {
-  const pinRef = useRef<HTMLDivElement>(null);
+  const pinRef   = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const pin = pinRef.current;
+    const pin   = pinRef.current;
     const track = trackRef.current;
     if (!pin || !track) return;
 
@@ -78,50 +41,35 @@ export default function Projects() {
 
   return (
     <>
-      {/* ── 1. PROJECTS 타이틀 (ScrollFloat + ShinyText) ── */}
-      <section className="w-full min-h-screen flex items-center justify-center px-6">
-        <div
-          className="relative"
-          style={{ fontFamily: "'KblJumpExtended', sans-serif" }}
-        >
-          <ScrollFloat
-            animationDuration={1.5}
-            ease="back.out(3)"
-            scrollStart="center bottom+=20%"
-            scrollEnd="center center"
-            stagger={0.08}
-            yPercent={200}
-            scaleY={3.5}
-            containerClassName="!font-normal !my-0"
-            textClassName={TEXT_CLASS}
-            textStyle={metalBaseStyle}
-          >
-            PROJECTS
-          </ScrollFloat>
+      {/* Hero → 카드 섹션 전환 텍스트 */}
+      <ScrollVelocity
+        texts={[
+          'SELECTED WORKS · INTERACTIVE PROJECTS · FRONTEND EXPERIENCES ·',
+          'NEXT.JS · TYPESCRIPT · TAILWIND · GSAP · FRAMER MOTION ·',
+        ]}
+        velocity={80}
+        numCopies={4}
+        className="text-[#3a3a3a]/60"
+      />
 
-          <div
-            className="absolute inset-0 flex items-center justify-center pointer-events-none"
-            style={{ mixBlendMode: "screen" }}
+      {/* 수평 카드 트랙 (ScrollTrigger pin) */}
+      <div ref={pinRef} className="h-screen relative">
+        {/* 섹션 라벨 — 핀 활성 중에도 고정 위치 유지 */}
+        <div className="absolute top-8 left-10 flex flex-col gap-1 z-10 pointer-events-none select-none">
+          <span
+            className="font-title uppercase text-neutral-500"
+            style={{ fontSize: "0.65rem", letterSpacing: "0.28em" }}
           >
-            <ShinyText
-              text="PROJECTS"
-              className={TEXT_CLASS}
-              color="#000000"
-              shineColor="#ffffff"
-              speed={3}
-              spread={120}
-              direction="left"
-            />
-          </div>
+            Selected Works
+          </span>
+          <span
+            className="font-body text-neutral-400"
+            style={{ fontSize: "0.6rem", letterSpacing: "0.12em" }}
+          >
+            04 Projects / 2025
+          </span>
         </div>
-      </section>
 
-      {/* ── 2. 수평 카드 트랙 ──
-          overflow:clip 래퍼 제거: pin spacer의 세로 확장을 막아
-          page height가 늘어나지 않고 start:"top top" 미충족 → 핀 미작동.
-          수평 스크롤바는 html { overflow-x:hidden } (globals.css)로 처리.
-      ── */}
-      <div ref={pinRef} className="h-screen">
         <div
           ref={trackRef}
           className="flex h-full w-max items-center gap-8 px-[10vw]"
