@@ -67,19 +67,22 @@ export default function Projects() {
 
       {/* 수평 카드 트랙 (ScrollTrigger pin) */}
       <div ref={pinRef} className="h-screen relative pt-32">
-        {/* 좌측 하단 라벨 — ScrollFloat 효과 + 핀 중 고정 위치 유지 */}
-        <div className="absolute bottom-10 left-10 z-10 pointer-events-none select-none">
+        {/* 카드 위 좌측 상단 라벨 — ScrollFloat 효과 + 핀 중 고정 위치 유지 */}
+        <div
+          className="absolute top-8 left-10 z-10 pointer-events-none select-none"
+          style={{ fontFamily: "'KblJumpExtended', sans-serif" }}
+        >
           <ScrollFloat
             {...LABEL_FLOAT_PROPS}
-            textClassName="!text-sm font-title uppercase"
-            textStyle={{ color: '#737373', letterSpacing: '0.25em' }}
+            textClassName="!text-sm uppercase"
+            textStyle={{ color: '#ffffff', letterSpacing: '0.25em' }}
           >
             SELECTED WORKS
           </ScrollFloat>
           <ScrollFloat
             {...LABEL_FLOAT_PROPS}
-            textClassName="!text-xs font-body"
-            textStyle={{ color: '#a3a3a3', letterSpacing: '0.15em' }}
+            textClassName="!text-xs"
+            textStyle={{ color: '#ffffff', letterSpacing: '0.15em' }}
           >
             04 PROJECTS / 2025
           </ScrollFloat>
