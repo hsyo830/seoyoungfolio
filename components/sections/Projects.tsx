@@ -85,11 +85,13 @@ export default function Projects() {
           style={{ fontFamily: "'KblJumpExtended', sans-serif" }}
         >
           <ScrollFloat
-            animationDuration={1}
-            ease="back.inOut(2)"
-            scrollStart="top bottom"
-            scrollEnd="bottom center"
-            stagger={0.03}
+            animationDuration={1.5}
+            ease="back.out(3)"
+            scrollStart="center bottom+=20%"
+            scrollEnd="center center"
+            stagger={0.08}
+            yPercent={200}
+            scaleY={3.5}
             containerClassName="!font-normal !my-0"
             textClassName={TEXT_CLASS}
             textStyle={metalBaseStyle}

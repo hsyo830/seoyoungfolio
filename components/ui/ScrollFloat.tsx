@@ -17,6 +17,8 @@ interface ScrollFloatProps {
   scrollStart?: string;
   scrollEnd?: string;
   stagger?: number;
+  yPercent?: number;
+  scaleY?: number;
 }
 
 const ScrollFloat: React.FC<ScrollFloatProps> = ({
@@ -30,6 +32,8 @@ const ScrollFloat: React.FC<ScrollFloatProps> = ({
   scrollStart = "center bottom+=50%",
   scrollEnd = "bottom bottom-=40%",
   stagger = 0.03,
+  yPercent = 120,
+  scaleY = 2.3,
 }) => {
   const containerRef = useRef<HTMLHeadingElement>(null);
 
@@ -58,8 +62,8 @@ const ScrollFloat: React.FC<ScrollFloatProps> = ({
       {
         willChange: "opacity, transform",
         opacity: 0,
-        yPercent: 120,
-        scaleY: 2.3,
+        yPercent,
+        scaleY,
         scaleX: 0.7,
         transformOrigin: "50% 0%",
       },
@@ -87,6 +91,8 @@ const ScrollFloat: React.FC<ScrollFloatProps> = ({
     scrollStart,
     scrollEnd,
     stagger,
+    yPercent,
+    scaleY,
   ]);
 
   return (
