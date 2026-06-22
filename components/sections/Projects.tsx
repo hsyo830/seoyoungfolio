@@ -16,6 +16,20 @@ const LABEL_FLOAT_SHARED = {
   containerClassName: "!font-normal !my-0",
 } as const;
 
+// Hero 글래스/엠보 텍스처 — 소형 텍스트 크기에 맞춰 shadow 스케일 다운
+const GLASS_EMBOSS: React.CSSProperties = {
+  color: 'transparent',
+  backgroundImage: 'linear-gradient(180deg, #ffffff 0%, #c6cad2 48%, #f2f2f4 78%, #ffffff 100%)',
+  WebkitBackgroundClip: 'text',
+  backgroundClip: 'text',
+  textShadow: [
+    '0 1px 0 rgba(255,255,255,0.9)',
+    '0 -1px 1px rgba(0,0,0,0.12)',
+    '0 1px 2px rgba(0,0,0,0.08)',
+    '0 2px 4px rgba(0,0,0,0.10)',
+  ].join(', '),
+};
+
 // 뷰포트 진입 시점부터 순차 등장: SELECTED WORKS → 04 PROJECTS
 // "center bottom"   = 엘리먼트 센터가 뷰포트 하단에 닿는 순간 (막 진입)
 // "center bottom-=15%" = 뷰포트 85% 지점 (SELECTED WORKS 완료 & 04 PROJECTS 시작)
@@ -80,14 +94,14 @@ export default function Projects() {
           <ScrollFloat
             {...LABEL_FLOAT_FIRST}
             textClassName="!text-sm uppercase"
-            textStyle={{ color: '#ffffff', letterSpacing: '0.25em' }}
+            textStyle={{ ...GLASS_EMBOSS, letterSpacing: '0.25em' }}
           >
             SELECTED WORKS
           </ScrollFloat>
           <ScrollFloat
             {...LABEL_FLOAT_SECOND}
             textClassName="!text-xs"
-            textStyle={{ color: '#ffffff', letterSpacing: '0.15em' }}
+            textStyle={{ ...GLASS_EMBOSS, letterSpacing: '0.15em' }}
           >
             04 PROJECTS / 2025
           </ScrollFloat>
