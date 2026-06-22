@@ -42,7 +42,7 @@ export default function Projects() {
   return (
     <>
       {/* Hero → 카드 섹션 전환 텍스트 */}
-      <div className="min-h-[40vh] flex flex-col items-center justify-center">
+      <div className="min-h-screen flex flex-col items-center justify-center">
         <ScrollVelocity
           texts={[
             'SELECTED WORKS · INTERACTIVE PROJECTS · FRONTEND EXPERIENCES ·',
