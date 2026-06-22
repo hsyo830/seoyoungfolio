@@ -16,9 +16,12 @@ const LABEL_FLOAT_SHARED = {
   containerClassName: "!font-normal !my-0",
 } as const;
 
-// SELECTED WORKS 먼저, 끝나는 지점에서 04 PROJECTS 시작
-const LABEL_FLOAT_FIRST  = { ...LABEL_FLOAT_SHARED, scrollStart: "center bottom+=50%", scrollEnd: "center bottom+=20%" } as const;
-const LABEL_FLOAT_SECOND = { ...LABEL_FLOAT_SHARED, scrollStart: "center bottom+=20%", scrollEnd: "center center"       } as const;
+// 뷰포트 진입 시점부터 순차 등장: SELECTED WORKS → 04 PROJECTS
+// "center bottom"   = 엘리먼트 센터가 뷰포트 하단에 닿는 순간 (막 진입)
+// "center bottom-=15%" = 뷰포트 85% 지점 (SELECTED WORKS 완료 & 04 PROJECTS 시작)
+// "center center"   = 뷰포트 중앙 (04 PROJECTS 완료)
+const LABEL_FLOAT_FIRST  = { ...LABEL_FLOAT_SHARED, scrollStart: "center bottom",      scrollEnd: "center bottom-=15%" } as const;
+const LABEL_FLOAT_SECOND = { ...LABEL_FLOAT_SHARED, scrollStart: "center bottom-=15%", scrollEnd: "center center"      } as const;
 
 export default function Projects() {
   const pinRef   = useRef<HTMLDivElement>(null);
