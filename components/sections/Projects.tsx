@@ -125,14 +125,14 @@ export default function Projects() {
         >
           <ScrollFloat
             {...LABEL_FLOAT_FIRST}
-            textClassName="!text-sm uppercase"
+            textClassName="!text-base uppercase"
             textStyle={{ ...GLASS_EMBOSS, letterSpacing: "0.25em" }}
           >
             SELECTED WORKS
           </ScrollFloat>
           <ScrollFloat
             {...LABEL_FLOAT_SECOND}
-            textClassName="!text-xs"
+            textClassName="!text-sm"
             textStyle={{ ...GLASS_EMBOSS, letterSpacing: "0.15em" }}
           >
             04 PROJECTS / 2025
