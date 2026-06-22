@@ -42,7 +42,7 @@ export default function Projects() {
   return (
     <>
       {/* Hero → 카드 섹션 전환 텍스트 */}
-      <div className="min-h-screen flex flex-col items-center justify-center">
+      <div className="min-h-screen flex flex-col items-center justify-center pb-32">
         <ScrollVelocity
           texts={[
             'SELECTED WORKS · INTERACTIVE PROJECTS · FRONTEND EXPERIENCES ·',
@@ -56,7 +56,7 @@ export default function Projects() {
       </div>
 
       {/* 수평 카드 트랙 (ScrollTrigger pin) */}
-      <div ref={pinRef} className="h-screen relative">
+      <div ref={pinRef} className="h-screen relative pt-32">
         {/* 섹션 라벨 — 핀 활성 중에도 고정 위치 유지 */}
         <div className="absolute top-8 left-10 flex flex-col gap-1 z-10 pointer-events-none select-none">
           <span
