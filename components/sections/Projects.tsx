@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ScrollVelocity from "@/components/ui/ScrollVelocity";
 import ScrollFloat from "@/components/ui/ScrollFloat";
 import ProjectCard from "@/components/cards/ProjectCard";
+import ShinyText from "@/components/ui/ShinyText";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,31 +19,40 @@ const LABEL_FLOAT_SHARED = {
 
 // Hero 글래스/엠보 텍스처 — 소형 텍스트 크기에 맞춰 shadow 스케일 다운
 const GLASS_EMBOSS: React.CSSProperties = {
-  color: 'transparent',
-  backgroundImage: 'linear-gradient(180deg, #ffffff 0%, #c6cad2 48%, #f2f2f4 78%, #ffffff 100%)',
-  WebkitBackgroundClip: 'text',
-  backgroundClip: 'text',
+  color: "transparent",
+  backgroundImage:
+    "linear-gradient(180deg, #ffffff 0%, #c6cad2 48%, #f2f2f4 78%, #ffffff 100%)",
+  WebkitBackgroundClip: "text",
+  backgroundClip: "text",
   textShadow: [
-    '0 1px 0 rgba(255,255,255,0.9)',
-    '0 -1px 1px rgba(0,0,0,0.12)',
-    '0 1px 2px rgba(0,0,0,0.08)',
-    '0 2px 4px rgba(0,0,0,0.10)',
-  ].join(', '),
+    "0 1px 0 rgba(255,255,255,0.9)",
+    "0 -1px 1px rgba(0,0,0,0.12)",
+    "0 1px 2px rgba(0,0,0,0.08)",
+    "0 2px 4px rgba(0,0,0,0.10)",
+  ].join(", "),
 };
 
 // 뷰포트 진입 시점부터 순차 등장: SELECTED WORKS → 04 PROJECTS
 // "center bottom"   = 엘리먼트 센터가 뷰포트 하단에 닿는 순간 (막 진입)
 // "center bottom-=15%" = 뷰포트 85% 지점 (SELECTED WORKS 완료 & 04 PROJECTS 시작)
 // "center center"   = 뷰포트 중앙 (04 PROJECTS 완료)
-const LABEL_FLOAT_FIRST  = { ...LABEL_FLOAT_SHARED, scrollStart: "center bottom",      scrollEnd: "center bottom-=15%" } as const;
-const LABEL_FLOAT_SECOND = { ...LABEL_FLOAT_SHARED, scrollStart: "center bottom-=15%", scrollEnd: "center center"      } as const;
+const LABEL_FLOAT_FIRST = {
+  ...LABEL_FLOAT_SHARED,
+  scrollStart: "center bottom",
+  scrollEnd: "center bottom-=15%",
+} as const;
+const LABEL_FLOAT_SECOND = {
+  ...LABEL_FLOAT_SHARED,
+  scrollStart: "center bottom-=15%",
+  scrollEnd: "center center",
+} as const;
 
 export default function Projects() {
-  const pinRef   = useRef<HTMLDivElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const pin   = pinRef.current;
+    const pin = pinRef.current;
     const track = trackRef.current;
     if (!pin || !track) return;
 
@@ -74,13 +84,35 @@ export default function Projects() {
       <div className="min-h-screen flex flex-col items-center justify-center pb-32">
         <ScrollVelocity
           texts={[
-            'SELECTED WORKS · INTERACTIVE PROJECTS · FRONTEND EXPERIENCES ·',
-            'NEXT.JS · TYPESCRIPT · TAILWIND · GSAP · FRAMER MOTION ·',
+            <ShinyText
+              key="v1"
+              text="CRAFT · PERFORMANCE · AESTHETICS · AMBITION · INNOVATION ·"
+              color="rgba(180,150,220,0.35)"
+              shineColor="rgba(220,200,255,0.55)"
+              speed={5}
+            />,
+            <ShinyText
+              key="v2"
+              text="SELECTED WORKS · INTERACTIVE PROJECTS · FRONTEND EXPERIENCES ·"
+              color="rgba(255,255,255,0.35)"
+              shineColor="rgba(255,255,255,0.65)"
+              speed={5}
+            />,
+            <ShinyText
+              key="v3"
+              text="NEXT.JS · TYPESCRIPT · TAILWIND · GSAP · FRAMER MOTION ·"
+              color="rgba(180,150,220,0.35)"
+              shineColor="rgba(220,200,255,0.55)"
+              speed={5}
+            />,
           ]}
-          velocity={80}
+          velocity={100}
           numCopies={4}
-          className="text-[#3a3a3a]/60"
-          scrollerStyle={{ fontFamily: "'KblJumpExtended', sans-serif" }}
+          scrollerStyle={{
+            fontFamily: "'KblJumpExtended', sans-serif",
+            fontWeight: 100,
+            WebkitTextStroke: "0.5px rgba(58, 58, 58, 0.4)",
+          }}
         />
       </div>
 
@@ -94,14 +126,14 @@ export default function Projects() {
           <ScrollFloat
             {...LABEL_FLOAT_FIRST}
             textClassName="!text-sm uppercase"
-            textStyle={{ ...GLASS_EMBOSS, letterSpacing: '0.25em' }}
+            textStyle={{ ...GLASS_EMBOSS, letterSpacing: "0.25em" }}
           >
             SELECTED WORKS
           </ScrollFloat>
           <ScrollFloat
             {...LABEL_FLOAT_SECOND}
             textClassName="!text-xs"
-            textStyle={{ ...GLASS_EMBOSS, letterSpacing: '0.15em' }}
+            textStyle={{ ...GLASS_EMBOSS, letterSpacing: "0.15em" }}
           >
             04 PROJECTS / 2025
           </ScrollFloat>
