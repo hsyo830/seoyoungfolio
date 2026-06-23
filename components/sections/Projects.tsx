@@ -5,13 +5,52 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ScrollVelocity from "@/components/ui/ScrollVelocity";
 import ScrollFloat from "@/components/ui/ScrollFloat";
-import ProjectCard from "@/components/cards/ProjectCard";
+import ProjectCard, { type Project } from "@/components/cards/ProjectCard";
 import ShinyText from "@/components/ui/ShinyText";
 import ScrambleText from "@/components/ui/ScrambleText";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const CARDS = ["001", "002", "003", "004"];
+const projects: Project[] = [
+  {
+    index: "001",
+    title: "직관GO",
+    titleEn: "JIKGWAN GO",
+    description: "placeholder description for project 1",
+    techStack: ["Next.js", "TypeScript", "TanStack Query", "Tailwind CSS", "Supabase"],
+    links: { github: "#", live: "#", demo: "#" },
+    videoSrc: "/videos/jikgwango.mp4",
+  },
+  {
+    index: "002",
+    title: "Global Nomad",
+    titleEn: "GLOBAL NOMAD",
+    description: "placeholder description for project 2",
+    techStack: ["Next.js", "TypeScript", "TanStack Query", "Tailwind CSS"],
+    links: { github: "#", live: "#", demo: "#" },
+    videoSrc: null,
+  },
+  {
+    index: "003",
+    title: "The Julge",
+    titleEn: "THE JULGE",
+    description: "placeholder description for project 3",
+    techStack: ["Next.js", "TypeScript", "Tailwind CSS"],
+    links: { github: "#", live: "#", demo: "#" },
+    videoSrc: null,
+  },
+  {
+    index: "004",
+    title: "Rolling",
+    titleEn: "ROLLING",
+    description: "placeholder description for project 4",
+    techStack: ["React", "JavaScript", "Tailwind CSS"],
+    links: { github: "#", live: "#", demo: "#" },
+    videoSrc: null,
+  },
+];
+
+const CARDS = projects.map((p) => p.index);
 const CARD_COUNT = CARDS.length;
 
 const LABEL_FLOAT_SHARED = {
@@ -48,50 +87,53 @@ const LABEL_FLOAT_SECOND = {
 
 export default function Projects() {
   const pinRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [showScramble, setShowScramble] = useState(false);
   const lastIndexRef = useRef(-1);
+  const progressLineRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const pin = pinRef.current;
-    const track = trackRef.current;
-    if (!pin || !track) return;
+    if (!pin) return;
 
-    const dist = track.scrollWidth - window.innerWidth;
-    if (dist <= 0) return;
+    // 콘텐츠는 고정, 스크롤 길이만 카드 4장 분량(3 × vw) 유지
+    const dist = (CARD_COUNT - 1) * window.innerWidth;
 
     const ctx = gsap.context(() => {
-      gsap.to(track, {
-        x: -dist,
-        ease: "none",
-        scrollTrigger: {
-          trigger: pin,
-          pin: true,
-          pinSpacing: true,
-          scrub: 1,
-          start: "top top",
-          end: `+=${dist}`,
-          invalidateOnRefresh: true,
-          onEnter: () => {
-            setShowScramble(true);
-            setActiveIndex(0);
-            lastIndexRef.current = 0;
-          },
-          onLeaveBack: () => {
-            setShowScramble(false);
-            lastIndexRef.current = -1;
-          },
-          onUpdate: (self) => {
-            const idx = Math.min(
-              Math.round(self.progress * (CARD_COUNT - 1)),
-              CARD_COUNT - 1,
-            );
-            if (idx !== lastIndexRef.current) {
-              lastIndexRef.current = idx;
-              setActiveIndex(idx);
-            }
-          },
+      ScrollTrigger.create({
+        trigger: pin,
+        pin: true,
+        pinSpacing: true,
+        scrub: 1,
+        start: "top top",
+        end: `+=${dist}`,
+        invalidateOnRefresh: true,
+        onEnter: () => {
+          setShowScramble(true);
+          setActiveIndex(0);
+          lastIndexRef.current = 0;
+        },
+        onLeaveBack: () => {
+          setShowScramble(false);
+          lastIndexRef.current = -1;
+        },
+        onUpdate: (self) => {
+          const p = self.progress;
+
+          // 각 프로젝트 구간: [i/4, (i+1)/4]
+          const idx = Math.min(Math.floor(p * CARD_COUNT), CARD_COUNT - 1);
+          if (idx !== lastIndexRef.current) {
+            lastIndexRef.current = idx;
+            setActiveIndex(idx);
+          }
+
+          // 현재 프로젝트 구간 내 로컬 progress → progress line width
+          const el = progressLineRef.current;
+          if (el) {
+            const chunkStart = idx / CARD_COUNT;
+            const localP = Math.min((p - chunkStart) * CARD_COUNT, 1);
+            el.style.width = `${10 + localP * 90}%`;
+          }
         },
       });
     });
@@ -138,7 +180,7 @@ export default function Projects() {
       </div>
 
       {/* 수평 카드 트랙 (ScrollTrigger pin) */}
-      <div ref={pinRef} className="h-screen relative pt-32">
+      <div ref={pinRef} className="h-screen relative" style={{ overflow: "visible" }}>
         {/* 카드 위 좌측 상단 라벨 */}
         <div
           className="absolute top-8 left-10 z-10 pointer-events-none select-none"
@@ -154,7 +196,7 @@ export default function Projects() {
                   PROJECT
                 </span>
                 <div
-                  className="mx-4 shrink-0 h-[2px] w-28"
+                  className="mx-4 shrink-0 h-0.5 w-28"
                   style={{
                     background:
                       "linear-gradient(90deg, rgba(255,255,255,0.85) 0%, rgba(198,202,210,0.35) 100%)",
@@ -193,14 +235,10 @@ export default function Projects() {
           )}
         </div>
 
-        <div
-          ref={trackRef}
-          className="flex h-full w-max items-center gap-8 px-[10vw]"
-        >
-          {[0, 1, 2, 3].map((i) => (
-            <ProjectCard key={i} />
-          ))}
-        </div>
+        <ProjectCard
+          project={projects[activeIndex]}
+          progressLineRef={(el) => { progressLineRef.current = el; }}
+        />
       </div>
     </>
   );
