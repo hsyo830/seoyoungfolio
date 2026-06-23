@@ -1,5 +1,6 @@
 import Grainient from "@/components/ui/Grainient";
 import MetalHeroText from "@/components/ui/MetalHeroText";
+import HeroAnimText from "@/components/ui/HeroAnimText";
 import ScrollIndicator from "@/components/ui/ScrollIndicator";
 import CrossBand from "@/components/sections/CrossBand";
 import Projects from "@/components/sections/Projects";
@@ -20,19 +21,7 @@ export default function Home() {
       <main className="relative flex flex-col items-center justify-center min-h-screen px-6 text-center select-none" style={{ zIndex: 10 }}>
         <MetalHeroText />
 
-        <p
-          className="mt-6 font-title font-medium tracking-widest uppercase text-text-secondary"
-          style={{ fontSize: "clamp(0.85rem, 2vw, 1.1rem)", letterSpacing: "0.35em" }}
-        >
-          Seo Young
-        </p>
-
-        <p
-          className="mt-4 font-body text-text-secondary"
-          style={{ fontSize: "clamp(0.9rem, 1.6vw, 1.1rem)" }}
-        >
-          Designing experiences, building interactions.
-        </p>
+        <HeroAnimText />
 
         <ScrollIndicator />
       </main>
