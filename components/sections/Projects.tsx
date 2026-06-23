@@ -85,7 +85,7 @@ export default function Projects() {
           onUpdate: (self) => {
             const idx = Math.min(
               Math.round(self.progress * (CARD_COUNT - 1)),
-              CARD_COUNT - 1
+              CARD_COUNT - 1,
             );
             if (idx !== lastIndexRef.current) {
               lastIndexRef.current = idx;
@@ -188,7 +188,7 @@ export default function Projects() {
               textClassName="!text-sm"
               textStyle={{ ...GLASS_EMBOSS, letterSpacing: "0.15em" }}
             >
-              04 PROJECTS / 2025
+              04 PROJECTS / 2025~2026
             </ScrollFloat>
           )}
         </div>
