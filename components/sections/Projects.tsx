@@ -3,10 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import ScrollVelocity from "@/components/ui/ScrollVelocity";
 import ScrollFloat from "@/components/ui/ScrollFloat";
 import ProjectCard, { type Project } from "@/components/cards/ProjectCard";
-import ShinyText from "@/components/ui/ShinyText";
 import ScrambleText from "@/components/ui/ScrambleText";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -143,42 +141,6 @@ export default function Projects() {
 
   return (
     <>
-      {/* Hero → 카드 섹션 전환 텍스트 */}
-      <div className="min-h-screen flex flex-col items-center justify-center pb-32">
-        <ScrollVelocity
-          texts={[
-            <ShinyText
-              key="v1"
-              text="CRAFT · PERFORMANCE · AESTHETICS · AMBITION · INNOVATION ·"
-              color="rgba(180,150,220,0.35)"
-              shineColor="rgba(220,200,255,0.55)"
-              speed={5}
-            />,
-            <ShinyText
-              key="v2"
-              text="SELECTED WORKS · INTERACTIVE PROJECTS · FRONTEND EXPERIENCES ·"
-              color="rgba(255,255,255,0.35)"
-              shineColor="rgba(255,255,255,0.65)"
-              speed={5}
-            />,
-            <ShinyText
-              key="v3"
-              text="NEXT.JS · TYPESCRIPT · TAILWIND · GSAP · FRAMER MOTION ·"
-              color="rgba(180,150,220,0.35)"
-              shineColor="rgba(220,200,255,0.55)"
-              speed={5}
-            />,
-          ]}
-          velocity={100}
-          numCopies={4}
-          scrollerStyle={{
-            fontFamily: "'KblJumpExtended', sans-serif",
-            fontWeight: 100,
-            WebkitTextStroke: "0.5px rgba(58, 58, 58, 0.4)",
-          }}
-        />
-      </div>
-
       {/* 수평 카드 트랙 (ScrollTrigger pin) */}
       <div ref={pinRef} className="h-screen relative" style={{ overflow: "visible" }}>
         {/* 카드 위 좌측 상단 라벨 */}

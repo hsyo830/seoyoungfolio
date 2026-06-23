@@ -1,6 +1,7 @@
 import Grainient from "@/components/ui/Grainient";
 import MetalHeroText from "@/components/ui/MetalHeroText";
 import ScrollIndicator from "@/components/ui/ScrollIndicator";
+import CrossBand from "@/components/sections/CrossBand";
 import Projects from "@/components/sections/Projects";
 
 export default function Home() {
@@ -16,7 +17,7 @@ export default function Home() {
       </div>
 
       {/* Hero */}
-      <main className="relative flex flex-col items-center justify-center min-h-screen px-6 text-center select-none">
+      <main className="relative flex flex-col items-center justify-center min-h-screen px-6 text-center select-none" style={{ zIndex: 10 }}>
         <MetalHeroText />
 
         <p
@@ -36,6 +37,7 @@ export default function Home() {
         <ScrollIndicator />
       </main>
 
+      <CrossBand />
       <Projects />
     </>
   );
