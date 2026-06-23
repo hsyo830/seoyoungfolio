@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 
 const NAME = "Seo Young";
-const TAGLINE = "Designing experiences, building interactions.";
+const TAGLINE = "Where aesthetics meet engineering.";
 
 export default function HeroAnimText() {
   const nameRef    = useRef<HTMLParagraphElement>(null);
@@ -60,6 +60,7 @@ export default function HeroAnimText() {
           flexWrap: "wrap",
           justifyContent: "center",
           gap: "0.3em",
+          letterSpacing: "0.2em",
         }}
       >
         {TAGLINE.split(" ").map((word, i) => (
