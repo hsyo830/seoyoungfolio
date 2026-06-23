@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
 import ScrambleText from "@/components/ui/ScrambleText";
 
 export interface Project {
@@ -20,6 +22,37 @@ interface Props {
 const TS: React.CSSProperties = { textShadow: "0 1px 12px rgba(0,0,0,0.4)" };
 
 export default function ProjectCard({ project, progressLineRef }: Props) {
+  const titleRef   = useRef<HTMLHeadingElement>(null);
+  const descRef    = useRef<HTMLParagraphElement>(null);
+  const stackRef   = useRef<HTMLDivElement>(null);
+  const linksRef   = useRef<HTMLDivElement>(null);
+  const tlRef      = useRef<gsap.core.Timeline | null>(null);
+
+  useEffect(() => {
+    if (tlRef.current) tlRef.current.kill();
+
+    const title      = titleRef.current;
+    const desc       = descRef.current;
+    const stackItems = stackRef.current ? Array.from(stackRef.current.children) : [];
+    const links      = linksRef.current;
+
+    if (!title || !desc || !links) return;
+
+    gsap.set([title, desc, links], { opacity: 0, y: 30 });
+    gsap.set(stackItems, { opacity: 0, y: 30 });
+
+    const tl = gsap.timeline();
+    tlRef.current = tl;
+
+    tl.to(title,      { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0);
+    tl.to(desc,       { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.2);
+    tl.to(stackItems, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", stagger: 0.08 }, 0.4);
+    tl.to(links,      { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
+      0.4 + project.techStack.length * 0.08 + 0.1);
+
+    return () => { tl.kill(); };
+  }, [project.index, project.techStack.length]);
+
   return (
     <div className="w-screen h-screen flex-shrink-0 relative" style={{ overflow: "visible" }}>
       <style>{`
@@ -75,12 +108,11 @@ export default function ProjectCard({ project, progressLineRef }: Props) {
           color: rgba(255,255,255,0.78);
           text-decoration: none;
           text-shadow: 0 1px 12px rgba(0,0,0,0.4);
-          transition: opacity 0.3s ease;
+          transition: opacity 0.3s ease, color 0.3s ease;
           cursor: pointer;
         }
         .link-arrow:hover { opacity: 1; color: rgba(110,90,255,0.95); }
 
-        /* 4모서리 브라켓 공통 */
         .link-arrow::before,
         .link-arrow::after {
           content: "";
@@ -98,31 +130,26 @@ export default function ProjectCard({ project, progressLineRef }: Props) {
           opacity: 0;
           transition: all 0.3s ease;
         }
-        /* top-left */
         .link-arrow::before {
           top: -7px; left: -7px;
           border-top: 1px solid rgba(255,255,255,0.8);
           border-left: 1px solid rgba(255,255,255,0.8);
         }
-        /* top-right */
         .link-arrow::after {
           top: -7px; right: -7px;
           border-top: 1px solid rgba(255,255,255,0.8);
           border-right: 1px solid rgba(255,255,255,0.8);
         }
-        /* bottom-left */
         .link-arrow .corner-bl {
           bottom: -7px; left: -7px;
           border-bottom: 1px solid rgba(255,255,255,0.8);
           border-left: 1px solid rgba(255,255,255,0.8);
         }
-        /* bottom-right */
         .link-arrow .corner-br {
           bottom: -7px; right: -7px;
           border-bottom: 1px solid rgba(255,255,255,0.8);
           border-right: 1px solid rgba(255,255,255,0.8);
         }
-        /* hover: 안쪽으로 좁혀지며 포커스 */
         .link-arrow:hover::before { top: -1px; left: -1px; opacity: 1; border-color: rgba(110,90,255,0.8); }
         .link-arrow:hover::after  { top: -1px; right: -1px; opacity: 1; border-color: rgba(110,90,255,0.8); }
         .link-arrow:hover .corner-bl { bottom: -1px; left: -1px; opacity: 1; border-color: rgba(110,90,255,0.8); }
@@ -185,7 +212,7 @@ export default function ProjectCard({ project, progressLineRef }: Props) {
         )}
       </div>
 
-      {/* 좌측 텍스트 콘텐츠 (좌하단 정렬) */}
+      {/* 좌측 텍스트 콘텐츠 */}
       <div
         className="absolute left-16 top-[12vh] flex flex-col w-[42vw]"
         style={{ overflow: "visible" }}
@@ -198,8 +225,9 @@ export default function ProjectCard({ project, progressLineRef }: Props) {
           <ScrambleText text={project.index} duration={300} />
         </p>
 
-        {/* 제목 */}
+        {/* 제목 — ScrambleText 유지, GSAP fadeUp 동시 적용 */}
         <h2
+          ref={titleRef}
           className="project-title-chrome text-[clamp(3.5rem,6.5vw,7rem)] font-black leading-[1.2] tracking-tight mb-1 whitespace-nowrap self-start"
           style={{
             fontFamily: "'KblJumpExtended', sans-serif",
@@ -236,7 +264,9 @@ export default function ProjectCard({ project, progressLineRef }: Props) {
 
         {/* 설명 · 스택 · 링크 */}
         <div className="project-copy">
+          {/* 설명 — ScrambleText 제거, GSAP fadeUp */}
           <p
+            ref={descRef}
             className="mb-6"
             style={{
               color: "rgba(255,255,255,0.82)",
@@ -246,17 +276,19 @@ export default function ProjectCard({ project, progressLineRef }: Props) {
               ...TS,
             }}
           >
-            <ScrambleText text={project.description} duration={800} />
+            {project.description}
           </p>
 
-          <div className="flex flex-wrap gap-2 mb-8">
+          {/* 기술 스택 — 각 항목 개별 stagger */}
+          <div ref={stackRef} className="flex flex-wrap gap-2 mb-8">
             {project.techStack.map((tech) => (
               <span key={tech} className="skill-tag">{tech}</span>
             ))}
           </div>
 
+          {/* 링크 버튼 */}
           <div
-            key={project.index}
+            ref={linksRef}
             className="flex flex-row flex-wrap"
             style={{ gap: "1.5rem" }}
           >
