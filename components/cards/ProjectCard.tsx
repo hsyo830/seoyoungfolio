@@ -22,33 +22,56 @@ interface Props {
 const TS: React.CSSProperties = { textShadow: "0 1px 12px rgba(0,0,0,0.4)" };
 
 export default function ProjectCard({ project, progressLineRef }: Props) {
-  const titleRef   = useRef<HTMLHeadingElement>(null);
-  const descRef    = useRef<HTMLParagraphElement>(null);
-  const stackRef   = useRef<HTMLDivElement>(null);
-  const linksRef   = useRef<HTMLDivElement>(null);
-  const tlRef      = useRef<gsap.core.Timeline | null>(null);
+  const titleRef  = useRef<HTMLHeadingElement>(null);
+  const descRef   = useRef<HTMLParagraphElement>(null);
+  const stackRef  = useRef<HTMLDivElement>(null);
+  const linksRef  = useRef<HTMLDivElement>(null);
+  const visualRef = useRef<HTMLDivElement>(null);
+  const videoRef  = useRef<HTMLVideoElement>(null);
+  const tlRef     = useRef<gsap.core.Timeline | null>(null);
 
   useEffect(() => {
     if (tlRef.current) tlRef.current.kill();
+
+    // 이전 영상 정지
+    if (videoRef.current) videoRef.current.pause();
 
     const title      = titleRef.current;
     const desc       = descRef.current;
     const stackItems = stackRef.current ? Array.from(stackRef.current.children) : [];
     const links      = linksRef.current;
+    const visual     = visualRef.current;
 
     if (!title || !desc || !links) return;
 
-    gsap.set([title, desc, links], { opacity: 0, y: 30 });
-    gsap.set(stackItems, { opacity: 0, y: 30 });
+    // 이전 GSAP 인라인 스타일 초기화 (애니메이션 속성만)
+    gsap.set([title, desc, links], { clearProps: "opacity,y" });
+    gsap.set(stackItems, { clearProps: "opacity,y" });
+    if (visual) gsap.set(visual, { clearProps: "opacity,x,scale" });
 
     const tl = gsap.timeline();
     tlRef.current = tl;
 
-    tl.to(title,      { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0);
-    tl.to(desc,       { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.2);
-    tl.to(stackItems, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", stagger: 0.08 }, 0.4);
-    tl.to(links,      { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
-      0.4 + project.techStack.length * 0.08 + 0.1);
+    tl.from(title, { y: 40, opacity: 0, duration: 0.6, ease: "power3.out" })
+      .from(desc,       { y: 20, opacity: 0, duration: 0.5 }, "-=0.2")
+      .from(stackItems, { y: 15, opacity: 0, duration: 0.4, stagger: 0.08 }, "-=0.2")
+      .from(links,      { y: 10, opacity: 0, duration: 0.4 }, "-=0.1");
+
+    if (visual) {
+      tl.from(visual, {
+        opacity: 0,
+        x: 80,
+        scale: 0.95,
+        duration: 0.8,
+        ease: "power2.out",
+        onComplete: () => {
+          // CSS 클래스 perspective/rotateY 복원
+          gsap.set(visual, { clearProps: "all" });
+          // 0.3초 후 영상 재생
+          gsap.delayedCall(0.3, () => { videoRef.current?.play(); });
+        },
+      }, "-=0.1");
+    }
 
     return () => { tl.kill(); };
   }, [project.index, project.techStack.length]);
@@ -187,11 +210,11 @@ export default function ProjectCard({ project, progressLineRef }: Props) {
       `}</style>
 
       {/* 우측 비주얼 */}
-      <div className="project-visual">
+      <div ref={visualRef} className="project-visual">
         {project.videoSrc ? (
           <video
+            ref={videoRef}
             src={project.videoSrc}
-            autoPlay
             muted
             loop
             playsInline

@@ -85,7 +85,7 @@ const LABEL_FLOAT_SECOND = {
 
 export default function Projects() {
   const pinRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(-1);
   const [showScramble, setShowScramble] = useState(false);
   const lastIndexRef = useRef(-1);
   const progressLineRef = useRef<HTMLDivElement | null>(null);
@@ -134,6 +134,7 @@ export default function Projects() {
           }
         },
       });
+
     });
 
     return () => ctx.revert();
@@ -197,10 +198,12 @@ export default function Projects() {
           )}
         </div>
 
-        <ProjectCard
-          project={projects[activeIndex]}
-          progressLineRef={(el) => { progressLineRef.current = el; }}
-        />
+        {activeIndex >= 0 && (
+          <ProjectCard
+            project={projects[activeIndex]}
+            progressLineRef={(el) => { progressLineRef.current = el; }}
+          />
+        )}
       </div>
     </>
   );
