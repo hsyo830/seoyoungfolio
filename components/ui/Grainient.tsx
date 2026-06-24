@@ -215,6 +215,7 @@ const Grainient: React.FC<GrainientProps> = ({
     canvas.style.width = "100%";
     canvas.style.height = "100%";
     canvas.style.display = "block";
+    canvas.style.background = "transparent";
     container.appendChild(canvas);
 
     const geometry = new Triangle(gl);

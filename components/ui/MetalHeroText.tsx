@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useCallback } from 'react';
+import { gsap } from 'gsap';
 
 const LERP = 0.11;         // 낮을수록 무겁게 따라옴
 const TRAIL_LEN = 14;      // 잔상 개수
@@ -15,6 +16,7 @@ type Trail = { x: number; y: number; angle: number; rx: number };
 export default function MetalHeroText() {
   const videoRef    = useRef<HTMLVideoElement>(null);
   const metalH1Ref  = useRef<HTMLHeadingElement>(null);
+  const baseH1Ref   = useRef<HTMLHeadingElement>(null);
   const videoRafRef = useRef<number>(0);
   const maskRafRef  = useRef<number>(0);
 
@@ -25,6 +27,17 @@ export default function MetalHeroText() {
   const angleRef    = useRef(0);
   const opacityRef  = useRef(0);
   const elSizeRef   = useRef({ w: 0, h: 0 });
+
+  // ── 등장 애니메이션 ───────────────────────────────────────────────────────
+  useEffect(() => {
+    const chars = baseH1Ref.current?.querySelectorAll<HTMLElement>('.metal-char');
+    if (!chars?.length) return;
+    gsap.fromTo(
+      chars,
+      { y: 20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.6, stagger: 0.04, ease: 'power3.out', delay: 0 }
+    );
+  }, []);
 
   // ── video → background-image ──────────────────────────────────────────────
   useEffect(() => {
@@ -156,12 +169,12 @@ export default function MetalHeroText() {
     mouseRef.current.active = false;
   }, []);
 
-  const sharedH1: React.CSSProperties = { fontSize: 'inherit', fontWeight: 'inherit', margin: 0 };
+  const sharedH1: React.CSSProperties = { fontSize: 'inherit', fontWeight: 'inherit', margin: 0, padding: 0, backgroundColor: 'transparent' };
 
   return (
     <div
       className="relative leading-none tracking-tighter"
-      style={{ fontSize: 'clamp(3.2rem, 11vw, 8.5rem)', fontFamily: "'KblJumpExtended', sans-serif" }}
+      style={{ fontSize: 'clamp(3.2rem, 11vw, 8.5rem)', fontFamily: "'KblJumpExtended', sans-serif", backgroundColor: 'transparent' }}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
     >
@@ -171,35 +184,37 @@ export default function MetalHeroText() {
         src="/videos/metal-texture.mp4"
         autoPlay loop muted playsInline
         aria-hidden="true"
-        style={{ position: 'absolute', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }}
+        style={{ position: 'absolute', width: 1, height: 1, opacity: 0, pointerEvents: 'none', backgroundColor: 'transparent' }}
       />
 
       {/* 아래 레이어: 글래스/엠보 텍스트 */}
       <h1
+        ref={baseH1Ref}
         style={
           {
             ...sharedH1,
-            // 유리 표면 느낌: 위쪽 밝음 → 중간 살짝 어두움 → 아래 다시 밝음
             color: 'transparent',
             backgroundImage:
               'linear-gradient(180deg, #ffffff 0%, #c6cad2 48%, #f2f2f4 78%, #ffffff 100%)',
             WebkitBackgroundClip: 'text',
             backgroundClip: 'text',
-            // 엠보싱: 위 하이라이트 + 아래 그림자로 두께감
             textShadow: [
               '0 1px 0 rgba(255,255,255,0.9)',
               '0 -1px 1px rgba(0,0,0,0.15)',
               '0 2px 2px rgba(0,0,0,0.08)',
               '0 4px 6px rgba(0,0,0,0.10)',
             ].join(', '),
-            // 외곽 글로우 — h1 자체 레이아웃에 영향 없음
             filter: 'drop-shadow(0 2px 10px rgba(0,0,0,0.12))',
           } as React.CSSProperties
         }
       >
-        FRONTEND
+        {'FRONTEND'.split('').map((char, i) => (
+          <span key={`f-${i}`} className="metal-char" style={{ display: 'inline-block', opacity: 0 }}>{char}</span>
+        ))}
         <br />
-        DEVELOPER
+        {'DEVELOPER'.split('').map((char, i) => (
+          <span key={`d-${i}`} className="metal-char" style={{ display: 'inline-block', opacity: 0 }}>{char}</span>
+        ))}
       </h1>
 
       {/* 위 레이어: 메탈 텍스트 + SVG 잔상 마스크 */}

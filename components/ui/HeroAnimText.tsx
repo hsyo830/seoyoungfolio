@@ -18,7 +18,7 @@ export default function HeroAnimText() {
       gsap.fromTo(
         chars,
         { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, stagger: 0.06, ease: "power3.out", delay: 0.5 }
+        { y: 0, opacity: 1, duration: 0.5, stagger: 0.06, ease: "power3.out", delay: 0.9 }
       );
     }
 
@@ -26,7 +26,7 @@ export default function HeroAnimText() {
       gsap.fromTo(
         words,
         { y: 15, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: "power2.out", delay: 0.9 }
+        { y: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: "power2.out", delay: 1.3 }
       );
     }
   }, []);
