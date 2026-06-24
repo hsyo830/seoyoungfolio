@@ -58,9 +58,11 @@ export default function CrossBand() {
           left: -50vw;
           width: 200vw;
           height: 60px;
-          background: rgba(255,255,255,0.1);
-          border-top: 1px solid rgba(255,255,255,0.3);
-          border-bottom: 1px solid rgba(255,255,255,0.3);
+          background: rgba(210,210,210,0.75);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          border-top: 1px solid rgba(255,255,255,0.15);
+          border-bottom: 1px solid rgba(255,255,255,0.15);
           overflow: hidden;
           display: flex;
           align-items: center;
@@ -79,10 +81,12 @@ export default function CrossBand() {
         .xb-track-right { animation: xb-right 40s linear infinite; }
         .xb-item {
           display: inline-block;
+          font-family: 'KblJumpExtended', sans-serif;
           font-size: 16px;
           font-weight: 300;
           letter-spacing: 0.2em;
           color: rgba(255,255,255,0.85);
+          -webkit-text-stroke: 0.5px rgba(40,40,40,0.55);
           text-transform: uppercase;
           padding: 0 48px;
           white-space: nowrap;
