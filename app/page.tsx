@@ -3,6 +3,7 @@ import MetalHeroText from "@/components/ui/MetalHeroText";
 import HeroAnimText from "@/components/ui/HeroAnimText";
 import ScrollIndicator from "@/components/ui/ScrollIndicator";
 import CrossBand from "@/components/sections/CrossBand";
+import ProjectsIntro from "@/components/sections/ProjectsIntro";
 import Projects from "@/components/sections/Projects";
 
 export default function Home() {
@@ -27,6 +28,7 @@ export default function Home() {
       </main>
 
       <CrossBand />
+      <ProjectsIntro />
       <Projects />
     </>
   );
