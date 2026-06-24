@@ -5,6 +5,7 @@ import ScrollIndicator from "@/components/ui/ScrollIndicator";
 import CrossBand from "@/components/sections/CrossBand";
 import ProjectsIntro from "@/components/sections/ProjectsIntro";
 import Projects from "@/components/sections/Projects";
+import About from "@/components/sections/About";
 
 export default function Home() {
   return (
@@ -30,6 +31,7 @@ export default function Home() {
       <CrossBand />
       <ProjectsIntro />
       <Projects />
+      <About />
     </>
   );
 }
