@@ -294,31 +294,11 @@ export default function About() {
           height: "100vh",
           overflow: "hidden",
           zIndex: 10,
-          // 어두운 배경 — 핀 동안 위아래 섹션을 가림
-          background: "linear-gradient(160deg, #090614 0%, #0f0920 50%, #090614 100%)",
+          background: "transparent",
           display: "flex",
           flexDirection: "column",
         }}
       >
-        {/* 상단 페이드 — SKILLS 섹션과 자연스럽게 블렌드 */}
-        <div style={{
-          position: "absolute", top: 0, left: 0, right: 0, height: 180,
-          background: "linear-gradient(to bottom, rgba(192,180,220,0.95) 0%, transparent 100%)",
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-          zIndex: 2,
-          pointerEvents: "none",
-        }} />
-
-        {/* 하단 페이드 — CONTACT 섹션과 자연스럽게 블렌드 */}
-        <div style={{
-          position: "absolute", bottom: 0, left: 0, right: 0, height: 180,
-          background: "linear-gradient(to top, rgba(182,162,210,0.95) 0%, transparent 100%)",
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-          zIndex: 2,
-          pointerEvents: "none",
-        }} />
 
         {/* Title (핀 중에도 고정 노출) */}
         <div style={{ padding: "8vh 10vw 0", flexShrink: 0, position: "relative", zIndex: 3 }}>
