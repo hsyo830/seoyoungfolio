@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import ShinyText from "@/components/ui/ShinyText";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -86,12 +85,48 @@ export default function ProjectsIntro() {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "flex-start",
+        paddingTop: "28vh",
         background: "transparent",
         position: "relative",
         overflow: "hidden",
       }}
     >
+      <style>{`
+        @keyframes projectsShine {
+          from { background-position: -200% center; }
+          to   { background-position:  200% center; }
+        }
+        .projects-shine-overlay {
+          position: absolute;
+          top: 0; left: 0;
+          white-space: nowrap;
+          pointer-events: none;
+          background: linear-gradient(110deg, transparent 35%, rgba(255,255,255,0.65) 50%, transparent 65%);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+          background-size: 200% auto;
+          opacity: 0.45;
+          animation: projectsShine 5s ease-in-out infinite;
+        }
+        @keyframes halftoneShift {
+          0%, 100% { background-size: 6px 6px; opacity: 0.28; }
+          50%       { background-size: 9px 9px; opacity: 0.48; }
+        }
+        .projects-halftone-overlay {
+          position: absolute;
+          top: 0; left: 0;
+          white-space: nowrap;
+          pointer-events: none;
+          background-image: radial-gradient(circle, rgba(255,255,255,0.55) 1px, transparent 1px);
+          background-size: 6px 6px;
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+          animation: halftoneShift 3s ease-in-out infinite;
+        }
+      `}</style>
 
       {/* SELECTED WORKS + 04 + PROJECTS + 2025-2026 — 함께 스크롤 아웃 */}
       <div
@@ -101,14 +136,14 @@ export default function ProjectsIntro() {
           flexDirection: "column",
           alignItems: "center",
           position: "relative",
-          gap: "10px",
+          gap: "12px",
         }}
       >
         <p
           style={{
-            fontSize: 13,
-            letterSpacing: "0.3em",
-            color: "rgba(255,255,255,0.5)",
+            fontSize: 12,
+            letterSpacing: "0.28em",
+            color: "rgba(255,255,255,0.72)",
             textTransform: "uppercase",
             margin: 0,
             lineHeight: 1,
@@ -141,62 +176,53 @@ export default function ProjectsIntro() {
           04
         </p>
 
-        {/* "PROJECTS" — text-stroke 베이스 + ShinyText 오버레이 */}
+        {/* "PROJECTS" — char spans (GSAP 타겟) + shine overlay */}
         <div
           ref={titleRef}
           style={{
             position: "relative",
             display: "inline-block",
-            fontSize: "clamp(50px, 8vw, 110px)",
             fontFamily: "'KblJumpExtended', sans-serif",
-            fontWeight: 900,
+            fontSize: "clamp(72px, 10vw, 150px)",
+            fontWeight: 800,
             lineHeight: 1,
-            letterSpacing: "-0.02em",
-            margin: 0,
-            filter: "drop-shadow(0 0 8px rgba(255,255,255,0.05))",
-            WebkitTextStroke: "1px rgba(255,255,255,0.45)",
+            letterSpacing: "-0.035em",
+            margin: "0 auto",
+            maxWidth: "75vw",
+            width: "fit-content",
+            overflow: "visible",
+            color: "rgba(255,255,255,0.06)",
+            WebkitTextStroke: "0.3px rgba(255,255,255,0.4)",
+            textShadow: "0 0 18px rgba(255,255,255,0.14), 0 12px 40px rgba(120,90,180,0.12)",
           }}
         >
-          {/* GSAP 애니메이션 타겟: text-stroke 아웃라인 글자 */}
           {CHARS.map((char, i) => (
             <span
               key={i}
               ref={el => { charsRef.current[i] = el; }}
-              style={{ display: "inline-block", color: "transparent" }}
+              style={{ display: "inline-block" }}
             >
               {char}
             </span>
           ))}
 
-          {/* ShinyText: shine sweep 오버레이 */}
-          <span
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              pointerEvents: "none",
-              whiteSpace: "nowrap",
-            }}
-          >
-            <ShinyText
-              text="PROJECTS"
-              color="transparent"
-              shineColor="rgba(255,255,255,0.6)"
-              speed={18}
-            />
-          </span>
+          {/* shine sweep 오버레이 */}
+          <span className="projects-shine-overlay">PROJECTS</span>
+
+          {/* halftone 도트 텍스처 오버레이 */}
+          <span className="projects-halftone-overlay">PROJECTS</span>
         </div>
 
         <p
           style={{
-            fontSize: 13,
-            letterSpacing: "0.2em",
-            color: "rgba(255,255,255,0.4)",
+            fontSize: 12,
+            letterSpacing: "0.22em",
+            color: "rgba(255,255,255,0.6)",
             margin: 0,
             lineHeight: 1,
           }}
         >
-          2025–2026
+          04 PROJECTS
         </p>
       </div>
     </section>
