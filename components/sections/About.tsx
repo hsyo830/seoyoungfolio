@@ -300,14 +300,34 @@ export default function About() {
           flexDirection: "column",
         }}
       >
+        {/* 상단 페이드 — SKILLS 섹션과 자연스럽게 블렌드 */}
+        <div style={{
+          position: "absolute", top: 0, left: 0, right: 0, height: 180,
+          background: "linear-gradient(to bottom, rgba(192,180,220,0.95) 0%, transparent 100%)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          zIndex: 2,
+          pointerEvents: "none",
+        }} />
+
+        {/* 하단 페이드 — CONTACT 섹션과 자연스럽게 블렌드 */}
+        <div style={{
+          position: "absolute", bottom: 0, left: 0, right: 0, height: 180,
+          background: "linear-gradient(to top, rgba(182,162,210,0.95) 0%, transparent 100%)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          zIndex: 2,
+          pointerEvents: "none",
+        }} />
+
         {/* Title (핀 중에도 고정 노출) */}
-        <div style={{ padding: "8vh 10vw 0", flexShrink: 0, position: "relative", zIndex: 1 }}>
+        <div style={{ padding: "8vh 10vw 0", flexShrink: 0, position: "relative", zIndex: 3 }}>
           <SplitTitle chars={EXP_TITLE} refsArr={expChars}
             style={{ fontSize: "clamp(24px, 3.2vw, 52px)" }} />
         </div>
 
         {/* 트랙 영역 — 수직 중앙 정렬, overflow hidden으로 양쪽 클리핑 */}
-        <div style={{ flex: 1, display: "flex", alignItems: "center", overflow: "hidden" }}>
+        <div style={{ flex: 1, display: "flex", alignItems: "center", overflow: "hidden", position: "relative", zIndex: 3 }}>
           <div
             ref={trackRef}
             style={{ width: "max-content", padding: "0 10vw", willChange: "transform" }}
