@@ -56,15 +56,11 @@ export default function ProfileAvatar() {
         borderRadius: "50%",
         display: "flex", alignItems: "center", justifyContent: "center",
       }}>
-        {/* 이미지 준비 시 아래 주석 해제 후 span 제거 */}
-        {/* <img
+        <img
           src="/images/profile-halftone.png"
           alt="Profile"
           style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }}
-        /> */}
-        <span style={{ fontSize: 11, letterSpacing: "0.35em", color: "rgba(255,255,255,0.15)", textTransform: "uppercase" }}>
-          PHOTO
-        </span>
+        />
       </div>
 
       {/* SVG 인터랙티브 오버레이 */}
