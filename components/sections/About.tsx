@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import VariableProximity from "@/components/ui/VariableProximity";
+import ProfileAvatar from "@/components/ui/ProfileAvatar";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -381,24 +382,12 @@ export default function About() {
       >
         <div ref={bd4} style={BACKDROP} />
 
-        {/* Photo placeholder */}
+        {/* Interactive profile avatar */}
         <div
           ref={photoRef}
-          style={{
-            width: 220, height: 220,
-            borderRadius: "50%",
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            flexShrink: 0,
-            opacity: 0,
-            position: "relative",
-            zIndex: 1,
-          }}
+          style={{ opacity: 0, position: "relative", zIndex: 1, flexShrink: 0 }}
         >
-          <span style={{ fontSize: 11, letterSpacing: "0.35em", color: "rgba(255,255,255,0.15)", textTransform: "uppercase" }}>
-            PHOTO
-          </span>
+          <ProfileAvatar />
         </div>
 
         {/* Links */}
