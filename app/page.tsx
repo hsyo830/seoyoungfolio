@@ -4,7 +4,6 @@ import HeroAnimText from "@/components/ui/HeroAnimText";
 import ScrollIndicator from "@/components/ui/ScrollIndicator";
 import ProjectsIntro from "@/components/sections/ProjectsIntro";
 import Projects from "@/components/sections/Projects";
-import BlobReveal from "@/components/sections/BlobReveal";
 import CharcoalLayout from "@/components/sections/CharcoalLayout";
 
 export default function Home() {
@@ -30,7 +29,6 @@ export default function Home() {
 
       <ProjectsIntro />
       <Projects />
-      <BlobReveal />
       <CharcoalLayout />
     </>
   );

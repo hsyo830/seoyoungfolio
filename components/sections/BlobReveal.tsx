@@ -3,13 +3,19 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import type { DashedGridOverlayHandle } from "@/components/ui/DashedGridOverlay";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function BlobReveal() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const canvasRef  = useRef<HTMLCanvasElement>(null);
-  const timeRef    = useRef(0);
+interface BlobRevealProps {
+  gridRef?: React.RefObject<DashedGridOverlayHandle | null>;
+}
+
+export default function BlobReveal({ gridRef }: BlobRevealProps = {}) {
+  const sectionRef    = useRef<HTMLElement>(null);
+  const canvasRef     = useRef<HTMLCanvasElement>(null);
+  const textRef       = useRef<HTMLDivElement>(null);
+  const timeRef       = useRef(0);
   const progressProxy = useRef({ value: 0 });
 
   useEffect(() => {
@@ -27,7 +33,7 @@ export default function BlobReveal() {
     resize();
     window.addEventListener("resize", resize);
 
-    // ── draw ─────────────────────────────────────────────────────────────
+    // ── draw (blob only, no canvas text) ─────────────────────────────────
     const draw = () => {
       const w        = canvas.width;
       const h        = canvas.height;
@@ -42,7 +48,6 @@ export default function BlobReveal() {
       const maxRadius = Math.max(w, h) * 0.85;
       const N         = 8;
 
-      // Blob control points
       const pts: { x: number; y: number }[] = [];
       for (let i = 0; i < N; i++) {
         const angle = (i / N) * Math.PI * 2;
@@ -53,7 +58,6 @@ export default function BlobReveal() {
         pts.push({ x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r });
       }
 
-      // Catmull-Rom → bezier smooth blob
       ctx.beginPath();
       ctx.moveTo(pts[0].x, pts[0].y);
       for (let i = 0; i < N; i++) {
@@ -70,40 +74,6 @@ export default function BlobReveal() {
       ctx.closePath();
       ctx.fillStyle = "#2a2a2e";
       ctx.fill();
-
-      // ── Text ────────────────────────────────────────────────────────
-      if (progress < 0.3) return;
-
-      const textOpacity = Math.min(1, (progress - 0.3) / 0.3);
-      ctx.textAlign    = "center";
-      ctx.textBaseline = "middle";
-
-      const fontSize = Math.round(Math.max(48, Math.min(96, w * 0.06)));
-      const lh       = fontSize * 1.2;
-
-      ctx.font      = `800 ${fontSize}px 'KblJumpExtended', sans-serif`;
-      ctx.fillStyle = `rgba(255,255,255,${textOpacity})`;
-      ctx.fillText("FROM PIXELS", cx, cy - lh * 0.85);
-      ctx.fillText("TO PURPOSE",  cx, cy + lh * 0.15);
-
-      const subLines = [
-        "3D animation과 디자인 백그라운드에서 출발해",
-        "프론트엔드 개발자로 전환.",
-        "성능과 미감 둘 다 타협하지 않는 개발을 추구합니다.",
-      ];
-      ctx.font      = `300 16px 'Inter', sans-serif`;
-      ctx.fillStyle = `rgba(255,255,255,${textOpacity * 0.75})`;
-      const subY = cy + lh * 1.25;
-      subLines.forEach((line, i) => ctx.fillText(line, cx, subY + i * 26));
-
-      const kwLines = [
-        "Performance | Interaction | Aesthetics",
-        "Clean Code | User Experience | Creativity",
-      ];
-      ctx.font      = `300 13px 'Inter', sans-serif`;
-      ctx.fillStyle = `rgba(255,255,255,${textOpacity * 0.5})`;
-      const kwY = subY + subLines.length * 26 + 20;
-      kwLines.forEach((line, i) => ctx.fillText(line, cx, kwY + i * 20));
     };
 
     // ── Animation loop ───────────────────────────────────────────────────
@@ -115,8 +85,15 @@ export default function BlobReveal() {
     };
     rafId = requestAnimationFrame(animate);
 
-    // ── ScrollTrigger (CSS sticky handles pinning) ───────────────────────
+    // ── ScrollTrigger + grid/text trigger at progress 0.85 ───────────────
+    const showFromPixelsText = () => {
+      if (!textRef.current) return;
+      gsap.to(textRef.current, { opacity: 1, duration: 0.6, ease: "power2.out" });
+    };
+
+    let gridTriggered = false;
     const proxy = progressProxy.current;
+
     const st = gsap.to(proxy, {
       value: 1,
       ease: "none",
@@ -125,6 +102,20 @@ export default function BlobReveal() {
         start: "top top",
         end: "bottom bottom",
         scrub: 1.5,
+        onUpdate: (self) => {
+          const p = self.progress;
+
+          if (p >= 0.85 && !gridTriggered) {
+            gridTriggered = true;
+            setTimeout(() => {
+              gridRef?.current?.showGrid(showFromPixelsText);
+            }, 200);
+          } else if (p < 0.85 && gridTriggered) {
+            gridTriggered = false;
+            gridRef?.current?.hideGrid();
+            if (textRef.current) gsap.to(textRef.current, { opacity: 0, duration: 0 });
+          }
+        },
       },
     });
 
@@ -133,13 +124,14 @@ export default function BlobReveal() {
       window.removeEventListener("resize", resize);
       st.scrollTrigger?.kill();
     };
-  }, []);
+  }, [gridRef]);
 
   return (
     <section
       ref={sectionRef}
       style={{ position: "relative", height: "300vh", width: "100%" }}
     >
+      {/* Blob canvas */}
       <canvas
         ref={canvasRef}
         style={{
@@ -150,6 +142,62 @@ export default function BlobReveal() {
           height: "100vh",
         }}
       />
+
+      {/* FROM PIXELS TO PURPOSE — appears after grid animation via showGrid onComplete */}
+      <div
+        ref={textRef}
+        style={{
+          position: "sticky",
+          top: 0,
+          height: "100vh",
+          marginTop: "-100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          opacity: 0,
+          pointerEvents: "none",
+          zIndex: 10,
+          textAlign: "center",
+          padding: "0 24px",
+        }}
+      >
+        <p style={{
+          fontFamily: "'KblJumpExtended', sans-serif",
+          fontWeight: 800,
+          fontSize: "clamp(48px, 6vw, 96px)",
+          lineHeight: 1.2,
+          color: "rgba(255,255,255,0.95)",
+          margin: 0,
+        }}>
+          FROM PIXELS<br />TO PURPOSE
+        </p>
+
+        <p style={{
+          fontFamily: "'Inter', sans-serif",
+          fontWeight: 300,
+          fontSize: 16,
+          lineHeight: "26px",
+          color: "rgba(255,255,255,0.75)",
+          marginTop: "2em",
+        }}>
+          3D animation과 디자인 백그라운드에서 출발해<br />
+          프론트엔드 개발자로 전환.<br />
+          성능과 미감 둘 다 타협하지 않는 개발을 추구합니다.
+        </p>
+
+        <p style={{
+          fontFamily: "'Inter', sans-serif",
+          fontWeight: 300,
+          fontSize: 13,
+          lineHeight: "20px",
+          color: "rgba(255,255,255,0.5)",
+          marginTop: "1.2em",
+        }}>
+          Performance | Interaction | Aesthetics<br />
+          Clean Code | User Experience | Creativity
+        </p>
+      </div>
     </section>
   );
 }
