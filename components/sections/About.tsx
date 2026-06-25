@@ -11,11 +11,8 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
-const ABOUT_TITLE  = [...'FROM PIXELS TO PURPOSE'];
 const SKILLS_TITLE = [...'SKILLS & STACK'];
 const EXP_TITLE    = [...'EXPERIENCE'];
-
-const ABOUT_TEXT = "3D animation과 디자인 백그라운드에서 출발해 프론트엔드 개발자로 전환. 성능과 미감 둘 다 타협하지 않는 개발을 추구합니다.";
 
 const SKILLS = [
   "Next.js", "TypeScript", "React",
@@ -86,16 +83,13 @@ function SplitTitle({
 
 // ─── Component ────────────────────────────────────────────────────────────────
 export default function About() {
-  const bd1 = useRef<HTMLDivElement>(null);
   const bd2 = useRef<HTMLDivElement>(null);
   const bd4 = useRef<HTMLDivElement>(null);
 
-  const sub1 = useRef<HTMLDivElement>(null);
   const sub2 = useRef<HTMLDivElement>(null);
   const sub3 = useRef<HTMLDivElement>(null);
   const sub4 = useRef<HTMLDivElement>(null);
 
-  const aboutChars  = useRef<(HTMLSpanElement | null)[]>([]);
   const skillsChars = useRef<(HTMLSpanElement | null)[]>([]);
   const expChars    = useRef<(HTMLSpanElement | null)[]>([]);
 
@@ -117,7 +111,7 @@ export default function About() {
     const totalWidth = Math.max(0, track.scrollWidth - document.documentElement.clientWidth);
 
     const ctx = gsap.context(() => {
-      // ── Backdrop (sub1, sub2, sub4 only) ──
+      // ── Backdrop (sub2, sub4) ──
       const animBd = (el: HTMLDivElement | null, trigger: HTMLDivElement | null) => {
         if (!el || !trigger) return;
         gsap.fromTo(el, { opacity: 0 }, {
@@ -125,7 +119,6 @@ export default function About() {
           scrollTrigger: { trigger, start: "top 75%", toggleActions: "play none none none" },
         });
       };
-      animBd(bd1.current, sub1.current);
       animBd(bd2.current, sub2.current);
       animBd(bd4.current, sub4.current);
 
@@ -147,7 +140,6 @@ export default function About() {
           }
         );
       };
-      animTitle(aboutChars,  sub1.current);
       animTitle(skillsChars, sub2.current);
       animTitle(expChars,    sub3.current, "top 90%");  // fires just before pin
 
@@ -218,7 +210,7 @@ export default function About() {
   };
 
   return (
-    <section style={{ position: "relative", width: "100%" }}>
+    <section style={{ position: "relative", width: "100%", background: "#2a2a2e", paddingBottom: "80px" }}>
       <style>{`
         .about-link {
           position: relative; display: inline-flex; align-items: flex-start;
@@ -257,20 +249,7 @@ export default function About() {
         }
       `}</style>
 
-      {/* ──────────── 1. ABOUT ──────────── */}
-      <div ref={sub1} style={{ position: "relative", minHeight: "100vh", display: "flex",
-        flexDirection: "column", justifyContent: "center", padding: "12vh 55vw 12vh 8vw" }}>
-        <div ref={bd1} style={BACKDROP} />
-        <SplitTitle chars={ABOUT_TITLE} refsArr={aboutChars}
-          style={{ fontSize: "clamp(28px, 3.8vw, 60px)", marginBottom: "2.5rem", position: "relative", zIndex: 1 }} />
-        <div style={{ position: "relative", zIndex: 1 }}>
-          <VariableProximity text={ABOUT_TEXT} splitBy="word"
-            style={{ fontSize: "clamp(15px, 1.35vw, 20px)", lineHeight: 1.8,
-              color: "rgba(255,255,255,0.72)", fontWeight: 300, letterSpacing: "0.02em", ...TS }} />
-        </div>
-      </div>
-
-      {/* ──────────── 2. SKILLS ──────────── */}
+      {/* ──────────── 1. SKILLS ──────────── */}
       <div ref={sub2} style={{ position: "relative", minHeight: "80vh", display: "flex",
         flexDirection: "column", justifyContent: "center", padding: "10vh 8vw 10vh 52vw" }}>
         <div ref={bd2} style={BACKDROP} />
@@ -294,7 +273,7 @@ export default function About() {
           height: "100vh",
           overflow: "hidden",
           zIndex: 10,
-          background: "transparent",
+          background: "#2a2a2e",
           display: "flex",
           flexDirection: "column",
         }}
@@ -373,7 +352,7 @@ export default function About() {
       </div>
 
       {/* ──────────── 4. CONTACT ──────────── */}
-      <div ref={sub4} style={{ position: "relative", minHeight: "80vh", display: "flex",
+      <div ref={sub4} style={{ position: "relative", minHeight: "100vh", background: "#2a2a2e", display: "flex",
         alignItems: "center", justifyContent: "center", gap: "8vw", padding: "10vh 8vw" }}>
         <div ref={bd4} style={BACKDROP} />
         <div ref={photoRef} style={{ opacity: 0, position: "relative", zIndex: 1, flexShrink: 0 }}>
