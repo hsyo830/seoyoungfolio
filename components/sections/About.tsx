@@ -6,7 +6,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import VariableProximity from "@/components/ui/VariableProximity";
 import ProfileAvatar from "@/components/ui/ProfileAvatar";
-
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -82,7 +81,13 @@ function SplitTitle({
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
-export default function About() {
+interface AboutProps {
+  sectionRef?:  React.RefObject<HTMLElement | null>;
+  contactRef?: React.RefObject<HTMLDivElement | null>;
+}
+
+export default function About({ sectionRef, contactRef }: AboutProps = {}) {
+  const ownRef = useRef<HTMLElement>(null);
   const bd2 = useRef<HTMLDivElement>(null);
   const bd4 = useRef<HTMLDivElement>(null);
 
@@ -99,15 +104,16 @@ export default function About() {
   const expNodes     = useRef<(HTMLDivElement | null)[]>([]);
   const connectMeRef = useRef<HTMLButtonElement>(null);
 
-  const photoRef = useRef<HTMLDivElement>(null);
-  const linksRef = useRef<HTMLDivElement>(null);
+  const photoRef  = useRef<HTMLDivElement>(null);
+  const linksRef  = useRef<HTMLDivElement>(null);
+
+  const charcoalRef = sectionRef ?? ownRef;
 
   useEffect(() => {
     const track   = trackRef.current;
     const section = sub3.current;
     if (!track || !section) return;
 
-    // Compute scroll distance after DOM is laid out
     const totalWidth = Math.max(0, track.scrollWidth - document.documentElement.clientWidth);
 
     const ctx = gsap.context(() => {
@@ -141,7 +147,7 @@ export default function About() {
         );
       };
       animTitle(skillsChars, sub2.current);
-      animTitle(expChars,    sub3.current, "top 90%");  // fires just before pin
+      animTitle(expChars,    sub3.current, "top 90%");
 
       // ── EXPERIENCE: pin + horizontal scroll ──
       if (totalWidth > 0) {
@@ -163,22 +169,18 @@ export default function About() {
           },
         });
 
-        // Track moves left
         tl.to(track, { x: -totalWidth, ease: "none", duration: 1 }, 0);
 
-        // Line grows
         if (expLine.current) {
           tl.to(expLine.current, { width: "100%", ease: "none", duration: 1 }, 0);
         }
 
-        // Nodes 3–5 appear as they scroll into view
         const at = [0.18, 0.50, 0.78];
         [3, 4, 5].forEach((ni, j) => {
           const node = expNodes.current[ni];
           if (node) tl.fromTo(node, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.08 }, at[j]);
         });
 
-        // CONNECT ME appears last
         if (connectMeRef.current) {
           tl.fromTo(connectMeRef.current, { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.06 }, 0.92);
         }
@@ -210,7 +212,10 @@ export default function About() {
   };
 
   return (
-    <section style={{ position: "relative", width: "100%", background: "#2a2a2e", paddingBottom: "80px" }}>
+    <section
+      ref={charcoalRef}
+      style={{ position: "relative", width: "100%", background: "#2a2a2e", paddingBottom: "80px" }}
+    >
       <style>{`
         .about-link {
           position: relative; display: inline-flex; align-items: flex-start;
@@ -278,20 +283,13 @@ export default function About() {
           flexDirection: "column",
         }}
       >
-
-        {/* Title (핀 중에도 고정 노출) */}
         <div style={{ padding: "8vh 10vw 0", flexShrink: 0, position: "relative", zIndex: 3 }}>
           <SplitTitle chars={EXP_TITLE} refsArr={expChars}
             style={{ fontSize: "clamp(24px, 3.2vw, 52px)" }} />
         </div>
 
-        {/* 트랙 영역 — 수직 중앙 정렬, overflow hidden으로 양쪽 클리핑 */}
         <div style={{ flex: 1, display: "flex", alignItems: "center", overflow: "hidden", position: "relative", zIndex: 3 }}>
-          <div
-            ref={trackRef}
-            style={{ width: "max-content", padding: "0 10vw", willChange: "transform" }}
-          >
-            {/* 수평 라인 트랙 */}
+          <div ref={trackRef} style={{ width: "max-content", padding: "0 10vw", willChange: "transform" }}>
             <div style={{ position: "relative", height: 2,
               background: "rgba(255,255,255,0.08)", marginBottom: 28, width: "100%" }}>
               <div ref={expLine} style={{
@@ -300,7 +298,6 @@ export default function About() {
               }} />
             </div>
 
-            {/* 노드 행 */}
             <div style={{ display: "flex", gap: "20px", alignItems: "stretch" }}>
               {EXPERIENCES.map((exp, i) => {
                 const isWork = exp.type === "work";
@@ -337,7 +334,6 @@ export default function About() {
                 );
               })}
 
-              {/* CONNECT ME ↓ */}
               <button
                 ref={connectMeRef}
                 className="connect-me-btn"
@@ -352,7 +348,10 @@ export default function About() {
       </div>
 
       {/* ──────────── 4. CONTACT ──────────── */}
-      <div ref={sub4} style={{ position: "relative", minHeight: "100vh", background: "#2a2a2e", display: "flex",
+      <div ref={el => {
+        (sub4 as React.MutableRefObject<HTMLDivElement | null>).current = el;
+        if (contactRef) (contactRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+      }} style={{ position: "relative", minHeight: "100vh", background: "#2a2a2e", display: "flex",
         alignItems: "center", justifyContent: "center", gap: "8vw", padding: "10vh 8vw" }}>
         <div ref={bd4} style={BACKDROP} />
         <div ref={photoRef} style={{ opacity: 0, position: "relative", zIndex: 1, flexShrink: 0 }}>

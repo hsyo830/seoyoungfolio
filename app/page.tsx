@@ -5,7 +5,7 @@ import ScrollIndicator from "@/components/ui/ScrollIndicator";
 import ProjectsIntro from "@/components/sections/ProjectsIntro";
 import Projects from "@/components/sections/Projects";
 import BlobReveal from "@/components/sections/BlobReveal";
-import About from "@/components/sections/About";
+import CharcoalLayout from "@/components/sections/CharcoalLayout";
 
 export default function Home() {
   return (
@@ -31,7 +31,7 @@ export default function Home() {
       <ProjectsIntro />
       <Projects />
       <BlobReveal />
-      <About />
+      <CharcoalLayout />
     </>
   );
 }
