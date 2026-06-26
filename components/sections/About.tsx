@@ -244,15 +244,15 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
       if (totalWidth > 0) {
         const triggeredCheckpoints = new Set<number>();
 
-        // 75% 흰색 / 15% 라이트그레이 / 7% 미디엄그레이 / 3% 연보라
+        // 75% 차콜 / 15% 밝은차콜 / 7% 미디엄그레이 / 3% 연보라
         const getMosaicColor = () => {
           const rand = Math.random();
           if (rand < 0.75) {
-            const v = 240 + Math.floor(Math.random() * 15);
-            return `rgb(${v},${v},${v})`;
+            const v = 38 + Math.floor(Math.random() * 12);
+            return `rgb(${v},${v},${v + 2})`;
           } else if (rand < 0.90) {
-            const v = 200 + Math.floor(Math.random() * 20);
-            return `rgb(${v},${v},${v})`;
+            const v = 55 + Math.floor(Math.random() * 15);
+            return `rgb(${v},${v},${v + 3})`;
           } else if (rand < 0.97) {
             const v = 165 + Math.floor(Math.random() * 20);
             return `rgb(${v},${v},${v})`;
