@@ -38,7 +38,7 @@ export default function BlobReveal({ gridRef }: BlobRevealProps = {}) {
       const w        = canvas.width;
       const h        = canvas.height;
       const t        = timeRef.current;
-      const progress = progressProxy.current.value;
+      const progress = Math.min(1, progressProxy.current.value / 0.5);
 
       ctx.clearRect(0, 0, w, h);
       if (progress <= 0.001) return;
@@ -105,12 +105,12 @@ export default function BlobReveal({ gridRef }: BlobRevealProps = {}) {
         onUpdate: (self) => {
           const p = self.progress;
 
-          if (p >= 0.85 && !gridTriggered) {
+          if (p >= 0.55 && !gridTriggered) {
             gridTriggered = true;
             setTimeout(() => {
               gridRef?.current?.showGrid(showFromPixelsText);
             }, 200);
-          } else if (p < 0.85 && gridTriggered) {
+          } else if (p < 0.55 && gridTriggered) {
             gridTriggered = false;
             gridRef?.current?.hideGrid();
             if (textRef.current) gsap.to(textRef.current, { opacity: 0, duration: 0 });
@@ -129,7 +129,7 @@ export default function BlobReveal({ gridRef }: BlobRevealProps = {}) {
   return (
     <section
       ref={sectionRef}
-      style={{ position: "relative", height: "300vh", width: "100%" }}
+      style={{ position: "relative", height: "500vh", width: "100%" }}
     >
       {/* Blob canvas */}
       <canvas
