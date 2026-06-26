@@ -140,9 +140,10 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
   const expNodes = useRef<(HTMLDivElement | null)[]>([]);
   const connectMeRef = useRef<HTMLButtonElement>(null);
 
-  const c2026Ref = useRef<HTMLDivElement>(null);
-  const panelRef  = useRef<HTMLDivElement>(null);
-  const linksRef  = useRef<(HTMLAnchorElement | null)[]>([]);
+  const c2026Ref      = useRef<HTMLDivElement>(null);
+  const panelRef      = useRef<HTMLDivElement>(null);
+  const linksRef      = useRef<(HTMLAnchorElement | null)[]>([]);
+  const gridCanvasRef = useRef<HTMLCanvasElement>(null);
 
   const charcoalRef = sectionRef ?? ownRef;
 
@@ -323,6 +324,133 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
       contactRef.current = null;
     };
   }, [contactRef]);
+
+  // ── Contact 패널 grid cell edge hover ──
+  useEffect(() => {
+    const canvas = gridCanvasRef.current;
+    const panel  = panelRef.current;
+    if (!canvas || !panel) return;
+
+    const CELL = 100;
+    const HALF = CELL / 2;
+    const BASE = "133, 87, 207";
+
+    let mouseX = -1, mouseY = -1;
+    let isHovering = false;
+    let raf: number | null = null;
+
+    const resize = () => {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+
+    const drawDot = (
+      ctx: CanvasRenderingContext2D,
+      cx: number, cy: number,
+      opacity: number,
+      flicker: number,
+    ) => {
+      if (opacity < 0.02) return;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${BASE}, ${opacity * flicker})`;
+      ctx.fill();
+    };
+
+    const draw = () => {
+      const ctx = canvas.getContext("2d");
+      if (!ctx) { raf = null; return; }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (!isHovering || mouseX < 0) {
+        raf = null;
+        return;
+      }
+
+      const col = Math.floor(mouseX / CELL);
+      const row = Math.floor(mouseY / CELL);
+      const x   = col * CELL;
+      const y   = row * CELL;
+
+      // 셀 중앙 기준 오프셋 (-50 ~ 50)
+      const dx = mouseX - (x + HALF);
+      const dy = mouseY - (y + HALF);
+
+      // 방향별 근접도
+      const lp = Math.max(0, -dx / HALF);
+      const rp = Math.max(0,  dx / HALF);
+      const tp = Math.max(0, -dy / HALF);
+      const bp = Math.max(0,  dy / HALF);
+
+      // 중앙에 있을 때 4변 균등하게 켜지도록 최소값 보장
+      const centerProx = 1 - Math.max(Math.abs(dx), Math.abs(dy)) / HALF;
+      const minOp      = Math.max(0, centerProx * 0.6);
+
+      const flp = Math.max(lp, minOp);
+      const frp = Math.max(rp, minOp);
+      const ftp = Math.max(tp, minOp);
+      const fbp = Math.max(bp, minOp);
+
+      const flicker = Math.sin(Date.now() / 1000 * 8) * 0.15 + 0.85;
+
+      ctx.lineWidth = 1.5;
+
+      if (flp > 0.05) {
+        ctx.strokeStyle = `rgba(${BASE}, ${flp * 0.7 * flicker})`;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + CELL); ctx.stroke();
+      }
+      if (frp > 0.05) {
+        ctx.strokeStyle = `rgba(${BASE}, ${frp * 0.7 * flicker})`;
+        ctx.beginPath(); ctx.moveTo(x + CELL, y); ctx.lineTo(x + CELL, y + CELL); ctx.stroke();
+      }
+      if (ftp > 0.05) {
+        ctx.strokeStyle = `rgba(${BASE}, ${ftp * 0.7 * flicker})`;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + CELL, y); ctx.stroke();
+      }
+      if (fbp > 0.05) {
+        ctx.strokeStyle = `rgba(${BASE}, ${fbp * 0.7 * flicker})`;
+        ctx.beginPath(); ctx.moveTo(x, y + CELL); ctx.lineTo(x + CELL, y + CELL); ctx.stroke();
+      }
+
+      // 꼭지점 원
+      drawDot(ctx, x,        y,        flp * ftp, flicker);
+      drawDot(ctx, x + CELL, y,        frp * ftp, flicker);
+      drawDot(ctx, x,        y + CELL, flp * fbp, flicker);
+      drawDot(ctx, x + CELL, y + CELL, frp * fbp, flicker);
+
+      raf = requestAnimationFrame(draw);
+    };
+
+    const onMouseMove = (e: MouseEvent) => {
+      const rect = panel.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+      isHovering = true;
+      if (raf === null) raf = requestAnimationFrame(draw);
+    };
+
+    const onMouseLeave = () => {
+      isHovering = false;
+      mouseX = -1;
+      mouseY = -1;
+      if (raf !== null) { cancelAnimationFrame(raf); raf = null; }
+      const ctx = canvas.getContext("2d");
+      if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+    };
+
+    window.addEventListener("resize", resize);
+    panel.addEventListener("mousemove", onMouseMove);
+    panel.addEventListener("mouseleave", onMouseLeave);
+
+    return () => {
+      window.removeEventListener("resize", resize);
+      panel.removeEventListener("mousemove", onMouseMove);
+      panel.removeEventListener("mouseleave", onMouseLeave);
+      if (raf !== null) cancelAnimationFrame(raf);
+    };
+  }, []);
 
   const scrollToContact = () => {
     if (!sub4.current) return;
@@ -602,9 +730,19 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
             background: "#07070b",
             zIndex: 1,
             transform: "translateY(100%)",
-            pointerEvents: "none",
+            pointerEvents: "auto",
           }}
-        />
+        >
+          {/* hover 격자 highlight canvas */}
+          <canvas
+            ref={gridCanvasRef}
+            style={{
+              position: "absolute",
+              inset: 0,
+              pointerEvents: "none",
+            }}
+          />
+        </div>
 
         {/* 링크 버튼 */}
         <div
