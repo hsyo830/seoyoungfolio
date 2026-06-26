@@ -30,6 +30,8 @@ const BOX_OFFSETS = [
 export interface DashedGridOverlayHandle {
   showGrid: (onComplete?: () => void) => void;
   hideGrid: () => void;
+  hideOnContact: () => void;
+  showOnLeaveContact: () => void;
 }
 
 interface Props {
@@ -112,7 +114,21 @@ const DashedGridOverlay = forwardRef<DashedGridOverlayHandle, Props>(
       gsap.to(overlayRef.current, { opacity: 0, duration: 0 });
     }, []);
 
-    useImperativeHandle(ref, () => ({ showGrid, hideGrid }), [showGrid, hideGrid]);
+    const hideOnContact = useCallback(() => {
+      if (!gridVisibleRef.current) return;
+      gsap.to(overlayRef.current, { opacity: 0, duration: 0.5, ease: "power2.out" });
+    }, []);
+
+    const showOnLeaveContact = useCallback(() => {
+      if (!gridVisibleRef.current) return;
+      gsap.to(overlayRef.current, { opacity: 1, duration: 0.4 });
+    }, []);
+
+    useImperativeHandle(
+      ref,
+      () => ({ showGrid, hideGrid, hideOnContact, showOnLeaveContact }),
+      [showGrid, hideGrid, hideOnContact, showOnLeaveContact],
+    );
 
     // Scroll check: only hides when scrolled past contact section
     // contactRef.current를 lazy하게 읽어야 함 —

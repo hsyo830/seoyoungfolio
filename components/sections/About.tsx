@@ -5,6 +5,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import VariableProximity from "@/components/ui/VariableProximity";
+import type { DashedGridOverlayHandle } from "@/components/ui/DashedGridOverlay";
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -119,9 +120,10 @@ function SplitTitle({
 interface AboutProps {
   sectionRef?: React.RefObject<HTMLElement | null>;
   contactRef?: { current: HTMLDivElement | null };
+  gridRef?: React.RefObject<DashedGridOverlayHandle | null>;
 }
 
-export default function About({ sectionRef, contactRef }: AboutProps = {}) {
+export default function About({ sectionRef, contactRef, gridRef }: AboutProps = {}) {
   const ownRef = useRef<HTMLElement>(null);
   const bd2 = useRef<HTMLDivElement>(null);
 
@@ -284,6 +286,8 @@ export default function About({ sectionRef, contactRef }: AboutProps = {}) {
               trigger: sub4.current,
               start: "top 60%",
               toggleActions: "play none none none",
+              onEnter: () => gridRef?.current?.hideOnContact(),
+              onLeaveBack: () => gridRef?.current?.showOnLeaveContact(),
             },
           },
         );
@@ -291,7 +295,7 @@ export default function About({ sectionRef, contactRef }: AboutProps = {}) {
     });
 
     return () => ctx.revert();
-  }, []);
+  }, [gridRef]);
 
   useEffect(() => {
     if (!contactRef) return;

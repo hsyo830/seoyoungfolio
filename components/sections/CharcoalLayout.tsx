@@ -14,7 +14,7 @@ export default function CharcoalLayout() {
     <>
       <BlobReveal gridRef={gridRef} />
       <DashedGridOverlay ref={gridRef} containerRef={charcoalRef} contactRef={contactRef} />
-      <About sectionRef={charcoalRef} contactRef={contactRef} />
+      <About sectionRef={charcoalRef} contactRef={contactRef} gridRef={gridRef} />
     </>
   );
 }
