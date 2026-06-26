@@ -26,42 +26,49 @@ const SKILLS = [
 
 const EXPERIENCES = [
   {
-    year: "2025.09 – 2026.02",
-    title: "Codeit",
+    id: 1, year: "2025.09 - 2026.02", company: "Codeit",
     role: "Frontend Engineering Bootcamp",
-    type: "education",
+    desc: "React, TypeScript, Next.js 기반 프로젝트 수행",
+    type: "education", position: "top", checkpointProgress: 0.12,
   },
   {
-    year: "2023.01 – 2024.05",
-    title: "Seoul Game Art Academy",
+    id: 2, year: "2023.01 - 2024.05", company: "Seoul Game Art Academy",
     role: "Game Engine & AI Programming",
-    type: "education",
+    desc: "C++, Unreal Engine 기반 게임 개발 학습",
+    type: "education", position: "bottom", checkpointProgress: 0.28,
   },
   {
-    year: "2022.09 – 2022.12",
-    title: "Carrysoft",
+    id: 3, year: "2022.09 - 2022.12", company: "Carrysoft",
     role: "3D Animator Intern",
-    type: "work",
+    desc: "MAYA 기반 3D 애니메이팅, 장편 애니메이션 제작 참여",
+    type: "work", position: "top", checkpointProgress: 0.44,
   },
   {
-    year: "2022.04 – 2022.08",
-    title: "Seoul Metropolitan Gov.",
+    id: 4, year: "2022.04 - 2022.08", company: "Seoul Metropolitan Gov.",
     role: "Virtual Space Creator Training",
-    type: "education",
+    desc: "Unreal Engine 기반 가상공간 콘텐츠 제작",
+    type: "education", position: "bottom", checkpointProgress: 0.60,
   },
   {
-    year: "2021.10 – 2022.02",
-    title: "Wonderful Platform",
+    id: 5, year: "2021.10 - 2022.02", company: "Wonderful Platform",
     role: "Frontend Intern",
-    type: "work",
+    desc: "모바일 웹 브릿지 페이지 UI 구현, Cafe24 웹페이지 개발",
+    type: "work", position: "top", checkpointProgress: 0.76,
   },
   {
-    year: "2021.07 – 2021.08",
-    title: "TheHigh Company",
+    id: 6, year: "2021.07 - 2021.08", company: "TheHigh Company",
     role: "Design Intern",
-    type: "work",
+    desc: "광고 배너, 웹사이트 시안 디자인 제작",
+    type: "work", position: "bottom", checkpointProgress: 0.90,
   },
 ];
+
+const PATH_D =
+  "M 0 400 C 200 400 300 150 600 150 S 900 600 1100 400 " +
+  "C 1300 200 1500 650 1800 400 S 2100 150 2400 300 " +
+  "C 2600 450 2800 600 3000 400 S 3300 150 3600 250 " +
+  "C 3800 350 4000 600 4200 400 S 4500 200 4800 350 " +
+  "C 5000 500 5200 150 5400 400 S 5700 500 6000 400";
 
 // ─── Shared styles ────────────────────────────────────────────────────────────
 
@@ -135,10 +142,12 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
   const expChars = useRef<(HTMLSpanElement | null)[]>([]);
 
   // Experience timeline
-  const trackRef = useRef<HTMLDivElement>(null);
-  const expLine = useRef<HTMLDivElement>(null);
-  const expNodes = useRef<(HTMLDivElement | null)[]>([]);
-  const connectMeRef = useRef<HTMLButtonElement>(null);
+  const trackRef        = useRef<HTMLDivElement>(null);
+  const svgRef          = useRef<SVGSVGElement>(null);
+  const progressPathRef = useRef<SVGPathElement>(null);
+  const cardRefs        = useRef<(HTMLDivElement | null)[]>([]);
+  const mediaRefs       = useRef<(HTMLDivElement | null)[]>([]);
+  const checkpointRefs  = useRef<(SVGCircleElement | null)[]>([]);
 
   const c2026Ref      = useRef<HTMLDivElement>(null);
   const panelRef      = useRef<HTMLDivElement>(null);
@@ -212,8 +221,10 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
       animTitle(skillsChars, sub2.current);
       animTitle(expChars, sub3.current, "top 90%");
 
-      // ── EXPERIENCE: pin + horizontal scroll ──
+      // ── EXPERIENCE: SVG path timeline pin + horizontal scroll ──
       if (totalWidth > 0) {
+        const triggeredCheckpoints = new Set<number>();
+
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
@@ -222,55 +233,53 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
             pin: true,
             scrub: 1,
             anticipatePin: 1,
-            onEnter: () => {
-              const first3 = expNodes.current
-                .slice(0, 3)
-                .filter(Boolean) as HTMLDivElement[];
-              gsap.fromTo(
-                first3,
-                { opacity: 0, y: 14 },
-                {
-                  opacity: 1,
-                  y: 0,
-                  duration: 0.5,
-                  stagger: 0.12,
-                  ease: "power2.out",
-                },
-              );
+            onUpdate: (self) => {
+              const p = self.progress;
+
+              // SVG progress path strokeDashoffset
+              const progPath = progressPathRef.current;
+              if (progPath) {
+                const len = progPath.getTotalLength();
+                progPath.style.strokeDashoffset = String(len * (1 - p));
+              }
+
+              // Checkpoint 도달 → 카드/원 등장
+              EXPERIENCES.forEach((exp, i) => {
+                if (p >= exp.checkpointProgress - 0.02 && !triggeredCheckpoints.has(i)) {
+                  triggeredCheckpoints.add(i);
+
+                  const circle = checkpointRefs.current[i];
+                  if (circle) gsap.to(circle, { opacity: 1, duration: 0.3 });
+
+                  const card = cardRefs.current[i];
+                  const media = mediaRefs.current[i];
+                  const initY = exp.position === "top" ? -20 : 20;
+                  if (card) {
+                    gsap.fromTo(card,
+                      { opacity: 0, y: initY },
+                      { opacity: 1, y: 0, duration: 0.6, delay: 0.3, ease: "power2.out" },
+                    );
+                  }
+                  if (media) {
+                    gsap.to(media, { opacity: 1, duration: 0.5, delay: 0.7 });
+                  }
+                }
+                // scrub 역방향 처리
+                if (p < exp.checkpointProgress - 0.04 && triggeredCheckpoints.has(i)) {
+                  triggeredCheckpoints.delete(i);
+                  const circle = checkpointRefs.current[i];
+                  if (circle) gsap.to(circle, { opacity: 0, duration: 0.2 });
+                  const card = cardRefs.current[i];
+                  if (card) gsap.to(card, { opacity: 0, duration: 0.2 });
+                  const media = mediaRefs.current[i];
+                  if (media) gsap.to(media, { opacity: 0, duration: 0.2 });
+                }
+              });
             },
           },
         });
 
         tl.to(track, { x: -totalWidth, ease: "none", duration: 1 }, 0);
-
-        if (expLine.current) {
-          tl.to(
-            expLine.current,
-            { width: "100%", ease: "none", duration: 1 },
-            0,
-          );
-        }
-
-        const at = [0.18, 0.5, 0.78];
-        [3, 4, 5].forEach((ni, j) => {
-          const node = expNodes.current[ni];
-          if (node)
-            tl.fromTo(
-              node,
-              { opacity: 0, y: 14 },
-              { opacity: 1, y: 0, duration: 0.08 },
-              at[j],
-            );
-        });
-
-        if (connectMeRef.current) {
-          tl.fromTo(
-            connectMeRef.current,
-            { opacity: 0, x: 20 },
-            { opacity: 1, x: 0, duration: 0.06 },
-            0.92,
-          );
-        }
       }
 
       // ── Contact: 패널 → 이미지 → 버튼 순차 등장 ──
@@ -324,6 +333,45 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
       contactRef.current = null;
     };
   }, [contactRef]);
+
+  // ── Experience SVG path 초기화 (pathLength + 카드/체크포인트 위치) ──
+  useEffect(() => {
+    const progPath = progressPathRef.current;
+    if (!progPath) return;
+
+    const raf = requestAnimationFrame(() => {
+      const len = progPath.getTotalLength();
+      if (len === 0) return;
+
+      progPath.style.strokeDasharray = String(len);
+      progPath.style.strokeDashoffset = String(len);
+
+      const svgW = window.innerWidth * 6;
+      const svgH = window.innerHeight;
+
+      EXPERIENCES.forEach((exp, i) => {
+        const pt = progPath.getPointAtLength(len * exp.checkpointProgress);
+
+        const circle = checkpointRefs.current[i];
+        if (circle) {
+          circle.setAttribute("cx", String(pt.x));
+          circle.setAttribute("cy", String(pt.y));
+        }
+
+        const card = cardRefs.current[i];
+        if (card) {
+          const cssX = (pt.x / 6000) * svgW;
+          const cssY = (pt.y / 800) * svgH;
+          card.style.left = `${cssX - 120}px`;
+          card.style.top  = exp.position === "top"
+            ? `${cssY - 220}px`
+            : `${cssY + 24}px`;
+        }
+      });
+    });
+
+    return () => cancelAnimationFrame(raf);
+  }, []);
 
   // ── Contact 패널 grid cell edge hover ──
   useEffect(() => {
@@ -492,14 +540,7 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
     };
   }, []);
 
-  const scrollToContact = () => {
-    if (!sub4.current) return;
-    gsap.to(window, {
-      scrollTo: { y: sub4.current },
-      duration: 1.2,
-      ease: "power2.inOut",
-    });
-  };
+
 
   return (
     <section
@@ -606,16 +647,16 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
           overflow: "hidden",
           zIndex: 10,
           background: "#2a2a2e",
-          display: "flex",
-          flexDirection: "column",
         }}
       >
+        {/* 타이틀 — 좌상단 고정 */}
         <div
           style={{
-            padding: "8vh 10vw 0",
-            flexShrink: 0,
-            position: "relative",
-            zIndex: 3,
+            position: "absolute",
+            top: "8vh",
+            left: "10vw",
+            zIndex: 10,
+            pointerEvents: "none",
           }}
         >
           <SplitTitle
@@ -625,129 +666,118 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
           />
         </div>
 
+        {/* 가로 스크롤 트랙 */}
         <div
+          ref={trackRef}
           style={{
-            flex: 1,
-            display: "flex",
-            alignItems: "center",
-            overflow: "hidden",
-            position: "relative",
-            zIndex: 3,
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "600vw",
+            height: "100%",
+            willChange: "transform",
           }}
         >
-          <div
-            ref={trackRef}
-            style={{
-              width: "max-content",
-              padding: "0 10vw",
-              willChange: "transform",
-            }}
+          {/* SVG 곡선 경로 */}
+          <svg
+            ref={svgRef}
+            width="600vw"
+            height="100%"
+            viewBox="0 0 6000 800"
+            preserveAspectRatio="none"
+            style={{ position: "absolute", inset: 0 }}
           >
+            {/* 점선 배경 경로 */}
+            <path
+              d={PATH_D}
+              stroke="rgba(255,255,255,0.12)"
+              strokeWidth="1.5"
+              strokeDasharray="6 8"
+              fill="none"
+            />
+            {/* 진행 실선 (strokeDashoffset으로 제어) */}
+            <path
+              ref={progressPathRef}
+              d={PATH_D}
+              stroke="#F4F4F6"
+              strokeWidth="2"
+              fill="none"
+            />
+            {/* 체크포인트 원 (cx/cy는 useEffect에서 설정) */}
+            {EXPERIENCES.map((exp, i) => (
+              <circle
+                key={exp.id}
+                ref={el => { checkpointRefs.current[i] = el; }}
+                r={6}
+                fill="#F4F4F6"
+                opacity={0}
+                style={{ transformOrigin: "center", transformBox: "fill-box" }}
+              />
+            ))}
+          </svg>
+
+          {/* 경력 카드 (left/top은 useEffect에서 설정) */}
+          {EXPERIENCES.map((exp, i) => (
             <div
+              key={exp.id}
+              ref={el => { cardRefs.current[i] = el; }}
               style={{
-                position: "relative",
-                height: 2,
-                background: "rgba(255,255,255,0.08)",
-                marginBottom: 28,
-                width: "100%",
+                position: "absolute",
+                width: 240,
+                opacity: 0,
+                transform: `translateY(${exp.position === "top" ? -20 : 20}px)`,
+                zIndex: 5,
               }}
             >
+              {/* 미디어 영역 */}
               <div
-                ref={expLine}
+                ref={el => { mediaRefs.current[i] = el; }}
+                data-video-src=""
                 style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  height: "100%",
-                  width: "0%",
-                  background:
-                    "linear-gradient(90deg, rgba(255,255,255,0.4) 0%, rgba(160,100,255,0.7) 100%)",
+                  width: "100%",
+                  aspectRatio: "16/9",
+                  background: "rgba(133,87,207,0.08)",
+                  borderRadius: 4,
+                  marginBottom: 10,
+                  opacity: 0,
+                  overflow: "hidden",
+                  position: "relative",
                 }}
-              />
-            </div>
-
-            <div
-              style={{ display: "flex", gap: "20px", alignItems: "stretch" }}
-            >
-              {EXPERIENCES.map((exp, i) => {
-                const isWork = exp.type === "work";
-                return (
-                  <div
-                    key={i}
-                    ref={(el) => {
-                      expNodes.current[i] = el;
-                    }}
-                    style={{
-                      opacity: 0,
-                      minWidth: "33vw",
-                      clipPath:
-                        "polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%)",
-                      background: isWork
-                        ? "rgba(140,80,220,0.82)"
-                        : "rgba(255,255,255,0.06)",
-                      filter: isWork
-                        ? "none"
-                        : "drop-shadow(0 0 1px rgba(255,255,255,0.25))",
-                      backdropFilter: "blur(10px)",
-                      WebkitBackdropFilter: "blur(10px)",
-                      padding: "20px 40px 20px 24px",
-                    }}
-                  >
-                    <p
-                      style={{
-                        fontSize: 10,
-                        letterSpacing: "0.24em",
-                        whiteSpace: "nowrap",
-                        color: isWork
-                          ? "rgba(255,255,255,0.5)"
-                          : "rgba(160,110,255,0.85)",
-                        margin: "0 0 8px",
-                        fontFamily: "'KblJumpExtended', sans-serif",
-                      }}
-                    >
-                      {exp.year}
-                    </p>
-                    <p
-                      style={{
-                        fontSize: 15,
-                        color: "rgba(255,255,255,0.94)",
-                        whiteSpace: "nowrap",
-                        margin: "0 0 6px",
-                        fontWeight: 700,
-                        letterSpacing: "0.03em",
-                        ...TS,
-                      }}
-                    >
-                      {exp.title}
-                    </p>
-                    <p
-                      style={{
-                        fontSize: 11,
-                        whiteSpace: "nowrap",
-                        margin: 0,
-                        letterSpacing: "0.12em",
-                        textTransform: "uppercase",
-                        color: isWork
-                          ? "rgba(255,255,255,0.55)"
-                          : "rgba(255,255,255,0.35)",
-                      }}
-                    >
-                      {exp.role}
-                    </p>
-                  </div>
-                );
-              })}
-
-              <button
-                ref={connectMeRef}
-                className="connect-me-btn"
-                style={{ opacity: 0 }}
-                onClick={scrollToContact}
               >
-                CONNECT ME ↓
-              </button>
+                <div style={{
+                  width: "100%",
+                  height: "100%",
+                  backgroundImage:
+                    "repeating-linear-gradient(45deg, rgba(133,87,207,0.06) 0px, rgba(133,87,207,0.06) 1px, transparent 1px, transparent 10px), " +
+                    "repeating-linear-gradient(-45deg, rgba(133,87,207,0.03) 0px, rgba(133,87,207,0.03) 1px, transparent 1px, transparent 10px)",
+                }} />
+              </div>
+
+              {/* 카드 본문 */}
+              <div style={{
+                background: "rgba(255,255,255,0.04)",
+                border: "1px solid rgba(133,87,207,0.3)",
+                borderRadius: 8,
+                padding: 16,
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+                transition: "box-shadow 0.3s ease",
+              }}>
+                <p style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", margin: "0 0 4px", letterSpacing: "0.1em" }}>
+                  {exp.year}
+                </p>
+                <p style={{ fontSize: 13, color: "white", fontWeight: 700, margin: "0 0 4px", letterSpacing: "0.02em", ...TS }}>
+                  {exp.company}
+                </p>
+                <p style={{ fontSize: 10, color: "rgba(255,255,255,0.7)", margin: "0 0 6px", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                  {exp.role}
+                </p>
+                <p style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", margin: 0, lineHeight: 1.6 }}>
+                  {exp.desc}
+                </p>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
 
