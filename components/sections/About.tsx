@@ -180,8 +180,8 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
   const c2026Ref        = useRef<HTMLDivElement>(null);
   const panelRef        = useRef<HTMLDivElement>(null);
   const linksRef        = useRef<(HTMLAnchorElement | null)[]>([]);
-  const emailLinkRef    = useRef<HTMLDivElement>(null);
-  const portfolioLinkRef = useRef<HTMLAnchorElement>(null);
+  const emailLinkRef     = useRef<HTMLDivElement>(null);
+  const portfolioLinkRef = useRef<HTMLDivElement>(null);
   const gridCanvasRef   = useRef<HTMLCanvasElement>(null);
 
   const charcoalRef = sectionRef ?? ownRef;
@@ -782,7 +782,7 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
         .contact-link:hover .cb-l { bottom:-1px; left:-1px; opacity:1; border-color:rgba(110,90,255,0.8); }
         .contact-link:hover .cb-r { bottom:-1px; right:-1px; opacity:1; border-color:rgba(110,90,255,0.8); }
         .hero-link {
-          position: relative; display: inline-flex; align-items: center;
+          display: inline-flex; align-items: center;
           text-decoration: none;
           font-family: 'Inter', 'Geist', system-ui, sans-serif;
           font-weight: 700; line-height: 1.1; letter-spacing: -0.02em;
@@ -792,15 +792,18 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
         }
         .hero-link:hover { color: #8557cf; }
         .hero-link:active { color: #5a3a9a; }
-        .hero-link::before { content:""; position:absolute; top:-14px; left:-14px; width:18px; height:18px; border-top:2px solid #8557cf; border-left:2px solid #8557cf; opacity:0; transition:all .3s ease; }
-        .hero-link::after  { content:""; position:absolute; top:-14px; right:-14px; width:18px; height:18px; border-top:2px solid #8557cf; border-right:2px solid #8557cf; opacity:0; transition:all .3s ease; }
-        .hero-link .cb-l { position:absolute; bottom:-14px; left:-14px; width:18px; height:18px; border-bottom:2px solid #8557cf; border-left:2px solid #8557cf; opacity:0; transition:all .3s ease; }
-        .hero-link .cb-r { position:absolute; bottom:-14px; right:-14px; width:18px; height:18px; border-bottom:2px solid #8557cf; border-right:2px solid #8557cf; opacity:0; transition:all .3s ease; }
-        .hero-link:hover::before { top:-4px; left:-4px; opacity:1; }
-        .hero-link:hover::after  { top:-4px; right:-4px; opacity:1; }
-        .hero-link:hover .cb-l { bottom:-4px; left:-4px; opacity:1; }
-        .hero-link:hover .cb-r { bottom:-4px; right:-4px; opacity:1; }
-        .hero-link:hover .email-tooltip { opacity: 1; }
+        .hero-wrap {
+          position: relative; display: inline-block; width: fit-content;
+        }
+        .hero-wrap::before { content:""; position:absolute; top:-14px; left:-14px; width:18px; height:18px; border-top:2px solid #8557cf; border-left:2px solid #8557cf; opacity:0; transition:all .3s ease; }
+        .hero-wrap::after  { content:""; position:absolute; top:-14px; right:-14px; width:18px; height:18px; border-top:2px solid #8557cf; border-right:2px solid #8557cf; opacity:0; transition:all .3s ease; }
+        .hero-wrap .cb-l { position:absolute; bottom:-14px; left:-14px; width:18px; height:18px; border-bottom:2px solid #8557cf; border-left:2px solid #8557cf; opacity:0; transition:all .3s ease; }
+        .hero-wrap .cb-r { position:absolute; bottom:-14px; right:-14px; width:18px; height:18px; border-bottom:2px solid #8557cf; border-right:2px solid #8557cf; opacity:0; transition:all .3s ease; }
+        .hero-wrap:hover::before { top:-4px; left:-4px; opacity:1; }
+        .hero-wrap:hover::after  { top:-4px; right:-4px; opacity:1; }
+        .hero-wrap:hover .cb-l { bottom:-4px; left:-4px; opacity:1; }
+        .hero-wrap:hover .cb-r { bottom:-4px; right:-4px; opacity:1; }
+        .hero-wrap:hover .email-tooltip { opacity: 1; }
         .connect-me-btn {
           background: none;
           border: 1px solid rgba(255,255,255,0.28);
@@ -1125,47 +1128,50 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
             gap: 8,
           }}
         >
-          {/* 이메일 — 개별 ref, 브라켓 독립, 툴팁 포함 */}
-          <div
-            ref={emailLinkRef}
-            className="hero-link"
-            onClick={handleEmailCopy}
-            style={{ fontSize: "clamp(32px, 5vw, 72px)", position: "relative" }}
-          >
+          {/* 이메일 — 독립 wrapper, 브라켓 fit-content 기준 */}
+          <div ref={emailLinkRef} className="hero-wrap">
             <span className="cb-l" />
             <span className="cb-r" />
-            {emailCopied ? "COPIED!" : "nah830@gmail.com ↗"}
-            <span style={{
-              position: "absolute",
-              bottom: -24,
-              left: 0,
-              fontSize: 12,
-              color: "rgba(255,255,255,0.5)",
-              letterSpacing: "0.05em",
-              opacity: 0,
-              transition: "opacity 0.2s ease",
-              pointerEvents: "none",
-              whiteSpace: "nowrap",
-            }}
+            <div
+              className="hero-link"
+              onClick={handleEmailCopy}
+              style={{ fontSize: "clamp(32px, 5vw, 72px)" }}
+            >
+              {emailCopied ? "COPIED!" : "nah830@gmail.com ↗"}
+            </div>
+            <span
               className="email-tooltip"
+              style={{
+                position: "absolute",
+                bottom: -24,
+                left: 0,
+                fontSize: 12,
+                color: "rgba(255,255,255,0.5)",
+                letterSpacing: "0.05em",
+                opacity: 0,
+                transition: "opacity 0.2s ease",
+                pointerEvents: "none",
+                whiteSpace: "nowrap",
+              }}
             >
               {emailCopied ? "복사됐어요!" : "nah830@gmail.com 복사하기"}
             </span>
           </div>
 
-          {/* 포트폴리오 — 개별 ref, 브라켓 독립 */}
-          <a
-            ref={portfolioLinkRef}
-            className="hero-link"
-            href="https://app.notion.com/p/Portfolio-35efb7a813f88072ac2af3fd6a574392?source=copy_link"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ fontSize: "clamp(32px, 5vw, 72px)" }}
-          >
+          {/* 포트폴리오 — 독립 wrapper, 브라켓 fit-content 기준 */}
+          <div ref={portfolioLinkRef} className="hero-wrap">
             <span className="cb-l" />
             <span className="cb-r" />
-            PORTFOLIO ↗
-          </a>
+            <a
+              className="hero-link"
+              href="https://app.notion.com/p/Portfolio-35efb7a813f88072ac2af3fd6a574392?source=copy_link"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ fontSize: "clamp(32px, 5vw, 72px)" }}
+            >
+              PORTFOLIO ↗
+            </a>
+          </div>
         </div>
 
         {/* ©2026 이미지 — 상단 기준 배치, 하단 클립 */}
