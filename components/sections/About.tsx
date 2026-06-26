@@ -335,13 +335,28 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
     const HALF = CELL / 2;
     const BASE = "133, 87, 207";
 
+    const NEIGHBOR_OFFSETS = [
+      { dc:  0, dr: -1 },
+      { dc:  0, dr:  1 },
+      { dc: -1, dr:  0 },
+      { dc:  1, dr:  0 },
+    ] as const;
+
     let mouseX = -1, mouseY = -1;
+    let lastCol = -1, lastRow = -1;
     let isHovering = false;
     let raf: number | null = null;
+    let cols = 0, rows = 0;
+
+    // 인접 셀 / 중심 셀 lerp opacity
+    const neighborOps = [0, 0, 0, 0];
+    let centerOp = 0;
 
     const resize = () => {
       canvas.width  = window.innerWidth;
       canvas.height = window.innerHeight;
+      cols = Math.ceil(canvas.width  / CELL);
+      rows = Math.ceil(canvas.height / CELL);
     };
     resize();
 
@@ -364,69 +379,96 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      if (!isHovering || mouseX < 0) {
+      const cTarget = isHovering ? 0.18 : 0;
+      const nTarget = isHovering ? 0.06 : 0;
+      let anyVisible = false;
+
+      // 1. 인접 셀 fill (뒤)
+      if (lastCol >= 0) {
+        NEIGHBOR_OFFSETS.forEach(({ dc, dr }, i) => {
+          const nc = lastCol + dc;
+          const nr = lastRow + dr;
+          neighborOps[i] += (nTarget - neighborOps[i]) * 0.08;
+          if (neighborOps[i] > 0.001 && nc >= 0 && nr >= 0 && nc < cols && nr < rows) {
+            anyVisible = true;
+            ctx.fillStyle = `rgba(${BASE}, ${neighborOps[i]})`;
+            ctx.fillRect(nc * CELL, nr * CELL, CELL, CELL);
+          }
+        });
+
+        // 2. 중심 셀 fill (앞)
+        centerOp += (cTarget - centerOp) * 0.08;
+        if (centerOp > 0.001) {
+          anyVisible = true;
+          ctx.fillStyle = `rgba(${BASE}, ${centerOp})`;
+          ctx.fillRect(lastCol * CELL, lastRow * CELL, CELL, CELL);
+        }
+      }
+
+      // 3. 기존 테두리 + 꼭지점 원 (호버 중에만)
+      if (isHovering && mouseX >= 0) {
+        anyVisible = true;
+        const col = Math.floor(mouseX / CELL);
+        const row = Math.floor(mouseY / CELL);
+        const x   = col * CELL;
+        const y   = row * CELL;
+
+        const dx = mouseX - (x + HALF);
+        const dy = mouseY - (y + HALF);
+
+        const lp = Math.max(0, -dx / HALF);
+        const rp = Math.max(0,  dx / HALF);
+        const tp = Math.max(0, -dy / HALF);
+        const bp = Math.max(0,  dy / HALF);
+
+        const centerProx = 1 - Math.max(Math.abs(dx), Math.abs(dy)) / HALF;
+        const minOp      = Math.max(0, centerProx * 0.6);
+
+        const flp = Math.max(lp, minOp);
+        const frp = Math.max(rp, minOp);
+        const ftp = Math.max(tp, minOp);
+        const fbp = Math.max(bp, minOp);
+
+        const flicker = Math.sin(Date.now() / 1000 * 8) * 0.15 + 0.85;
+
+        ctx.lineWidth = 1.5;
+
+        if (flp > 0.05) {
+          ctx.strokeStyle = `rgba(${BASE}, ${flp * 0.7 * flicker})`;
+          ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + CELL); ctx.stroke();
+        }
+        if (frp > 0.05) {
+          ctx.strokeStyle = `rgba(${BASE}, ${frp * 0.7 * flicker})`;
+          ctx.beginPath(); ctx.moveTo(x + CELL, y); ctx.lineTo(x + CELL, y + CELL); ctx.stroke();
+        }
+        if (ftp > 0.05) {
+          ctx.strokeStyle = `rgba(${BASE}, ${ftp * 0.7 * flicker})`;
+          ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + CELL, y); ctx.stroke();
+        }
+        if (fbp > 0.05) {
+          ctx.strokeStyle = `rgba(${BASE}, ${fbp * 0.7 * flicker})`;
+          ctx.beginPath(); ctx.moveTo(x, y + CELL); ctx.lineTo(x + CELL, y + CELL); ctx.stroke();
+        }
+
+        drawDot(ctx, x,        y,        flp * ftp, flicker);
+        drawDot(ctx, x + CELL, y,        frp * ftp, flicker);
+        drawDot(ctx, x,        y + CELL, flp * fbp, flicker);
+        drawDot(ctx, x + CELL, y + CELL, frp * fbp, flicker);
+      }
+
+      if (anyVisible || isHovering) {
+        raf = requestAnimationFrame(draw);
+      } else {
         raf = null;
-        return;
       }
-
-      const col = Math.floor(mouseX / CELL);
-      const row = Math.floor(mouseY / CELL);
-      const x   = col * CELL;
-      const y   = row * CELL;
-
-      // 셀 중앙 기준 오프셋 (-50 ~ 50)
-      const dx = mouseX - (x + HALF);
-      const dy = mouseY - (y + HALF);
-
-      // 방향별 근접도
-      const lp = Math.max(0, -dx / HALF);
-      const rp = Math.max(0,  dx / HALF);
-      const tp = Math.max(0, -dy / HALF);
-      const bp = Math.max(0,  dy / HALF);
-
-      // 중앙에 있을 때 4변 균등하게 켜지도록 최소값 보장
-      const centerProx = 1 - Math.max(Math.abs(dx), Math.abs(dy)) / HALF;
-      const minOp      = Math.max(0, centerProx * 0.6);
-
-      const flp = Math.max(lp, minOp);
-      const frp = Math.max(rp, minOp);
-      const ftp = Math.max(tp, minOp);
-      const fbp = Math.max(bp, minOp);
-
-      const flicker = Math.sin(Date.now() / 1000 * 8) * 0.15 + 0.85;
-
-      ctx.lineWidth = 1.5;
-
-      if (flp > 0.05) {
-        ctx.strokeStyle = `rgba(${BASE}, ${flp * 0.7 * flicker})`;
-        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + CELL); ctx.stroke();
-      }
-      if (frp > 0.05) {
-        ctx.strokeStyle = `rgba(${BASE}, ${frp * 0.7 * flicker})`;
-        ctx.beginPath(); ctx.moveTo(x + CELL, y); ctx.lineTo(x + CELL, y + CELL); ctx.stroke();
-      }
-      if (ftp > 0.05) {
-        ctx.strokeStyle = `rgba(${BASE}, ${ftp * 0.7 * flicker})`;
-        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + CELL, y); ctx.stroke();
-      }
-      if (fbp > 0.05) {
-        ctx.strokeStyle = `rgba(${BASE}, ${fbp * 0.7 * flicker})`;
-        ctx.beginPath(); ctx.moveTo(x, y + CELL); ctx.lineTo(x + CELL, y + CELL); ctx.stroke();
-      }
-
-      // 꼭지점 원
-      drawDot(ctx, x,        y,        flp * ftp, flicker);
-      drawDot(ctx, x + CELL, y,        frp * ftp, flicker);
-      drawDot(ctx, x,        y + CELL, flp * fbp, flicker);
-      drawDot(ctx, x + CELL, y + CELL, frp * fbp, flicker);
-
-      raf = requestAnimationFrame(draw);
     };
 
     const onMouseMove = (e: MouseEvent) => {
       const rect = panel.getBoundingClientRect();
-      mouseX = e.clientX - rect.left;
-      mouseY = e.clientY - rect.top;
+      mouseX  = e.clientX - rect.left;
+      mouseY  = e.clientY - rect.top;
+      lastCol = Math.floor(mouseX / CELL);
+      lastRow = Math.floor(mouseY / CELL);
       isHovering = true;
       if (raf === null) raf = requestAnimationFrame(draw);
     };
@@ -435,9 +477,7 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
       isHovering = false;
       mouseX = -1;
       mouseY = -1;
-      if (raf !== null) { cancelAnimationFrame(raf); raf = null; }
-      const ctx = canvas.getContext("2d");
-      if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // RAF 유지 — neighborOps/centerOp가 0으로 lerp되며 자연스럽게 종료
     };
 
     window.addEventListener("resize", resize);
