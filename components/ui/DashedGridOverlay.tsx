@@ -115,12 +115,13 @@ const DashedGridOverlay = forwardRef<DashedGridOverlayHandle, Props>(
     useImperativeHandle(ref, () => ({ showGrid, hideGrid }), [showGrid, hideGrid]);
 
     // Scroll check: only hides when scrolled past contact section
-    // showGrid is controlled externally by BlobReveal
+    // contactRef.current를 lazy하게 읽어야 함 —
+    // About의 useEffect가 DashedGridOverlay의 effect보다 늦게 실행되므로
+    // 마운트 시점에 스냅샷을 찍으면 null이 됨.
     useEffect(() => {
-      const contact = contactRef.current;
-      if (!contact) return;
-
       const check = () => {
+        const contact = contactRef.current;
+        if (!contact) return;
         const contactBottom = contact.getBoundingClientRect().bottom + window.scrollY;
         if (window.scrollY >= contactBottom && gridVisibleRef.current) {
           gridVisibleRef.current = false;

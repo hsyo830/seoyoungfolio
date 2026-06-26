@@ -5,33 +5,61 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import VariableProximity from "@/components/ui/VariableProximity";
-import ProfileAvatar from "@/components/ui/ProfileAvatar";
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
-const SKILLS_TITLE = [...'SKILLS & STACK'];
-const EXP_TITLE    = [...'EXPERIENCE'];
+const SKILLS_TITLE = [..."SKILLS & STACK"];
+const EXP_TITLE = [..."EXPERIENCE"];
 
 const SKILLS = [
-  "Next.js", "TypeScript", "React",
-  "TanStack Query", "Tailwind CSS",
-  "GSAP", "Framer Motion", "Supabase",
+  "Next.js",
+  "TypeScript",
+  "React",
+  "TanStack Query",
+  "Tailwind CSS",
+  "GSAP",
+  "Framer Motion",
+  "Supabase",
 ];
 
 const EXPERIENCES = [
-  { year: "2025.09 – 2026.02", title: "Codeit",                 role: "Frontend Engineering Bootcamp",  type: "education" },
-  { year: "2023.01 – 2024.05", title: "Seoul Game Art Academy", role: "Game Engine & AI Programming",   type: "education" },
-  { year: "2022.09 – 2022.12", title: "Carrysoft",              role: "3D Animator Intern",             type: "work" },
-  { year: "2022.04 – 2022.08", title: "Seoul Metropolitan Gov.",role: "Virtual Space Creator Training", type: "education" },
-  { year: "2021.10 – 2022.02", title: "Wonderful Platform",     role: "Frontend Intern",               type: "work" },
-  { year: "2021.07 – 2021.08", title: "TheHigh Company",        role: "Design Intern",                 type: "work" },
-];
-
-const CONTACTS = [
-  { label: "GITHUB", value: "github.com/hsyo830", href: "https://github.com/hsyo830" },
-  { label: "EMAIL",  value: "이메일주소",            href: "mailto:#" },
-  { label: "PHONE",  value: "전화번호",              href: "tel:#" },
+  {
+    year: "2025.09 – 2026.02",
+    title: "Codeit",
+    role: "Frontend Engineering Bootcamp",
+    type: "education",
+  },
+  {
+    year: "2023.01 – 2024.05",
+    title: "Seoul Game Art Academy",
+    role: "Game Engine & AI Programming",
+    type: "education",
+  },
+  {
+    year: "2022.09 – 2022.12",
+    title: "Carrysoft",
+    role: "3D Animator Intern",
+    type: "work",
+  },
+  {
+    year: "2022.04 – 2022.08",
+    title: "Seoul Metropolitan Gov.",
+    role: "Virtual Space Creator Training",
+    type: "education",
+  },
+  {
+    year: "2021.10 – 2022.02",
+    title: "Wonderful Platform",
+    role: "Frontend Intern",
+    type: "work",
+  },
+  {
+    year: "2021.07 – 2021.08",
+    title: "TheHigh Company",
+    role: "Design Intern",
+    type: "work",
+  },
 ];
 
 // ─── Shared styles ────────────────────────────────────────────────────────────
@@ -45,13 +73,15 @@ const OUTLINE: React.CSSProperties = {
   letterSpacing: "-0.03em",
   color: "rgba(255,255,255,0.06)",
   WebkitTextStroke: "0.3px rgba(255,255,255,0.5)" as string,
-  textShadow: "0 0 18px rgba(255,255,255,0.14), 0 12px 40px rgba(120,90,180,0.12)",
+  textShadow:
+    "0 0 18px rgba(255,255,255,0.14), 0 12px 40px rgba(120,90,180,0.12)",
 };
 
 const BACKDROP: React.CSSProperties = {
   position: "absolute",
   inset: "-60px",
-  background: "radial-gradient(ellipse at center, rgba(0,0,0,0.22) 0%, transparent 70%)",
+  background:
+    "radial-gradient(ellipse at center, rgba(0,0,0,0.22) 0%, transparent 70%)",
   filter: "blur(20px)",
   opacity: 0,
   pointerEvents: "none",
@@ -65,14 +95,19 @@ function SplitTitle({
   style,
 }: {
   chars: string[];
-  refsArr: React.MutableRefObject<(HTMLSpanElement | null)[]>;
+  refsArr: React.RefObject<(HTMLSpanElement | null)[]>;
   style?: React.CSSProperties;
 }) {
   return (
     <div style={{ ...OUTLINE, ...style }}>
       {chars.map((char, i) => (
-        <span key={i} ref={el => { refsArr.current[i] = el; }}
-          style={{ display: "inline-block", opacity: 0 }}>
+        <span
+          key={i}
+          ref={(el) => {
+            refsArr.current[i] = el;
+          }}
+          style={{ display: "inline-block", opacity: 0 }}
+        >
           {char === " " ? " " : char}
         </span>
       ))}
@@ -82,72 +117,95 @@ function SplitTitle({
 
 // ─── Component ────────────────────────────────────────────────────────────────
 interface AboutProps {
-  sectionRef?:  React.RefObject<HTMLElement | null>;
-  contactRef?: React.RefObject<HTMLDivElement | null>;
+  sectionRef?: React.RefObject<HTMLElement | null>;
+  contactRef?: { current: HTMLDivElement | null };
 }
 
 export default function About({ sectionRef, contactRef }: AboutProps = {}) {
   const ownRef = useRef<HTMLElement>(null);
   const bd2 = useRef<HTMLDivElement>(null);
-  const bd4 = useRef<HTMLDivElement>(null);
 
   const sub2 = useRef<HTMLDivElement>(null);
   const sub3 = useRef<HTMLDivElement>(null);
   const sub4 = useRef<HTMLDivElement>(null);
 
   const skillsChars = useRef<(HTMLSpanElement | null)[]>([]);
-  const expChars    = useRef<(HTMLSpanElement | null)[]>([]);
+  const expChars = useRef<(HTMLSpanElement | null)[]>([]);
 
   // Experience timeline
-  const trackRef     = useRef<HTMLDivElement>(null);
-  const expLine      = useRef<HTMLDivElement>(null);
-  const expNodes     = useRef<(HTMLDivElement | null)[]>([]);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const expLine = useRef<HTMLDivElement>(null);
+  const expNodes = useRef<(HTMLDivElement | null)[]>([]);
   const connectMeRef = useRef<HTMLButtonElement>(null);
 
-  const photoRef  = useRef<HTMLDivElement>(null);
-  const linksRef  = useRef<HTMLDivElement>(null);
+  const c2026Ref = useRef<HTMLDivElement>(null);
 
   const charcoalRef = sectionRef ?? ownRef;
 
   useEffect(() => {
-    const track   = trackRef.current;
+    const track = trackRef.current;
     const section = sub3.current;
     if (!track || !section) return;
 
-    const totalWidth = Math.max(0, track.scrollWidth - document.documentElement.clientWidth);
+    const totalWidth = Math.max(
+      0,
+      track.scrollWidth - document.documentElement.clientWidth,
+    );
 
     const ctx = gsap.context(() => {
       // ── Backdrop (sub2, sub4) ──
-      const animBd = (el: HTMLDivElement | null, trigger: HTMLDivElement | null) => {
+      const animBd = (
+        el: HTMLDivElement | null,
+        trigger: HTMLDivElement | null,
+      ) => {
         if (!el || !trigger) return;
-        gsap.fromTo(el, { opacity: 0 }, {
-          opacity: 1, duration: 1, ease: "power2.out",
-          scrollTrigger: { trigger, start: "top 75%", toggleActions: "play none none none" },
-        });
+        gsap.fromTo(
+          el,
+          { opacity: 0 },
+          {
+            opacity: 1,
+            duration: 1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger,
+              start: "top 75%",
+              toggleActions: "play none none none",
+            },
+          },
+        );
       };
       animBd(bd2.current, sub2.current);
-      animBd(bd4.current, sub4.current);
 
       // ── Title chars ──
       const animTitle = (
-        refs: React.MutableRefObject<(HTMLSpanElement | null)[]>,
+        refs: React.RefObject<(HTMLSpanElement | null)[]>,
         trigger: HTMLDivElement | null,
-        start = "top 75%"
+        start = "top 75%",
       ) => {
         const els = refs.current.filter(Boolean) as HTMLSpanElement[];
         if (!els.length || !trigger) return;
-        gsap.fromTo(els,
+        gsap.fromTo(
+          els,
           { y: 40, opacity: 0, filter: "blur(8px)" },
           {
-            y: 0, opacity: 1, filter: "blur(0px)",
-            duration: 0.65, stagger: 0.025, ease: "power3.out", delay: 0.2,
+            y: 0,
+            opacity: 1,
+            filter: "blur(0px)",
+            duration: 0.65,
+            stagger: 0.025,
+            ease: "power3.out",
+            delay: 0.2,
             onComplete: () => gsap.set(els, { clearProps: "filter" }),
-            scrollTrigger: { trigger, start, toggleActions: "play none none none" },
-          }
+            scrollTrigger: {
+              trigger,
+              start,
+              toggleActions: "play none none none",
+            },
+          },
         );
       };
       animTitle(skillsChars, sub2.current);
-      animTitle(expChars,    sub3.current, "top 90%");
+      animTitle(expChars, sub3.current, "top 90%");
 
       // ── EXPERIENCE: pin + horizontal scroll ──
       if (totalWidth > 0) {
@@ -160,10 +218,19 @@ export default function About({ sectionRef, contactRef }: AboutProps = {}) {
             scrub: 1,
             anticipatePin: 1,
             onEnter: () => {
-              const first3 = expNodes.current.slice(0, 3).filter(Boolean) as HTMLDivElement[];
-              gsap.fromTo(first3,
+              const first3 = expNodes.current
+                .slice(0, 3)
+                .filter(Boolean) as HTMLDivElement[];
+              gsap.fromTo(
+                first3,
                 { opacity: 0, y: 14 },
-                { opacity: 1, y: 0, duration: 0.5, stagger: 0.12, ease: "power2.out" }
+                {
+                  opacity: 1,
+                  y: 0,
+                  duration: 0.5,
+                  stagger: 0.12,
+                  ease: "power2.out",
+                },
               );
             },
           },
@@ -172,33 +239,53 @@ export default function About({ sectionRef, contactRef }: AboutProps = {}) {
         tl.to(track, { x: -totalWidth, ease: "none", duration: 1 }, 0);
 
         if (expLine.current) {
-          tl.to(expLine.current, { width: "100%", ease: "none", duration: 1 }, 0);
+          tl.to(
+            expLine.current,
+            { width: "100%", ease: "none", duration: 1 },
+            0,
+          );
         }
 
-        const at = [0.18, 0.50, 0.78];
+        const at = [0.18, 0.5, 0.78];
         [3, 4, 5].forEach((ni, j) => {
           const node = expNodes.current[ni];
-          if (node) tl.fromTo(node, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.08 }, at[j]);
+          if (node)
+            tl.fromTo(
+              node,
+              { opacity: 0, y: 14 },
+              { opacity: 1, y: 0, duration: 0.08 },
+              at[j],
+            );
         });
 
         if (connectMeRef.current) {
-          tl.fromTo(connectMeRef.current, { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.06 }, 0.92);
+          tl.fromTo(
+            connectMeRef.current,
+            { opacity: 0, x: 20 },
+            { opacity: 1, x: 0, duration: 0.06 },
+            0.92,
+          );
         }
       }
 
-      // ── Contact ──
-      if (photoRef.current) {
-        gsap.fromTo(photoRef.current,
-          { scale: 0.9, opacity: 0 },
-          { scale: 1, opacity: 1, duration: 0.8, ease: "power3.out", delay: 0.2,
-            scrollTrigger: { trigger: sub4.current, start: "top 75%", toggleActions: "play none none none" } }
-        );
-      }
-      if (linksRef.current) {
-        gsap.fromTo(linksRef.current,
-          { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", delay: 0.35,
-            scrollTrigger: { trigger: sub4.current, start: "top 75%", toggleActions: "play none none none" } }
+      // ── Contact: ©2026 image ──
+      if (c2026Ref.current) {
+        gsap.set(c2026Ref.current, { transformOrigin: "bottom center" });
+        gsap.fromTo(
+          c2026Ref.current,
+          { y: 120, opacity: 0, scale: 0.92 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 1.4,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: sub4.current,
+              start: "top 60%",
+              toggleActions: "play none none none",
+            },
+          },
         );
       }
     });
@@ -206,32 +293,44 @@ export default function About({ sectionRef, contactRef }: AboutProps = {}) {
     return () => ctx.revert();
   }, []);
 
+  useEffect(() => {
+    if (!contactRef) return;
+    contactRef.current = sub4.current;
+    return () => {
+      contactRef.current = null;
+    };
+  }, [contactRef]);
+
   const scrollToContact = () => {
     if (!sub4.current) return;
-    gsap.to(window, { scrollTo: { y: sub4.current }, duration: 1.2, ease: "power2.inOut" });
+    gsap.to(window, {
+      scrollTo: { y: sub4.current },
+      duration: 1.2,
+      ease: "power2.inOut",
+    });
   };
 
   return (
     <section
       ref={charcoalRef}
-      style={{ position: "relative", width: "100%", background: "#2a2a2e", paddingBottom: "80px" }}
+      style={{ position: "relative", width: "100%", background: "#2a2a2e" }}
     >
       <style>{`
-        .about-link {
-          position: relative; display: inline-flex; align-items: flex-start;
-          gap: 0.5rem; padding: 6px 10px; text-decoration: none;
-          color: rgba(255,255,255,0.78); transition: color 0.3s ease;
+        .contact-link {
+          position: relative; display: inline-flex; align-items: center;
+          padding: 6px 10px; text-decoration: none;
+          color: rgba(255,255,255,0.75); font-size: 13px; letter-spacing: 0.2em;
+          transition: color 0.3s ease, opacity 0.3s ease;
         }
-        .about-link:hover { color: rgba(110,90,255,0.95); }
-        .about-link .cb { position: absolute; width: 9px; height: 9px; opacity: 0; transition: all 0.3s ease; }
-        .about-link::before { content:""; position:absolute; top:-7px; left:-7px; width:9px; height:9px; border-top:1px solid rgba(255,255,255,0.8); border-left:1px solid rgba(255,255,255,0.8); opacity:0; transition:all .3s ease; }
-        .about-link::after  { content:""; position:absolute; top:-7px; right:-7px; width:9px; height:9px; border-top:1px solid rgba(255,255,255,0.8); border-right:1px solid rgba(255,255,255,0.8); opacity:0; transition:all .3s ease; }
-        .about-link .cb-l { bottom:-7px; left:-7px; border-bottom:1px solid rgba(255,255,255,0.8); border-left:1px solid rgba(255,255,255,0.8); }
-        .about-link .cb-r { bottom:-7px; right:-7px; border-bottom:1px solid rgba(255,255,255,0.8); border-right:1px solid rgba(255,255,255,0.8); }
-        .about-link:hover::before { top:-1px; left:-1px; opacity:1; border-color:rgba(110,90,255,0.8); }
-        .about-link:hover::after  { top:-1px; right:-1px; opacity:1; border-color:rgba(110,90,255,0.8); }
-        .about-link:hover .cb-l { bottom:-1px; left:-1px; opacity:1; border-color:rgba(110,90,255,0.8); }
-        .about-link:hover .cb-r { bottom:-1px; right:-1px; opacity:1; border-color:rgba(110,90,255,0.8); }
+        .contact-link:hover { opacity: 1; color: rgba(255,255,255,0.95); }
+        .contact-link::before { content:""; position:absolute; top:-7px; left:-7px; width:9px; height:9px; border-top:1px solid rgba(255,255,255,0.8); border-left:1px solid rgba(255,255,255,0.8); opacity:0; transition:all .3s ease; }
+        .contact-link::after  { content:""; position:absolute; top:-7px; right:-7px; width:9px; height:9px; border-top:1px solid rgba(255,255,255,0.8); border-right:1px solid rgba(255,255,255,0.8); opacity:0; transition:all .3s ease; }
+        .contact-link .cb-l { position:absolute; bottom:-7px; left:-7px; width:9px; height:9px; border-bottom:1px solid rgba(255,255,255,0.8); border-left:1px solid rgba(255,255,255,0.8); opacity:0; transition:all .3s ease; }
+        .contact-link .cb-r { position:absolute; bottom:-7px; right:-7px; width:9px; height:9px; border-bottom:1px solid rgba(255,255,255,0.8); border-right:1px solid rgba(255,255,255,0.8); opacity:0; transition:all .3s ease; }
+        .contact-link:hover::before { top:-1px; left:-1px; opacity:1; border-color:rgba(110,90,255,0.8); }
+        .contact-link:hover::after  { top:-1px; right:-1px; opacity:1; border-color:rgba(110,90,255,0.8); }
+        .contact-link:hover .cb-l { bottom:-1px; left:-1px; opacity:1; border-color:rgba(110,90,255,0.8); }
+        .contact-link:hover .cb-r { bottom:-1px; right:-1px; opacity:1; border-color:rgba(110,90,255,0.8); }
         .connect-me-btn {
           background: none;
           border: 1px solid rgba(255,255,255,0.28);
@@ -255,17 +354,54 @@ export default function About({ sectionRef, contactRef }: AboutProps = {}) {
       `}</style>
 
       {/* ──────────── 1. SKILLS ──────────── */}
-      <div ref={sub2} style={{ position: "relative", minHeight: "80vh", display: "flex",
-        flexDirection: "column", justifyContent: "center", padding: "10vh 8vw 10vh 52vw" }}>
+      <div
+        ref={sub2}
+        style={{
+          position: "relative",
+          minHeight: "80vh",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          padding: "10vh 8vw 10vh 52vw",
+        }}
+      >
         <div ref={bd2} style={BACKDROP} />
-        <SplitTitle chars={SKILLS_TITLE} refsArr={skillsChars}
-          style={{ fontSize: "clamp(24px, 3.2vw, 52px)", marginBottom: "2.5rem", position: "relative", zIndex: 1 }} />
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", position: "relative", zIndex: 1 }}>
-          {SKILLS.map(skill => (
-            <VariableProximity key={skill} text={skill} splitBy="char" minWeight={300} maxWeight={700}
-              style={{ fontSize: "clamp(11px, 1vw, 15px)", color: "rgba(255,255,255,0.78)",
-                letterSpacing: "0.1em", padding: "6px 14px",
-                border: "1px solid rgba(255,255,255,0.22)", borderRadius: "3px", ...TS }} />
+        <SplitTitle
+          chars={SKILLS_TITLE}
+          refsArr={skillsChars}
+          style={{
+            fontSize: "clamp(24px, 3.2vw, 52px)",
+            marginBottom: "2.5rem",
+            position: "relative",
+            zIndex: 1,
+          }}
+        />
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "10px",
+            position: "relative",
+            zIndex: 1,
+          }}
+        >
+          {SKILLS.map((skill) => (
+            <VariableProximity
+              key={skill}
+              text={skill}
+              splitBy="char"
+              minWeight={300}
+              maxWeight={700}
+              style={{
+                fontSize: "clamp(11px, 1vw, 15px)",
+                color: "rgba(255,255,255,0.78)",
+                letterSpacing: "0.1em",
+                padding: "6px 14px",
+                border: "1px solid rgba(255,255,255,0.22)",
+                borderRadius: "3px",
+                ...TS,
+              }}
+            />
           ))}
         </div>
       </div>
@@ -283,51 +419,128 @@ export default function About({ sectionRef, contactRef }: AboutProps = {}) {
           flexDirection: "column",
         }}
       >
-        <div style={{ padding: "8vh 10vw 0", flexShrink: 0, position: "relative", zIndex: 3 }}>
-          <SplitTitle chars={EXP_TITLE} refsArr={expChars}
-            style={{ fontSize: "clamp(24px, 3.2vw, 52px)" }} />
+        <div
+          style={{
+            padding: "8vh 10vw 0",
+            flexShrink: 0,
+            position: "relative",
+            zIndex: 3,
+          }}
+        >
+          <SplitTitle
+            chars={EXP_TITLE}
+            refsArr={expChars}
+            style={{ fontSize: "clamp(24px, 3.2vw, 52px)" }}
+          />
         </div>
 
-        <div style={{ flex: 1, display: "flex", alignItems: "center", overflow: "hidden", position: "relative", zIndex: 3 }}>
-          <div ref={trackRef} style={{ width: "max-content", padding: "0 10vw", willChange: "transform" }}>
-            <div style={{ position: "relative", height: 2,
-              background: "rgba(255,255,255,0.08)", marginBottom: 28, width: "100%" }}>
-              <div ref={expLine} style={{
-                position: "absolute", top: 0, left: 0, height: "100%", width: "0%",
-                background: "linear-gradient(90deg, rgba(255,255,255,0.4) 0%, rgba(160,100,255,0.7) 100%)",
-              }} />
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            overflow: "hidden",
+            position: "relative",
+            zIndex: 3,
+          }}
+        >
+          <div
+            ref={trackRef}
+            style={{
+              width: "max-content",
+              padding: "0 10vw",
+              willChange: "transform",
+            }}
+          >
+            <div
+              style={{
+                position: "relative",
+                height: 2,
+                background: "rgba(255,255,255,0.08)",
+                marginBottom: 28,
+                width: "100%",
+              }}
+            >
+              <div
+                ref={expLine}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  height: "100%",
+                  width: "0%",
+                  background:
+                    "linear-gradient(90deg, rgba(255,255,255,0.4) 0%, rgba(160,100,255,0.7) 100%)",
+                }}
+              />
             </div>
 
-            <div style={{ display: "flex", gap: "20px", alignItems: "stretch" }}>
+            <div
+              style={{ display: "flex", gap: "20px", alignItems: "stretch" }}
+            >
               {EXPERIENCES.map((exp, i) => {
                 const isWork = exp.type === "work";
                 return (
                   <div
                     key={i}
-                    ref={el => { expNodes.current[i] = el; }}
+                    ref={(el) => {
+                      expNodes.current[i] = el;
+                    }}
                     style={{
                       opacity: 0,
                       minWidth: "33vw",
-                      clipPath: "polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%)",
-                      background: isWork ? "rgba(140,80,220,0.82)" : "rgba(255,255,255,0.06)",
-                      filter: isWork ? "none" : "drop-shadow(0 0 1px rgba(255,255,255,0.25))",
+                      clipPath:
+                        "polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%)",
+                      background: isWork
+                        ? "rgba(140,80,220,0.82)"
+                        : "rgba(255,255,255,0.06)",
+                      filter: isWork
+                        ? "none"
+                        : "drop-shadow(0 0 1px rgba(255,255,255,0.25))",
                       backdropFilter: "blur(10px)",
                       WebkitBackdropFilter: "blur(10px)",
                       padding: "20px 40px 20px 24px",
                     }}
                   >
-                    <p style={{ fontSize: 10, letterSpacing: "0.24em", whiteSpace: "nowrap",
-                      color: isWork ? "rgba(255,255,255,0.5)" : "rgba(160,110,255,0.85)",
-                      margin: "0 0 8px", fontFamily: "'KblJumpExtended', sans-serif" }}>
+                    <p
+                      style={{
+                        fontSize: 10,
+                        letterSpacing: "0.24em",
+                        whiteSpace: "nowrap",
+                        color: isWork
+                          ? "rgba(255,255,255,0.5)"
+                          : "rgba(160,110,255,0.85)",
+                        margin: "0 0 8px",
+                        fontFamily: "'KblJumpExtended', sans-serif",
+                      }}
+                    >
                       {exp.year}
                     </p>
-                    <p style={{ fontSize: 15, color: "rgba(255,255,255,0.94)", whiteSpace: "nowrap",
-                      margin: "0 0 6px", fontWeight: 700, letterSpacing: "0.03em", ...TS }}>
+                    <p
+                      style={{
+                        fontSize: 15,
+                        color: "rgba(255,255,255,0.94)",
+                        whiteSpace: "nowrap",
+                        margin: "0 0 6px",
+                        fontWeight: 700,
+                        letterSpacing: "0.03em",
+                        ...TS,
+                      }}
+                    >
                       {exp.title}
                     </p>
-                    <p style={{ fontSize: 11, whiteSpace: "nowrap", margin: 0, letterSpacing: "0.12em",
-                      textTransform: "uppercase",
-                      color: isWork ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.35)" }}>
+                    <p
+                      style={{
+                        fontSize: 11,
+                        whiteSpace: "nowrap",
+                        margin: 0,
+                        letterSpacing: "0.12em",
+                        textTransform: "uppercase",
+                        color: isWork
+                          ? "rgba(255,255,255,0.55)"
+                          : "rgba(255,255,255,0.35)",
+                      }}
+                    >
                       {exp.role}
                     </p>
                   </div>
@@ -348,31 +561,77 @@ export default function About({ sectionRef, contactRef }: AboutProps = {}) {
       </div>
 
       {/* ──────────── 4. CONTACT ──────────── */}
-      <div ref={el => {
-        (sub4 as React.MutableRefObject<HTMLDivElement | null>).current = el;
-        if (contactRef) (contactRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
-      }} style={{ position: "relative", minHeight: "100vh", background: "#2a2a2e", display: "flex",
-        alignItems: "center", justifyContent: "center", gap: "8vw", padding: "10vh 8vw" }}>
-        <div ref={bd4} style={BACKDROP} />
-        <div ref={photoRef} style={{ opacity: 0, position: "relative", zIndex: 1, flexShrink: 0 }}>
-          <ProfileAvatar />
+      <div
+        ref={sub4}
+        style={{
+          position: "relative",
+          minHeight: "100vh",
+          background: "#2a2a2e",
+          overflow: "hidden",
+        }}
+      >
+        {/* 상단 우측 링크 버튼 */}
+        <div
+          style={{
+            position: "absolute",
+            top: 48,
+            right: 48,
+            display: "flex",
+            gap: 40,
+            alignItems: "center",
+            zIndex: 2,
+          }}
+        >
+          <a
+            href="https://github.com/hsyo830"
+            className="contact-link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span className="cb-l" />
+            <span className="cb-r" />
+            GITHUB ↗
+          </a>
+          <a href="mailto:nah830@gmail.com" className="contact-link">
+            <span className="cb-l" />
+            <span className="cb-r" />
+            EMAIL ↗
+          </a>
+          <a href="tel:01082528608" className="contact-link">
+            <span className="cb-l" />
+            <span className="cb-r" />
+            PHONE ↗
+          </a>
         </div>
-        <div ref={linksRef}
-          style={{ display: "flex", flexDirection: "column", gap: "2.5rem", opacity: 0, position: "relative", zIndex: 1 }}>
-          {CONTACTS.map(({ label, value, href }) => (
-            <a key={label} href={href} className="about-link" onClick={e => e.preventDefault()}>
-              <span className="cb cb-l" /><span className="cb cb-r" />
-              <div>
-                <span style={{ display: "block", fontSize: 10, letterSpacing: "0.4em",
-                  color: "rgba(255,255,255,0.3)", marginBottom: 5, textTransform: "uppercase" }}>
-                  {label}
-                </span>
-                <span style={{ fontSize: "clamp(13px, 1vw, 16px)", letterSpacing: "0.12em", ...TS }}>
-                  {value} ↗
-                </span>
-              </div>
-            </a>
-          ))}
+
+        {/* ©2026 이미지 — 상단 기준 배치, 하단 클립 */}
+        <div
+          ref={c2026Ref}
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            width: "100%",
+            height: "75vh",
+            overflow: "hidden",
+            zIndex: 1,
+            pointerEvents: "none",
+            opacity: 0,
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/c2026.png"
+            alt=""
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "auto",
+              display: "block",
+            }}
+          />
         </div>
       </div>
     </section>
