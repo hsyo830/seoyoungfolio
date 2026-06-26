@@ -141,6 +141,8 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
   const connectMeRef = useRef<HTMLButtonElement>(null);
 
   const c2026Ref = useRef<HTMLDivElement>(null);
+  const panelRef  = useRef<HTMLDivElement>(null);
+  const linksRef  = useRef<(HTMLAnchorElement | null)[]>([]);
 
   const charcoalRef = sectionRef ?? ownRef;
 
@@ -270,27 +272,44 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
         }
       }
 
-      // ── Contact: ©2026 image ──
-      if (c2026Ref.current) {
-        gsap.set(c2026Ref.current, { transformOrigin: "bottom center" });
-        gsap.fromTo(
-          c2026Ref.current,
-          { y: 120, opacity: 0, scale: 0.92 },
-          {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            duration: 1.4,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: sub4.current,
-              start: "top 60%",
-              toggleActions: "play none none none",
-              onEnter: () => gridRef?.current?.hideOnContact(),
-              onLeaveBack: () => gridRef?.current?.showOnLeaveContact(),
-            },
+      // ── Contact: 패널 → 이미지 → 버튼 순차 등장 ──
+      if (panelRef.current && c2026Ref.current) {
+        // 초기 상태 설정
+        gsap.set(c2026Ref.current, { y: 160, opacity: 0 });
+        gsap.set(linksRef.current.filter(Boolean), { y: 20, opacity: 0 });
+
+        // 1단계: 검정 패널 슬라이드업
+        gsap.to(panelRef.current, {
+          y: 0,
+          duration: 1.0,
+          ease: "power3.inOut",
+          scrollTrigger: {
+            trigger: sub4.current,
+            start: "top 60%",
+            toggleActions: "play none none none",
+            onEnter: () => gridRef?.current?.hideOnContact(),
+            onLeaveBack: () => gridRef?.current?.showOnLeaveContact(),
           },
-        );
+          onComplete: () => {
+            // 2단계: ©2026 이미지 등장
+            gsap.to(c2026Ref.current, {
+              y: 0,
+              opacity: 1,
+              duration: 1.4,
+              ease: "power3.out",
+              onComplete: () => {
+                // 3단계: 링크 버튼 순차 fade in
+                gsap.to(linksRef.current.filter(Boolean), {
+                  opacity: 1,
+                  y: 0,
+                  duration: 0.6,
+                  stagger: 0.1,
+                  ease: "power2.out",
+                });
+              },
+            });
+          },
+        });
       }
     });
 
@@ -574,7 +593,20 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
           overflow: "hidden",
         }}
       >
-        {/* 상단 우측 링크 버튼 */}
+        {/* 검정 패널 — 아래에서 위로 슬라이드 */}
+        <div
+          ref={panelRef}
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "#07070b",
+            zIndex: 1,
+            transform: "translateY(100%)",
+            pointerEvents: "none",
+          }}
+        />
+
+        {/* 링크 버튼 */}
         <div
           style={{
             position: "absolute",
@@ -583,10 +615,11 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
             display: "flex",
             gap: 40,
             alignItems: "center",
-            zIndex: 2,
+            zIndex: 3,
           }}
         >
           <a
+            ref={el => { linksRef.current[0] = el; }}
             href="https://github.com/hsyo830"
             className="contact-link"
             target="_blank"
@@ -596,12 +629,20 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
             <span className="cb-r" />
             GITHUB ↗
           </a>
-          <a href="mailto:nah830@gmail.com" className="contact-link">
+          <a
+            ref={el => { linksRef.current[1] = el; }}
+            href="mailto:nah830@gmail.com"
+            className="contact-link"
+          >
             <span className="cb-l" />
             <span className="cb-r" />
             EMAIL ↗
           </a>
-          <a href="tel:01082528608" className="contact-link">
+          <a
+            ref={el => { linksRef.current[2] = el; }}
+            href="tel:01082528608"
+            className="contact-link"
+          >
             <span className="cb-l" />
             <span className="cb-r" />
             PHONE ↗
@@ -618,9 +659,8 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
             width: "100%",
             height: "75vh",
             overflow: "hidden",
-            zIndex: 1,
+            zIndex: 2,
             pointerEvents: "none",
-            opacity: 0,
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
