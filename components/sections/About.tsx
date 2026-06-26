@@ -756,23 +756,23 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
               {/* 카드 본문 */}
               <div style={{
                 background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(133,87,207,0.3)",
+                border: "1px solid rgba(255,255,255,0.12)",
                 borderRadius: 8,
                 padding: 16,
                 backdropFilter: "blur(8px)",
                 WebkitBackdropFilter: "blur(8px)",
                 transition: "box-shadow 0.3s ease",
               }}>
-                <p style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", margin: "0 0 4px", letterSpacing: "0.1em" }}>
+                <p style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", margin: "0 0 4px", letterSpacing: "0.1em" }}>
                   {exp.year}
                 </p>
-                <p style={{ fontSize: 13, color: "white", fontWeight: 700, margin: "0 0 4px", letterSpacing: "0.02em", ...TS }}>
+                <p style={{ fontSize: 13, color: "rgba(255,255,255,1.0)", fontWeight: 700, margin: "0 0 4px", letterSpacing: "0.02em", ...TS }}>
                   {exp.company}
                 </p>
-                <p style={{ fontSize: 10, color: "rgba(255,255,255,0.7)", margin: "0 0 6px", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                <p style={{ fontSize: 10, color: "rgba(255,255,255,0.75)", margin: "0 0 6px", letterSpacing: "0.05em", textTransform: "uppercase" }}>
                   {exp.role}
                 </p>
-                <p style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", margin: 0, lineHeight: 1.6 }}>
+                <p style={{ fontSize: 10, color: "rgba(255,255,255,0.55)", margin: 0, lineHeight: 1.6 }}>
                   {exp.desc}
                 </p>
               </div>
