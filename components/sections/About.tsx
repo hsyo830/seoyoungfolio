@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
@@ -140,6 +140,15 @@ interface AboutProps {
 }
 
 export default function About({ sectionRef, contactRef, gridRef }: AboutProps = {}) {
+  const [emailCopied, setEmailCopied] = useState(false);
+
+  const handleEmailCopy = () => {
+    navigator.clipboard.writeText("nah830@gmail.com").then(() => {
+      setEmailCopied(true);
+      setTimeout(() => setEmailCopied(false), 1500);
+    });
+  };
+
   const ownRef = useRef<HTMLElement>(null);
   const bd2 = useRef<HTMLDivElement>(null);
 
@@ -764,6 +773,25 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
         .contact-link:hover::after  { top:-1px; right:-1px; opacity:1; border-color:rgba(110,90,255,0.8); }
         .contact-link:hover .cb-l { bottom:-1px; left:-1px; opacity:1; border-color:rgba(110,90,255,0.8); }
         .contact-link:hover .cb-r { bottom:-1px; right:-1px; opacity:1; border-color:rgba(110,90,255,0.8); }
+        .hero-link {
+          position: relative; display: inline-flex; align-items: center;
+          text-decoration: none;
+          font-family: 'Inter', 'Geist', system-ui, sans-serif;
+          font-weight: 700; line-height: 1.1; letter-spacing: -0.02em;
+          color: rgba(255,255,255,0.9);
+          cursor: pointer;
+          transition: color 0.2s ease;
+        }
+        .hero-link:hover { color: #8557cf; }
+        .hero-link:active { color: #5a3a9a; }
+        .hero-link::before { content:""; position:absolute; top:-14px; left:-14px; width:18px; height:18px; border-top:2px solid #8557cf; border-left:2px solid #8557cf; opacity:0; transition:all .3s ease; }
+        .hero-link::after  { content:""; position:absolute; top:-14px; right:-14px; width:18px; height:18px; border-top:2px solid #8557cf; border-right:2px solid #8557cf; opacity:0; transition:all .3s ease; }
+        .hero-link .cb-l { position:absolute; bottom:-14px; left:-14px; width:18px; height:18px; border-bottom:2px solid #8557cf; border-left:2px solid #8557cf; opacity:0; transition:all .3s ease; }
+        .hero-link .cb-r { position:absolute; bottom:-14px; right:-14px; width:18px; height:18px; border-bottom:2px solid #8557cf; border-right:2px solid #8557cf; opacity:0; transition:all .3s ease; }
+        .hero-link:hover::before { top:-4px; left:-4px; opacity:1; }
+        .hero-link:hover::after  { top:-4px; right:-4px; opacity:1; }
+        .hero-link:hover .cb-l { bottom:-4px; left:-4px; opacity:1; }
+        .hero-link:hover .cb-r { bottom:-4px; right:-4px; opacity:1; }
         .connect-me-btn {
           background: none;
           border: 1px solid rgba(255,255,255,0.28);
@@ -1073,6 +1101,40 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
             <span className="cb-l" />
             <span className="cb-r" />
             PHONE ↗
+          </a>
+        </div>
+
+        {/* 좌측 상단 대형 텍스트 링크 */}
+        <div
+          style={{
+            position: "absolute",
+            top: 48,
+            left: 48,
+            zIndex: 10,
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+          }}
+        >
+          <div
+            className="hero-link"
+            onClick={handleEmailCopy}
+            style={{ fontSize: "clamp(32px, 5vw, 72px)" }}
+          >
+            <span className="cb-l" />
+            <span className="cb-r" />
+            {emailCopied ? "COPIED!" : "nah830@gmail.com ↗"}
+          </div>
+          <a
+            className="hero-link"
+            href="https://app.notion.com/p/Portfolio-35efb7a813f88072ac2af3fd6a574392?source=copy_link"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ fontSize: "clamp(32px, 5vw, 72px)" }}
+          >
+            <span className="cb-l" />
+            <span className="cb-r" />
+            PORTFOLIO ↗
           </a>
         </div>
 
