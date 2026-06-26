@@ -155,7 +155,7 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
   const svgRef          = useRef<SVGSVGElement>(null);
   const progressPathRef = useRef<SVGPathElement>(null);
   const cardRefs        = useRef<(HTMLDivElement | null)[]>([]);
-  const checkpointRefs  = useRef<(SVGCircleElement | null)[]>([]);
+  const checkpointRefs  = useRef<(SVGRectElement | null)[]>([]);
 
   // Floating video preview
   const floatingRef    = useRef<HTMLDivElement>(null);
@@ -364,8 +364,8 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
               EXPERIENCES.forEach((exp, i) => {
                 if (p >= exp.checkpointProgress - 0.02 && !triggeredCheckpoints.has(i)) {
                   triggeredCheckpoints.add(i);
-                  const circle = checkpointRefs.current[i];
-                  if (circle) gsap.to(circle, { opacity: 1, duration: 0.3 });
+                  const rect = checkpointRefs.current[i];
+                  if (rect) gsap.to(rect, { opacity: 1, duration: 0.3 });
                   const card = cardRefs.current[i];
                   const initY = exp.position === "top" ? -20 : 20;
                   if (card) {
@@ -378,8 +378,8 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
                 // scrub 역방향 처리
                 if (p < exp.checkpointProgress - 0.04 && triggeredCheckpoints.has(i)) {
                   triggeredCheckpoints.delete(i);
-                  const circle = checkpointRefs.current[i];
-                  if (circle) gsap.to(circle, { opacity: 0, duration: 0.2 });
+                  const rect = checkpointRefs.current[i];
+                  if (rect) gsap.to(rect, { opacity: 0, duration: 0.2 });
                   const card = cardRefs.current[i];
                   if (card) gsap.to(card, { opacity: 0, duration: 0.2 });
                 }
@@ -492,10 +492,10 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
       EXPERIENCES.forEach((exp, i) => {
         const pt = progPath.getPointAtLength(len * exp.checkpointProgress);
 
-        const circle = checkpointRefs.current[i];
-        if (circle) {
-          circle.setAttribute("cx", String(pt.x));
-          circle.setAttribute("cy", String(pt.y));
+        const rect = checkpointRefs.current[i];
+        if (rect) {
+          rect.setAttribute("x", String(pt.x - 6));
+          rect.setAttribute("y", String(pt.y - 6));
         }
 
         const card = cardRefs.current[i];
@@ -904,12 +904,13 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
               strokeWidth="2"
               fill="none"
             />
-            {/* 체크포인트 원 (cx/cy는 useEffect에서 설정) */}
+            {/* 체크포인트 사각형 (x/y는 useEffect에서 설정) */}
             {EXPERIENCES.map((exp, i) => (
-              <circle
+              <rect
                 key={exp.id}
                 ref={el => { checkpointRefs.current[i] = el; }}
-                r={6}
+                width={12}
+                height={12}
                 fill="#F4F4F6"
                 opacity={0}
                 style={{ transformOrigin: "center", transformBox: "fill-box" }}
