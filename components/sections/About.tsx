@@ -30,36 +30,42 @@ const EXPERIENCES = [
     role: "Frontend Engineering Bootcamp",
     desc: "React, TypeScript, Next.js 기반 프로젝트 수행",
     type: "education", position: "top", checkpointProgress: 0.12,
+    videoSrc: "/videos/jikgwango.mp4",
   },
   {
     id: 2, year: "2023.01 - 2024.05", company: "Seoul Game Art Academy",
     role: "Game Engine & AI Programming",
     desc: "C++, Unreal Engine 기반 게임 개발 학습",
     type: "education", position: "bottom", checkpointProgress: 0.28,
+    videoSrc: "/videos/jikgwango.mp4",
   },
   {
     id: 3, year: "2022.09 - 2022.12", company: "Carrysoft",
     role: "3D Animator Intern",
     desc: "MAYA 기반 3D 애니메이팅, 장편 애니메이션 제작 참여",
     type: "work", position: "top", checkpointProgress: 0.44,
+    videoSrc: "/videos/jikgwango.mp4",
   },
   {
     id: 4, year: "2022.04 - 2022.08", company: "Seoul Metropolitan Gov.",
     role: "Virtual Space Creator Training",
     desc: "Unreal Engine 기반 가상공간 콘텐츠 제작",
     type: "education", position: "bottom", checkpointProgress: 0.60,
+    videoSrc: "/videos/jikgwango.mp4",
   },
   {
     id: 5, year: "2021.10 - 2022.02", company: "Wonderful Platform",
     role: "Frontend Intern",
     desc: "모바일 웹 브릿지 페이지 UI 구현, Cafe24 웹페이지 개발",
     type: "work", position: "top", checkpointProgress: 0.76,
+    videoSrc: null,
   },
   {
     id: 6, year: "2021.07 - 2021.08", company: "TheHigh Company",
     role: "Design Intern",
     desc: "광고 배너, 웹사이트 시안 디자인 제작",
     type: "work", position: "bottom", checkpointProgress: 0.90,
+    videoSrc: null,
   },
 ];
 
@@ -146,8 +152,18 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
   const svgRef          = useRef<SVGSVGElement>(null);
   const progressPathRef = useRef<SVGPathElement>(null);
   const cardRefs        = useRef<(HTMLDivElement | null)[]>([]);
-  const mediaRefs       = useRef<(HTMLDivElement | null)[]>([]);
   const checkpointRefs  = useRef<(SVGCircleElement | null)[]>([]);
+
+  // Floating video preview
+  const floatingRef    = useRef<HTMLDivElement>(null);
+  const floatCanvasRef = useRef<HTMLCanvasElement>(null);
+  const floatVideoRef  = useRef<HTMLVideoElement>(null);
+  const activeExpRef   = useRef<(typeof EXPERIENCES)[number] | null>(null);
+  const targetXRef     = useRef(0);
+  const targetYRef     = useRef(0);
+  const currentXRef    = useRef(0);
+  const currentYRef    = useRef(0);
+  const floatRafRef    = useRef<number | null>(null);
 
   const c2026Ref      = useRef<HTMLDivElement>(null);
   const panelRef      = useRef<HTMLDivElement>(null);
@@ -225,6 +241,97 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
       if (totalWidth > 0) {
         const triggeredCheckpoints = new Set<number>();
 
+        // ── Mosaic reveal: noise → video ──
+        const revealVideo = (onDone?: () => void) => {
+          const cv = floatCanvasRef.current;
+          const vd = floatVideoRef.current;
+          if (!cv || !vd) return;
+          const ctx2d = cv.getContext("2d");
+          if (!ctx2d) return;
+          const W = cv.width, H = cv.height;
+          cv.style.opacity = "1";
+          vd.style.opacity = "0";
+          vd.play().catch(() => {});
+          let frame = 0;
+          const total = 30;
+          const loop = () => {
+            const progress = frame / total;
+            const blockSize = Math.max(1, Math.floor(32 * (1 - progress)));
+            ctx2d.clearRect(0, 0, W, H);
+            const cols = Math.ceil(W / blockSize);
+            const rows = Math.ceil(H / blockSize);
+            const ns = 1 - progress;
+            for (let r = 0; r < rows; r++) {
+              for (let c = 0; c < cols; c++) {
+                if (Math.random() < ns * 0.25) {
+                  const g = Math.floor(Math.random() * 40);
+                  ctx2d.fillStyle = `rgba(${70+g},${30+g},${140+g},${0.6 + Math.random() * 0.4})`;
+                } else {
+                  const b = 15 + Math.floor(Math.random() * 20 * ns);
+                  ctx2d.fillStyle = `rgb(${b},${b},${b+3})`;
+                }
+                ctx2d.fillRect(c * blockSize, r * blockSize, blockSize, blockSize);
+              }
+            }
+            if (Math.random() < ns * 0.25) {
+              const lineY = Math.floor(Math.random() * H);
+              const offset = Math.floor((Math.random() - 0.5) * 12 * ns);
+              ctx2d.drawImage(cv, offset, lineY, W, 2, 0, lineY, W, 2);
+            }
+            frame++;
+            if (frame < total) {
+              requestAnimationFrame(loop);
+            } else {
+              gsap.to(cv, { opacity: 0, duration: 0.2 });
+              gsap.to(vd, { opacity: 1, duration: 0.2 });
+              onDone?.();
+            }
+          };
+          requestAnimationFrame(loop);
+        };
+
+        // ── Mosaic dissolve: video → noise → done ──
+        const dissolveVideo = (onDone?: () => void) => {
+          const cv = floatCanvasRef.current;
+          const vd = floatVideoRef.current;
+          if (!cv || !vd) return;
+          const ctx2d = cv.getContext("2d");
+          if (!ctx2d) return;
+          const W = cv.width, H = cv.height;
+          ctx2d.drawImage(vd, 0, 0, W, H);
+          gsap.to(vd, { opacity: 0, duration: 0.1 });
+          gsap.to(cv, { opacity: 1, duration: 0.1 });
+          let frame = 0;
+          const total = 25;
+          const loop = () => {
+            const progress = frame / total;
+            const blockSize = Math.max(1, Math.floor(32 * progress));
+            const ns = progress;
+            const cols = Math.ceil(W / blockSize);
+            const rows = Math.ceil(H / blockSize);
+            ctx2d.clearRect(0, 0, W, H);
+            for (let r = 0; r < rows; r++) {
+              for (let c = 0; c < cols; c++) {
+                if (Math.random() < ns * 0.3) {
+                  const g = Math.floor(Math.random() * 40);
+                  ctx2d.fillStyle = `rgba(${70+g},${30+g},${140+g},${Math.random() * 0.8})`;
+                } else {
+                  const b = 15 + Math.floor(Math.random() * 20 * ns);
+                  ctx2d.fillStyle = `rgb(${b},${b},${b+3})`;
+                }
+                ctx2d.fillRect(c * blockSize, r * blockSize, blockSize, blockSize);
+              }
+            }
+            frame++;
+            if (frame < total) {
+              requestAnimationFrame(loop);
+            } else {
+              onDone?.();
+            }
+          };
+          requestAnimationFrame(loop);
+        };
+
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
@@ -247,21 +354,15 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
               EXPERIENCES.forEach((exp, i) => {
                 if (p >= exp.checkpointProgress - 0.02 && !triggeredCheckpoints.has(i)) {
                   triggeredCheckpoints.add(i);
-
                   const circle = checkpointRefs.current[i];
                   if (circle) gsap.to(circle, { opacity: 1, duration: 0.3 });
-
                   const card = cardRefs.current[i];
-                  const media = mediaRefs.current[i];
                   const initY = exp.position === "top" ? -20 : 20;
                   if (card) {
                     gsap.fromTo(card,
                       { opacity: 0, y: initY },
                       { opacity: 1, y: 0, duration: 0.6, delay: 0.3, ease: "power2.out" },
                     );
-                  }
-                  if (media) {
-                    gsap.to(media, { opacity: 1, duration: 0.5, delay: 0.7 });
                   }
                 }
                 // scrub 역방향 처리
@@ -271,10 +372,39 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
                   if (circle) gsap.to(circle, { opacity: 0, duration: 0.2 });
                   const card = cardRefs.current[i];
                   if (card) gsap.to(card, { opacity: 0, duration: 0.2 });
-                  const media = mediaRefs.current[i];
-                  if (media) gsap.to(media, { opacity: 0, duration: 0.2 });
                 }
               });
+
+              // Active experience tracking → floating video 전환
+              const active = EXPERIENCES.reduce<(typeof EXPERIENCES)[number] | null>(
+                (prev, curr) => (p >= curr.checkpointProgress - 0.02 ? curr : prev),
+                null,
+              );
+              if (active?.id !== activeExpRef.current?.id) {
+                const prev = activeExpRef.current;
+                activeExpRef.current = active ?? null;
+                const floating = floatingRef.current;
+                if (!floating) return;
+                if (prev?.videoSrc) {
+                  dissolveVideo(() => {
+                    if (active?.videoSrc) {
+                      const vd = floatVideoRef.current;
+                      if (vd) { vd.src = active.videoSrc; vd.load(); }
+                      gsap.to(floating, { opacity: 1, duration: 0.3 });
+                      revealVideo();
+                    } else {
+                      gsap.to(floating, { opacity: 0, duration: 0.3 });
+                    }
+                  });
+                } else if (active?.videoSrc) {
+                  const vd = floatVideoRef.current;
+                  if (vd) { vd.src = active.videoSrc; vd.load(); }
+                  gsap.to(floating, { opacity: 1, duration: 0.2 });
+                  revealVideo();
+                } else {
+                  gsap.to(floating, { opacity: 0, duration: 0.3 });
+                }
+              }
             },
           },
         });
@@ -371,6 +501,62 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
     });
 
     return () => cancelAnimationFrame(raf);
+  }, []);
+
+  // ── Floating video: 캔버스 크기 설정 + 마우스 추적 lerp 루프 ──
+  useEffect(() => {
+    const section  = sub3.current;
+    const floating = floatingRef.current;
+    const cv       = floatCanvasRef.current;
+    if (!section || !floating || !cv) return;
+
+    cv.width  = 280;
+    cv.height = 157;
+
+    const onMouseMove = (e: MouseEvent) => {
+      const rect = section.getBoundingClientRect();
+      targetXRef.current = e.clientX - rect.left;
+      targetYRef.current = e.clientY - rect.top;
+    };
+
+    const onMouseLeave = () => {
+      gsap.to(floating, { opacity: 0, duration: 0.3 });
+    };
+
+    const onMouseEnter = () => {
+      if (activeExpRef.current?.videoSrc) {
+        gsap.to(floating, { opacity: 1, duration: 0.3 });
+      }
+    };
+
+    const loop = () => {
+      currentXRef.current += (targetXRef.current - currentXRef.current) * 0.08;
+      currentYRef.current += (targetYRef.current - currentYRef.current) * 0.08;
+
+      const rect = section.getBoundingClientRect();
+      const W = 280, H = 157;
+      let posX = currentXRef.current + 24;
+      let posY = currentYRef.current - 80;
+
+      if (posX + W > rect.width  - 20) posX = currentXRef.current - W - 24;
+      if (posY < 20)                   posY = currentYRef.current + 24;
+      if (posY + H > rect.height - 20) posY = rect.height - H - 20;
+
+      floating.style.transform = `translate(${posX}px, ${posY}px)`;
+      floatRafRef.current = requestAnimationFrame(loop);
+    };
+    floatRafRef.current = requestAnimationFrame(loop);
+
+    section.addEventListener("mousemove",  onMouseMove);
+    section.addEventListener("mouseleave", onMouseLeave);
+    section.addEventListener("mouseenter", onMouseEnter);
+
+    return () => {
+      section.removeEventListener("mousemove",  onMouseMove);
+      section.removeEventListener("mouseleave", onMouseLeave);
+      section.removeEventListener("mouseenter", onMouseEnter);
+      if (floatRafRef.current !== null) cancelAnimationFrame(floatRafRef.current);
+    };
   }, []);
 
   // ── Contact 패널 grid cell edge hover ──
@@ -729,31 +915,7 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
                 zIndex: 5,
               }}
             >
-              {/* 미디어 영역 */}
-              <div
-                ref={el => { mediaRefs.current[i] = el; }}
-                data-video-src=""
-                style={{
-                  width: "100%",
-                  aspectRatio: "16/9",
-                  background: "rgba(133,87,207,0.08)",
-                  borderRadius: 4,
-                  marginBottom: 10,
-                  opacity: 0,
-                  overflow: "hidden",
-                  position: "relative",
-                }}
-              >
-                <div style={{
-                  width: "100%",
-                  height: "100%",
-                  backgroundImage:
-                    "repeating-linear-gradient(45deg, rgba(133,87,207,0.06) 0px, rgba(133,87,207,0.06) 1px, transparent 1px, transparent 10px), " +
-                    "repeating-linear-gradient(-45deg, rgba(133,87,207,0.03) 0px, rgba(133,87,207,0.03) 1px, transparent 1px, transparent 10px)",
-                }} />
-              </div>
-
-              {/* 카드 본문 */}
+              {/* 카드 본문 — 텍스트 정보만 */}
               <div style={{
                 background: "rgba(255,255,255,0.04)",
                 border: "1px solid rgba(255,255,255,0.12)",
@@ -778,6 +940,47 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Floating Video Preview */}
+        <div
+          ref={floatingRef}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: 280,
+            height: 157,
+            zIndex: 50,
+            pointerEvents: "none",
+            borderRadius: 6,
+            overflow: "hidden",
+            border: "1px solid rgba(255,255,255,0.15)",
+            boxShadow: "0 0 24px rgba(133,87,207,0.3)",
+            opacity: 0,
+          }}
+        >
+          <canvas
+            ref={floatCanvasRef}
+            width={280}
+            height={157}
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+          />
+          <video
+            ref={floatVideoRef}
+            autoPlay
+            muted
+            loop
+            playsInline
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              opacity: 0,
+            }}
+          />
         </div>
       </div>
 
