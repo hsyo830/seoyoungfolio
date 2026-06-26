@@ -177,10 +177,12 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
   const currentYRef    = useRef(0);
   const floatRafRef    = useRef<number | null>(null);
 
-  const c2026Ref      = useRef<HTMLDivElement>(null);
-  const panelRef      = useRef<HTMLDivElement>(null);
-  const linksRef      = useRef<(HTMLAnchorElement | null)[]>([]);
-  const gridCanvasRef = useRef<HTMLCanvasElement>(null);
+  const c2026Ref        = useRef<HTMLDivElement>(null);
+  const panelRef        = useRef<HTMLDivElement>(null);
+  const linksRef        = useRef<(HTMLAnchorElement | null)[]>([]);
+  const emailLinkRef    = useRef<HTMLDivElement>(null);
+  const portfolioLinkRef = useRef<HTMLAnchorElement>(null);
+  const gridCanvasRef   = useRef<HTMLCanvasElement>(null);
 
   const charcoalRef = sectionRef ?? ownRef;
 
@@ -435,7 +437,8 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
       if (panelRef.current && c2026Ref.current) {
         // 초기 상태 설정
         gsap.set(c2026Ref.current, { y: 160, opacity: 0 });
-        gsap.set(linksRef.current.filter(Boolean), { y: 20, opacity: 0 });
+        gsap.set(linksRef.current.filter(Boolean), { y: 30, opacity: 0 });
+        gsap.set([emailLinkRef.current, portfolioLinkRef.current], { y: 30, opacity: 0 });
 
         // 1단계: 검정 패널 슬라이드업
         gsap.to(panelRef.current, {
@@ -457,13 +460,18 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
               duration: 1.4,
               ease: "power3.out",
               onComplete: () => {
-                // 3단계: 링크 버튼 순차 fade in
+                // 3단계: 이메일 링크
+                gsap.to(emailLinkRef.current, {
+                  opacity: 1, y: 0, duration: 0.6, delay: 0.2, ease: "power2.out",
+                });
+                // 4단계: 포트폴리오 링크
+                gsap.to(portfolioLinkRef.current, {
+                  opacity: 1, y: 0, duration: 0.6, delay: 0.35, ease: "power2.out",
+                });
+                // 5단계: GITHUB/EMAIL/PHONE 버튼
                 gsap.to(linksRef.current.filter(Boolean), {
-                  opacity: 1,
-                  y: 0,
-                  duration: 0.6,
-                  stagger: 0.1,
-                  ease: "power2.out",
+                  opacity: 1, y: 0, duration: 0.6, delay: 0.5,
+                  stagger: 0.1, ease: "power2.out",
                 });
               },
             });
@@ -792,6 +800,7 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
         .hero-link:hover::after  { top:-4px; right:-4px; opacity:1; }
         .hero-link:hover .cb-l { bottom:-4px; left:-4px; opacity:1; }
         .hero-link:hover .cb-r { bottom:-4px; right:-4px; opacity:1; }
+        .hero-link:hover .email-tooltip { opacity: 1; }
         .connect-me-btn {
           background: none;
           border: 1px solid rgba(255,255,255,0.28);
@@ -1116,16 +1125,37 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
             gap: 8,
           }}
         >
+          {/* 이메일 — 개별 ref, 브라켓 독립, 툴팁 포함 */}
           <div
+            ref={emailLinkRef}
             className="hero-link"
             onClick={handleEmailCopy}
-            style={{ fontSize: "clamp(32px, 5vw, 72px)" }}
+            style={{ fontSize: "clamp(32px, 5vw, 72px)", position: "relative" }}
           >
             <span className="cb-l" />
             <span className="cb-r" />
             {emailCopied ? "COPIED!" : "nah830@gmail.com ↗"}
+            <span style={{
+              position: "absolute",
+              bottom: -24,
+              left: 0,
+              fontSize: 12,
+              color: "rgba(255,255,255,0.5)",
+              letterSpacing: "0.05em",
+              opacity: 0,
+              transition: "opacity 0.2s ease",
+              pointerEvents: "none",
+              whiteSpace: "nowrap",
+            }}
+              className="email-tooltip"
+            >
+              {emailCopied ? "복사됐어요!" : "nah830@gmail.com 복사하기"}
+            </span>
           </div>
+
+          {/* 포트폴리오 — 개별 ref, 브라켓 독립 */}
           <a
+            ref={portfolioLinkRef}
             className="hero-link"
             href="https://app.notion.com/p/Portfolio-35efb7a813f88072ac2af3fd6a574392?source=copy_link"
             target="_blank"
