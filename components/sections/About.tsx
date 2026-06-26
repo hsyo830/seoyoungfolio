@@ -29,7 +29,7 @@ const EXPERIENCES = [
     id: 1, year: "2025.09 - 2026.02", company: "Codeit",
     role: "Frontend Engineering Bootcamp",
     desc: "React, TypeScript, Next.js 기반 프로젝트 수행",
-    type: "education", position: "top", checkpointProgress: 0.12,
+    type: "education", position: "bottom", checkpointProgress: 0.12,
     videoSrc: "/videos/jikgwango.mp4",
   },
   {
@@ -69,12 +69,15 @@ const EXPERIENCES = [
   },
 ];
 
+// Safe area: path Y 최고점이 280 이상이 되도록 조정 (CSS 200px safe area 대응)
+const SAFE_AREA_TOP_PX = 200;
+
 const PATH_D =
-  "M 0 400 C 200 400 300 150 600 150 S 900 600 1100 400 " +
-  "C 1300 200 1500 650 1800 400 S 2100 150 2400 300 " +
-  "C 2600 450 2800 600 3000 400 S 3300 150 3600 250 " +
-  "C 3800 350 4000 600 4200 400 S 4500 200 4800 350 " +
-  "C 5000 500 5200 150 5400 400 S 5700 500 6000 400";
+  "M 0 400 C 200 400 300 280 600 280 S 900 560 1100 400 " +
+  "C 1300 280 1500 600 1800 400 S 2100 280 2400 320 " +
+  "C 2600 450 2800 580 3000 400 S 3300 280 3600 280 " +
+  "C 3800 360 4000 580 4200 400 S 4500 280 4800 360 " +
+  "C 5000 500 5200 280 5400 400 S 5700 500 6000 400";
 
 // ─── Shared styles ────────────────────────────────────────────────────────────
 
@@ -492,8 +495,13 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
         if (card) {
           const cssX = (pt.x / 6000) * svgW;
           const cssY = (pt.y / 800) * svgH;
+          // Safe Area 침범 시 강제 bottom 배치
+          const effectivePos =
+            exp.position === "top" && (cssY - 220) < SAFE_AREA_TOP_PX
+              ? "bottom"
+              : exp.position;
           card.style.left = `${cssX - 120}px`;
-          card.style.top  = exp.position === "top"
+          card.style.top  = effectivePos === "top"
             ? `${cssY - 220}px`
             : `${cssY + 24}px`;
         }
@@ -835,13 +843,13 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
           background: "#2a2a2e",
         }}
       >
-        {/* 타이틀 — 좌상단 고정 */}
+        {/* 타이틀 — 좌상단 고정, 카드보다 항상 위 */}
         <div
           style={{
             position: "absolute",
-            top: "8vh",
-            left: "10vw",
-            zIndex: 10,
+            top: 32,
+            left: 48,
+            zIndex: 20,
             pointerEvents: "none",
           }}
         >
