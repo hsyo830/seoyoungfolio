@@ -244,6 +244,26 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
       if (totalWidth > 0) {
         const triggeredCheckpoints = new Set<number>();
 
+        // 75% 흰색 / 15% 라이트그레이 / 7% 미디엄그레이 / 3% 연보라
+        const getMosaicColor = () => {
+          const rand = Math.random();
+          if (rand < 0.75) {
+            const v = 240 + Math.floor(Math.random() * 15);
+            return `rgb(${v},${v},${v})`;
+          } else if (rand < 0.90) {
+            const v = 200 + Math.floor(Math.random() * 20);
+            return `rgb(${v},${v},${v})`;
+          } else if (rand < 0.97) {
+            const v = 165 + Math.floor(Math.random() * 20);
+            return `rgb(${v},${v},${v})`;
+          } else {
+            const r = 210 + Math.floor(Math.random() * 10);
+            const g = 193 + Math.floor(Math.random() * 10);
+            const b = 250 + Math.floor(Math.random() * 5);
+            return `rgb(${r},${g},${b})`;
+          }
+        };
+
         // ── Mosaic reveal: noise → video ──
         const revealVideo = (onDone?: () => void) => {
           const cv = floatCanvasRef.current;
@@ -266,13 +286,7 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
             const ns = 1 - progress;
             for (let r = 0; r < rows; r++) {
               for (let c = 0; c < cols; c++) {
-                if (Math.random() < ns * 0.25) {
-                  const g = Math.floor(Math.random() * 40);
-                  ctx2d.fillStyle = `rgba(${70+g},${30+g},${140+g},${0.6 + Math.random() * 0.4})`;
-                } else {
-                  const b = 15 + Math.floor(Math.random() * 20 * ns);
-                  ctx2d.fillStyle = `rgb(${b},${b},${b+3})`;
-                }
+                ctx2d.fillStyle = getMosaicColor();
                 ctx2d.fillRect(c * blockSize, r * blockSize, blockSize, blockSize);
               }
             }
@@ -309,19 +323,12 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
           const loop = () => {
             const progress = frame / total;
             const blockSize = Math.max(1, Math.floor(32 * progress));
-            const ns = progress;
             const cols = Math.ceil(W / blockSize);
             const rows = Math.ceil(H / blockSize);
             ctx2d.clearRect(0, 0, W, H);
             for (let r = 0; r < rows; r++) {
               for (let c = 0; c < cols; c++) {
-                if (Math.random() < ns * 0.3) {
-                  const g = Math.floor(Math.random() * 40);
-                  ctx2d.fillStyle = `rgba(${70+g},${30+g},${140+g},${Math.random() * 0.8})`;
-                } else {
-                  const b = 15 + Math.floor(Math.random() * 20 * ns);
-                  ctx2d.fillStyle = `rgb(${b},${b},${b+3})`;
-                }
+                ctx2d.fillStyle = getMosaicColor();
                 ctx2d.fillRect(c * blockSize, r * blockSize, blockSize, blockSize);
               }
             }
