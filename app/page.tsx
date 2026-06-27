@@ -20,9 +20,10 @@ export default function Home() {
       </div>
 
       {/* Hero */}
-      <main className="relative flex flex-col items-center justify-center min-h-screen px-6 text-center select-none" style={{ zIndex: 10 }}>
+      <main style={{ position: "relative", minHeight: "100vh", zIndex: 10 }}
+        className="flex flex-col items-center justify-center px-6 text-center select-none">
         <HeroLines />
-        <div className="relative flex flex-col items-center" style={{ zIndex: 1 }}>
+        <div className="relative flex flex-col items-center" style={{ zIndex: 10 }}>
           <MetalHeroText />
           <HeroAnimText />
         </div>
