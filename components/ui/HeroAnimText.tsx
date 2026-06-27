@@ -36,8 +36,8 @@ export default function HeroAnimText() {
       {/* SEO YOUNG — 글자별 stagger */}
       <p
         ref={nameRef}
-        className="mt-6 font-title font-medium tracking-widest uppercase text-text-secondary"
-        style={{ fontSize: "clamp(0.85rem, 2vw, 1.1rem)", letterSpacing: "0.35em" }}
+        className="mt-6 font-title font-medium tracking-widest uppercase"
+        style={{ fontSize: "clamp(0.85rem, 2vw, 1.1rem)", letterSpacing: "0.35em", color: "rgba(255,255,255,0.75)" }}
       >
         {NAME.split("").map((char, i) => (
           <span
@@ -53,8 +53,9 @@ export default function HeroAnimText() {
       {/* 태그라인 — 단어별 stagger */}
       <p
         ref={taglineRef}
-        className="mt-4 font-body text-text-secondary"
+        className="mt-4 font-body"
         style={{
+          color: "rgba(255,255,255,0.6)",
           fontSize: "clamp(0.9rem, 1.6vw, 1.1rem)",
           display: "flex",
           flexWrap: "wrap",
