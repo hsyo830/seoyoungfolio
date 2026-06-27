@@ -14,11 +14,15 @@ const BLUR = 36;           // SVG feGaussianBlur stdDeviation
 type Trail = { x: number; y: number; angle: number; rx: number };
 
 export default function MetalHeroText() {
-  const videoRef    = useRef<HTMLVideoElement>(null);
-  const metalH1Ref  = useRef<HTMLHeadingElement>(null);
-  const baseH1Ref   = useRef<HTMLHeadingElement>(null);
-  const videoRafRef = useRef<number>(0);
-  const maskRafRef  = useRef<number>(0);
+  const videoRef      = useRef<HTMLVideoElement>(null);
+  const metalH1Ref    = useRef<HTMLHeadingElement>(null);
+  const baseH1Ref     = useRef<HTMLHeadingElement>(null);
+  const videoRafRef   = useRef<number>(0);
+  const maskRafRef    = useRef<number>(0);
+  const divLeftRef    = useRef<HTMLSpanElement>(null);
+  const divLineRef    = useRef<HTMLDivElement>(null);
+  const divRightRef   = useRef<HTMLSpanElement>(null);
+  const accentLineRef = useRef<HTMLDivElement>(null);
 
   const mouseRef    = useRef({ x: 0, y: 0, active: false });
   const lerpRef     = useRef({ x: 0, y: 0 });
@@ -36,6 +40,20 @@ export default function MetalHeroText() {
       chars,
       { y: 20, opacity: 0 },
       { y: 0, opacity: 1, duration: 0.6, stagger: 0.04, ease: 'power3.out', delay: 0 }
+    );
+
+    // 17 chars * 0.04 stagger + 0.6 duration = ~1.3s 완료 후 divider/accent 등장
+    const heroEnd = 1.3;
+
+    gsap.timeline({ delay: heroEnd })
+      .fromTo(divLeftRef.current,  { opacity: 0 }, { opacity: 1, duration: 0.5 })
+      .fromTo(divLineRef.current,  { width: "0%" }, { width: "100%", duration: 0.8, ease: "power2.out" })
+      .fromTo(divRightRef.current, { opacity: 0 }, { opacity: 1, duration: 0.5 }, "-=0.1");
+
+    gsap.fromTo(
+      accentLineRef.current,
+      { scaleX: 0 },
+      { scaleX: 1, duration: 0.8, ease: "power3.out", transformOrigin: "right center", delay: heroEnd + 0.3 }
     );
   }, []);
 
@@ -178,6 +196,69 @@ export default function MetalHeroText() {
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
     >
+      {/* Element 2: divider — FRONTEND 텍스트 바로 위 */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: "calc(100% + 10px)",
+          left: 0,
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          gap: "16px",
+        }}
+      >
+        <span
+          ref={divLeftRef}
+          style={{
+            fontSize: "11px",
+            letterSpacing: "0.2em",
+            color: "rgba(255,255,255,0.55)",
+            whiteSpace: "nowrap",
+            fontFamily: "var(--font-space-grotesk)",
+            opacity: 0,
+            flexShrink: 0,
+          }}
+        >
+          Where Aesthetics
+        </span>
+        <div style={{ flex: 1, height: "1px", overflow: "hidden" }}>
+          <div
+            ref={divLineRef}
+            style={{ height: "100%", width: "0%", background: "rgba(255,255,255,0.4)" }}
+          />
+        </div>
+        <span
+          ref={divRightRef}
+          style={{
+            fontSize: "11px",
+            letterSpacing: "0.2em",
+            color: "rgba(255,255,255,0.55)",
+            whiteSpace: "nowrap",
+            fontFamily: "var(--font-space-grotesk)",
+            opacity: 0,
+            flexShrink: 0,
+          }}
+        >
+          Meet Engineering
+        </span>
+      </div>
+
+      {/* Element 3: accent line — DEVELOPER 텍스트 하단 우측 */}
+      <div
+        ref={accentLineRef}
+        style={{
+          position: "absolute",
+          bottom: "-10px",
+          right: 0,
+          width: "45%",
+          height: "6px",
+          background: "#ea5c2a",
+          transform: "scaleX(0)",
+          transformOrigin: "right center",
+        }}
+      />
+
       {/* Safari drawImage 호환: display:none 대신 1px 숨김 */}
       <video
         ref={videoRef}
