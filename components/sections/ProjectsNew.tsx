@@ -222,11 +222,11 @@ function Card({ project, onRef }: { project: Project; onRef: (r: CardRef) => voi
       <div style={{ flexShrink: 0, height: MARQUEE_H }} />
 
       {/* ── Content area: everything below sticky bar ── */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
+      <div style={{ height: `calc(100vh - ${MARQUEE_H}px)`, display: "flex", flexDirection: "column", overflow: "hidden" }}>
 
         {/* Title zone — 45% of content area */}
         <div style={{
-          flex: "0 0 45%", minHeight: 0,
+          flex: "0 0 45%", minHeight: 0, overflow: "hidden",
           display: "flex", flexDirection: "column", justifyContent: "center",
           padding: "0 5vw",
           position: "relative", zIndex: 2,
@@ -264,7 +264,7 @@ function Card({ project, onRef }: { project: Project; onRef: (r: CardRef) => voi
         }} />
 
         {/* Bottom zone: 3 columns — flex-1, takes remaining space */}
-        <div style={{ flex: 1, display: "flex", position: "relative", zIndex: 2, minHeight: 0 }}>
+        <div style={{ flex: 1, display: "flex", position: "relative", zIndex: 2, minHeight: 0, overflow: "hidden" }}>
 
           {/* Stack col — 33.3% */}
           <div style={{
