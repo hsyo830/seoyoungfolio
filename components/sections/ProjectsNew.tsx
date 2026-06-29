@@ -180,8 +180,8 @@ function Card({ project, onRef }: { project: Project; onRef: (r: CardRef) => voi
   const hasDemo = !!project.demo;
   const hasLive = !!project.live;
 
-  const titleH  = `calc((100vh - ${MARQUEE_H}px) / 3)`;
-  const bottomH = `calc((100vh - ${MARQUEE_H}px) * 2 / 3 - 1px)`;
+  const titleH  = `calc((100vh - ${MARQUEE_H}px) * 0.45)`;
+  const bottomH = `calc((100vh - ${MARQUEE_H}px) * 0.55 - 1px)`;
 
   return (
     <div style={{
@@ -457,14 +457,19 @@ function buildCardInTl(refs: CardRef, fast: boolean): gsap.core.Timeline {
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
+const ENTRY_DWELL = 500; // px of vertical scroll held at card 0 before horizontal starts
+const EXIT_DWELL  = 400; // px held at last card after horizontal ends
+
 export default function ProjectsNew() {
   const sectionRef     = useRef<HTMLElement>(null);
   const trackRef       = useRef<HTMLDivElement>(null);
   const [activeIdx, setActiveIdx] = useState(-1);
   const prevIdxRef     = useRef(-1);
+  const scrollIdxRef   = useRef(-1); // dedup guard for tween onUpdate
   const cardRefsMap    = useRef<Map<number, CardRef>>(new Map());
   const activeTlRef    = useRef<gsap.core.Timeline | null>(null);
   const gridAnimDone   = useRef(false);
+  const isInSection    = useRef(false);
 
   // Background SVG line refs
   const hLine1Ref = useRef<SVGLineElement>(null);
@@ -499,44 +504,86 @@ export default function ProjectsNew() {
       onComplete: () => gsap.set(all, { x: 0 }) });
   }, []);
 
-  // GSAP horizontal scroll pin
+  // GSAP horizontal scroll with entry + exit dwell zones
   useEffect(() => {
     const section = sectionRef.current;
     const track   = trackRef.current;
     if (!section || !track) return;
 
-    const dist = (projects.length - 1) * window.innerWidth;
+    const dist        = (projects.length - 1) * window.innerWidth;
+    const totalScroll = dist + ENTRY_DWELL + EXIT_DWELL;
+    const ENTRY_FRAC  = ENTRY_DWELL / totalScroll;
+    const EXIT_FRAC   = (totalScroll - EXIT_DWELL) / totalScroll;
+
+    const proxy = { val: 0 };
 
     const ctx = gsap.context(() => {
-      gsap.to(track, {
-        x: -dist,
+      // Proxy tween: scrub drives proxy.val 0→1 smoothly.
+      // onUpdate applies the custom nonlinear x mapping.
+      const tween = gsap.to(proxy, {
+        val: 1,
         ease: "none",
-        scrollTrigger: {
-          trigger: section,
-          pin: true, pinSpacing: true,
-          scrub: 1,
-          start: "top top",
-          end: `+=${dist}`,
-          invalidateOnRefresh: true,
-          onEnter() {
-            animateBgGrid();
-            setActiveIdx(0);
-          },
-          onLeaveBack() {
-            gridAnimDone.current = false;
-            gsap.set(
-              [hLine1Ref.current, hLine2Ref.current, vLine1Ref.current,
-               vLine2Ref.current, hDash1Ref.current, hDash2Ref.current],
-              { scaleX: 0, scaleY: 0 }
-            );
-            setActiveIdx(-1);
-          },
-          onUpdate(self) {
-            const idx = Math.min(Math.floor(self.progress * projects.length), projects.length - 1);
-            setActiveIdx(idx);
-          },
+        paused: true,
+        onUpdate() {
+          if (!isInSection.current) return;
+          const p = proxy.val;
+
+          let x: number;
+          let scrollFrac: number;
+          if (p <= ENTRY_FRAC) {
+            x = 0;
+            scrollFrac = 0;
+          } else if (p >= EXIT_FRAC) {
+            x = -dist;
+            scrollFrac = 1;
+          } else {
+            scrollFrac = (p - ENTRY_FRAC) / (EXIT_FRAC - ENTRY_FRAC);
+            x = -scrollFrac * dist;
+          }
+
+          gsap.set(track, { x });
+
+          const newIdx = Math.max(
+            0,
+            Math.min(Math.floor(scrollFrac * projects.length), projects.length - 1)
+          );
+          if (newIdx !== scrollIdxRef.current) {
+            scrollIdxRef.current = newIdx;
+            setActiveIdx(newIdx);
+          }
         },
       });
+
+      ScrollTrigger.create({
+        id: "projects-main",
+        trigger: section,
+        start: "top top",
+        end: `+=${totalScroll}`,
+        pin: true,
+        pinSpacing: true,
+        scrub: 1,
+        animation: tween,
+        invalidateOnRefresh: true,
+        onEnter() {
+          isInSection.current = true;
+          animateBgGrid();
+          scrollIdxRef.current = 0;
+          setActiveIdx(0);
+        },
+        onLeaveBack() {
+          isInSection.current = false;
+          gridAnimDone.current = false;
+          gsap.set(
+            [hLine1Ref.current, hLine2Ref.current, vLine1Ref.current,
+             vLine2Ref.current, hDash1Ref.current, hDash2Ref.current],
+            { scaleX: 0, scaleY: 0 }
+          );
+          scrollIdxRef.current = -1;
+          setActiveIdx(-1);
+        },
+      });
+
+      ScrollTrigger.refresh();
     });
 
     return () => ctx.revert();
