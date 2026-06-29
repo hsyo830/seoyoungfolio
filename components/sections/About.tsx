@@ -596,7 +596,7 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
 
     const CELL = 100;
     const HALF = CELL / 2;
-    const BASE = "133, 87, 207";
+    const BASE = "234, 93, 42";
 
     const NEIGHBOR_OFFSETS = [
       { dc:  0, dr: -1 },
@@ -774,10 +774,10 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
         .contact-link::after  { content:""; position:absolute; top:-7px; right:-7px; width:9px; height:9px; border-top:1px solid rgba(255,255,255,0.8); border-right:1px solid rgba(255,255,255,0.8); opacity:0; transition:all .3s ease; }
         .contact-link .cb-l { position:absolute; bottom:-7px; left:-7px; width:9px; height:9px; border-bottom:1px solid rgba(255,255,255,0.8); border-left:1px solid rgba(255,255,255,0.8); opacity:0; transition:all .3s ease; }
         .contact-link .cb-r { position:absolute; bottom:-7px; right:-7px; width:9px; height:9px; border-bottom:1px solid rgba(255,255,255,0.8); border-right:1px solid rgba(255,255,255,0.8); opacity:0; transition:all .3s ease; }
-        .contact-link:hover::before { top:-1px; left:-1px; opacity:1; border-color:rgba(110,90,255,0.8); }
-        .contact-link:hover::after  { top:-1px; right:-1px; opacity:1; border-color:rgba(110,90,255,0.8); }
-        .contact-link:hover .cb-l { bottom:-1px; left:-1px; opacity:1; border-color:rgba(110,90,255,0.8); }
-        .contact-link:hover .cb-r { bottom:-1px; right:-1px; opacity:1; border-color:rgba(110,90,255,0.8); }
+        .contact-link:hover::before { top:-1px; left:-1px; opacity:1; border-color:rgba(234,93,42,0.8); }
+        .contact-link:hover::after  { top:-1px; right:-1px; opacity:1; border-color:rgba(234,93,42,0.8); }
+        .contact-link:hover .cb-l { bottom:-1px; left:-1px; opacity:1; border-color:rgba(234,93,42,0.8); }
+        .contact-link:hover .cb-r { bottom:-1px; right:-1px; opacity:1; border-color:rgba(234,93,42,0.8); }
         .hero-link {
           display: inline-flex; align-items: center;
           text-decoration: none;
@@ -787,15 +787,15 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
           cursor: pointer;
           transition: color 0.2s ease;
         }
-        .hero-link:hover { color: #8557cf; }
-        .hero-link:active { color: #5a3a9a; }
+        .hero-link:hover { color: #ea5d2a; }
+        .hero-link:active { color: #c44a1a; }
         .hero-wrap {
           position: relative; display: inline-block; width: fit-content;
         }
-        .hero-wrap::before { content:""; position:absolute; top:-14px; left:-14px; width:18px; height:18px; border-top:2px solid #8557cf; border-left:2px solid #8557cf; opacity:0; transition:all .3s ease; }
-        .hero-wrap::after  { content:""; position:absolute; top:-14px; right:-14px; width:18px; height:18px; border-top:2px solid #8557cf; border-right:2px solid #8557cf; opacity:0; transition:all .3s ease; }
-        .hero-wrap .cb-l { position:absolute; bottom:-14px; left:-14px; width:18px; height:18px; border-bottom:2px solid #8557cf; border-left:2px solid #8557cf; opacity:0; transition:all .3s ease; }
-        .hero-wrap .cb-r { position:absolute; bottom:-14px; right:-14px; width:18px; height:18px; border-bottom:2px solid #8557cf; border-right:2px solid #8557cf; opacity:0; transition:all .3s ease; }
+        .hero-wrap::before { content:""; position:absolute; top:-14px; left:-14px; width:18px; height:18px; border-top:2px solid #ea5d2a; border-left:2px solid #ea5d2a; opacity:0; transition:all .3s ease; }
+        .hero-wrap::after  { content:""; position:absolute; top:-14px; right:-14px; width:18px; height:18px; border-top:2px solid #ea5d2a; border-right:2px solid #ea5d2a; opacity:0; transition:all .3s ease; }
+        .hero-wrap .cb-l { position:absolute; bottom:-14px; left:-14px; width:18px; height:18px; border-bottom:2px solid #ea5d2a; border-left:2px solid #ea5d2a; opacity:0; transition:all .3s ease; }
+        .hero-wrap .cb-r { position:absolute; bottom:-14px; right:-14px; width:18px; height:18px; border-bottom:2px solid #ea5d2a; border-right:2px solid #ea5d2a; opacity:0; transition:all .3s ease; }
         .hero-wrap:hover::before { top:-4px; left:-4px; opacity:1; }
         .hero-wrap:hover::after  { top:-4px; right:-4px; opacity:1; }
         .hero-wrap:hover .cb-l { bottom:-4px; left:-4px; opacity:1; }
@@ -817,9 +817,9 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
           margin-left: 40px;
         }
         .connect-me-btn:hover {
-          border-color: rgba(160,100,255,0.9);
-          color: rgba(180,130,255,0.95);
-          background: rgba(140,80,220,0.12);
+          border-color: rgba(234,93,42,0.9);
+          color: #ea5d2a;
+          background: rgba(234,93,42,0.12);
         }
       `}</style>
 
