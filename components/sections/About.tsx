@@ -268,10 +268,7 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
             const v = 165 + Math.floor(Math.random() * 20);
             return `rgb(${v},${v},${v})`;
           } else {
-            const r = 210 + Math.floor(Math.random() * 10);
-            const g = 193 + Math.floor(Math.random() * 10);
-            const b = 250 + Math.floor(Math.random() * 5);
-            return `rgb(${r},${g},${b})`;
+            return `rgba(180, 180, 180, 1)`;
           }
         };
 
@@ -951,7 +948,7 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
                 ref={el => { checkpointRefs.current[i] = el; }}
                 width={12}
                 height={12}
-                fill="#F4F4F6"
+                fill="#ea5d2a"
                 opacity={0}
                 style={{ transformOrigin: "center", transformBox: "fill-box" }}
               />
@@ -1012,7 +1009,7 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
             borderRadius: 6,
             overflow: "hidden",
             border: "1px solid rgba(255,255,255,0.15)",
-            boxShadow: "0 0 24px rgba(133,87,207,0.3)",
+            boxShadow: "0 0 16px rgba(180,180,180,0.15)",
             opacity: 0,
           }}
         >
