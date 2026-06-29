@@ -180,19 +180,15 @@ function Card({ project, onRef }: { project: Project; onRef: (r: CardRef) => voi
   const hasDemo = !!project.demo;
   const hasLive = !!project.live;
 
-  const titleH   = `calc((100vh - ${MARQUEE_H}px) * 0.45)`;
-  const bottomH  = `calc((100vh - ${MARQUEE_H}px) * 0.50 - 1px)`;
-  const typeRowH = `calc((100vh - ${MARQUEE_H}px) * 0.05)`;
-
   return (
     <div style={{
       width: "100vw", height: "100vh", flexShrink: 0,
       position: "relative",
       border: "1px dashed rgba(255,255,255,0.14)",
       boxSizing: "border-box", overflow: "hidden",
+      display: "flex", flexDirection: "column",
     }}>
-      {/* ── Inner box border — 4 edges, drawn clockwise ── */}
-      {/* Top */}
+      {/* ── Inner box border — 4 edges, drawn clockwise (absolute) ── */}
       <div ref={boxTopRef} style={{
         position: "absolute", top: MARQUEE_H + BOX_INSET,
         left: BOX_INSET, right: BOX_INSET, height: 2,
@@ -200,7 +196,6 @@ function Card({ project, onRef }: { project: Project; onRef: (r: CardRef) => voi
         transformOrigin: "left center", transform: "scaleX(0)",
         pointerEvents: "none", zIndex: 5,
       }} />
-      {/* Right */}
       <div ref={boxRightRef} style={{
         position: "absolute", top: MARQUEE_H + BOX_INSET,
         right: BOX_INSET, bottom: BOX_INSET, width: 2,
@@ -208,7 +203,6 @@ function Card({ project, onRef }: { project: Project; onRef: (r: CardRef) => voi
         transformOrigin: "top center", transform: "scaleY(0)",
         pointerEvents: "none", zIndex: 5,
       }} />
-      {/* Bottom */}
       <div ref={boxBottomRef} style={{
         position: "absolute", bottom: BOX_INSET,
         left: BOX_INSET, right: BOX_INSET, height: 2,
@@ -216,7 +210,6 @@ function Card({ project, onRef }: { project: Project; onRef: (r: CardRef) => voi
         transformOrigin: "right center", transform: "scaleX(0)",
         pointerEvents: "none", zIndex: 5,
       }} />
-      {/* Left */}
       <div ref={boxLeftRef} style={{
         position: "absolute", top: MARQUEE_H + BOX_INSET,
         left: BOX_INSET, bottom: BOX_INSET, width: 2,
@@ -226,176 +219,183 @@ function Card({ project, onRef }: { project: Project; onRef: (r: CardRef) => voi
       }} />
 
       {/* ── Sticky placeholder ── */}
-      <div style={{ height: MARQUEE_H }} />
+      <div style={{ flexShrink: 0, height: MARQUEE_H }} />
 
-      {/* ── Title zone ── */}
-      <div style={{
-        height: titleH,
-        display: "flex", flexDirection: "column", justifyContent: "center",
-        padding: "0 5vw",
-        position: "relative", zIndex: 2,
-      }}>
-        <p ref={indexRef} style={{
-          ...TEXT_HIDDEN,
-          fontFamily: "var(--font-inter)", fontSize: 11, fontWeight: 600,
-          letterSpacing: "0.25em", color: "rgba(255,255,255,0.4)",
-          textTransform: "uppercase", marginBottom: "0.6em",
-        }}>PROJECT // {project.index}</p>
+      {/* ── Content area: everything below sticky bar ── */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
 
-        <h2 ref={titleRef} style={{
-          ...TEXT_HIDDEN,
-          fontFamily: "'KblJumpExtended', sans-serif",
-          fontSize: "clamp(2.5rem, 6vw, 5.5rem)",
-          fontWeight: 800, lineHeight: 1, letterSpacing: "-0.02em",
-          color: "#ffffff", margin: 0, marginBottom: "0.4em",
-        }}>{project.title}</h2>
-
-        <p ref={subRef} style={{
-          ...TEXT_HIDDEN,
-          fontFamily: "var(--font-inter)",
-          fontSize: "clamp(10px, 1vw, 13px)", fontWeight: 400,
-          letterSpacing: "0.12em", color: "rgba(255,255,255,0.45)",
-          textTransform: "uppercase", margin: 0,
-        }}>{project.subtitle}</p>
-      </div>
-
-      {/* ── H divider: title ↔ bottom ── */}
-      <div ref={hDivRef} style={{
-        ...LINE_STYLE,
-        height: 1,
-        transformOrigin: "left center", transform: "scaleX(0)",
-        position: "relative", zIndex: 2,
-      }} />
-
-      {/* ── Bottom zone: 3 columns ── */}
-      <div style={{ height: bottomH, display: "flex", position: "relative", zIndex: 2 }}>
-
-        {/* Stack 3/9 */}
-        <div style={{ flex: "0 0 33.3%", padding: "1.8rem 2.5vw", display: "flex", flexDirection: "column", gap: "0.45rem" }}>
-          <p ref={stackLblRef} style={{
-            ...TEXT_HIDDEN,
-            fontFamily: "var(--font-inter)", fontSize: 10, fontWeight: 600,
-            letterSpacing: "0.2em", color: "rgba(255,255,255,0.35)",
-            textTransform: "uppercase", margin: 0, marginBottom: "0.8rem",
-          }}>STACK //</p>
-          <div ref={tagsRef} style={{ display: "flex", flexDirection: "column", gap: "0.45rem", alignItems: "flex-start" }}>
-            {project.stack.map((tech) => (
-              <span key={tech} style={{
-                ...TEXT_HIDDEN,
-                border: "1px solid rgba(255,255,255,0.3)",
-                padding: "4px 12px",
-                fontFamily: "var(--font-inter)", fontSize: 11, fontWeight: 500,
-                letterSpacing: "0.06em", color: "rgba(255,255,255,0.75)",
-              }}>{tech}</span>
-            ))}
-          </div>
-        </div>
-
-        {/* V divider 1 */}
-        <div ref={vDiv1Ref} style={{
-          ...LINE_STYLE, width: 1,
-          transformOrigin: "top center", transform: "scaleY(0)",
-        }} />
-
-        {/* Links 2/9 */}
-        <div style={{ flex: "0 0 22.2%", display: "flex", flexDirection: "column" }}>
-          {/* Link rows */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-            <a ref={link1Ref} href={hasGH ? project.github : undefined}
-              target="_blank" rel="noopener noreferrer"
-              className="pn-link-row"
-              style={{
-                ...TEXT_HIDDEN, flex: 1,
-                display: "flex", alignItems: "center", justifyContent: "space-between",
-                padding: "0 1.5vw",
-                fontFamily: "var(--font-inter)", fontSize: 11, fontWeight: 600,
-                letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none",
-                color: hasGH ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.2)",
-                cursor: hasGH ? "pointer" : "default",
-              }}>
-              <span>GITHUB</span>{hasGH && <span style={{ fontSize: 14 }}>↗</span>}
-            </a>
-
-            <div ref={hLink1Ref} style={{
-              ...LINE_STYLE, height: 1,
-              transformOrigin: "left center", transform: "scaleX(0)",
-            }} />
-
-            <a ref={link2Ref} href={hasDemo ? project.demo : undefined}
-              target="_blank" rel="noopener noreferrer"
-              className="pn-link-row"
-              style={{
-                ...TEXT_HIDDEN, flex: 1,
-                display: "flex", alignItems: "center", justifyContent: "space-between",
-                padding: "0 1.5vw",
-                fontFamily: "var(--font-inter)", fontSize: 11, fontWeight: 600,
-                letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none",
-                color: hasDemo ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.2)",
-                cursor: hasDemo ? "pointer" : "default",
-              }}>
-              <span>DEMO VIDEO</span>{hasDemo && <span style={{ fontSize: 14 }}>↗</span>}
-            </a>
-
-            <div ref={hLink2Ref} style={{
-              ...LINE_STYLE, height: 1,
-              transformOrigin: "left center", transform: "scaleX(0)",
-            }} />
-
-            <a ref={link3Ref} href={hasLive ? project.live : undefined}
-              target="_blank" rel="noopener noreferrer"
-              className="pn-link-row"
-              style={{
-                ...TEXT_HIDDEN, flex: 1,
-                display: "flex", alignItems: "center", justifyContent: "space-between",
-                padding: "0 1.5vw",
-                fontFamily: "var(--font-inter)", fontSize: 11, fontWeight: 600,
-                letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none",
-                color: hasLive ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.2)",
-                cursor: hasLive ? "pointer" : "default",
-              }}>
-              <span>LIVE SITE</span>{hasLive && <span style={{ fontSize: 14 }}>↗</span>}
-            </a>
-          </div>
-
-        </div>
-
-        {/* V divider 2 */}
-        <div ref={vDiv2Ref} style={{
-          ...LINE_STYLE, width: 1,
-          transformOrigin: "top center", transform: "scaleY(0)",
-        }} />
-
-        {/* Video 4/9 */}
-        <div ref={videoRef} style={{
-          flex: 1, position: "relative", overflow: "hidden",
-          ...TEXT_HIDDEN,
+        {/* Title zone — 45% of content area */}
+        <div style={{
+          flex: "0 0 45%", minHeight: 0,
+          display: "flex", flexDirection: "column", justifyContent: "center",
+          padding: "0 5vw",
+          position: "relative", zIndex: 2,
         }}>
-          <p style={{
-            position: "absolute", top: "1.2rem", left: "1.5vw", zIndex: 2,
-            fontFamily: "var(--font-inter)", fontSize: 10, fontWeight: 600,
-            letterSpacing: "0.2em", color: "rgba(255,255,255,0.45)",
-            textTransform: "uppercase", margin: 0,
-          }}>PREVIEW //</p>
-          <video src={project.video} autoPlay loop muted playsInline
-            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-        </div>
-      </div>
+          <p ref={indexRef} style={{
+            ...TEXT_HIDDEN,
+            fontFamily: "var(--font-inter)", fontSize: 11, fontWeight: 600,
+            letterSpacing: "0.25em", color: "rgba(255,255,255,0.4)",
+            textTransform: "uppercase", marginBottom: "0.6em",
+          }}>PROJECT // {project.index}</p>
 
-      {/* ── Type row — 5%, full-width, below bottom zone ── */}
-      <div style={{
-        height: typeRowH,
-        borderTop: "1px solid rgba(255,255,255,0.15)",
-        display: "flex", alignItems: "center",
-        padding: "0 5vw",
-        position: "relative", zIndex: 2,
-      }}>
-        <p ref={typeRef} style={{
-          ...TEXT_HIDDEN,
-          fontFamily: "var(--font-inter)", fontSize: 10, fontWeight: 500,
-          letterSpacing: "0.18em", color: "rgba(255,255,255,0.6)",
-          textTransform: "uppercase", margin: 0,
-        }}>{project.type}</p>
-      </div>
+          <h2 ref={titleRef} style={{
+            ...TEXT_HIDDEN,
+            fontFamily: "'KblJumpExtended', sans-serif",
+            fontSize: "clamp(2.5rem, 6vw, 5.5rem)",
+            fontWeight: 800, lineHeight: 1, letterSpacing: "-0.02em",
+            color: "#ffffff", margin: 0, marginBottom: "0.4em",
+          }}>{project.title}</h2>
+
+          <p ref={subRef} style={{
+            ...TEXT_HIDDEN,
+            fontFamily: "var(--font-inter)",
+            fontSize: "clamp(10px, 1vw, 13px)", fontWeight: 400,
+            letterSpacing: "0.12em", color: "rgba(255,255,255,0.45)",
+            textTransform: "uppercase", margin: 0,
+          }}>{project.subtitle}</p>
+        </div>
+
+        {/* H divider: title ↔ bottom */}
+        <div ref={hDivRef} style={{
+          ...LINE_STYLE,
+          flexShrink: 0, height: 1,
+          transformOrigin: "left center", transform: "scaleX(0)",
+          position: "relative", zIndex: 2,
+        }} />
+
+        {/* Bottom zone: 3 columns — flex-1, takes remaining space */}
+        <div style={{ flex: 1, display: "flex", position: "relative", zIndex: 2, minHeight: 0 }}>
+
+          {/* Stack col — 33.3% */}
+          <div style={{
+            flex: "0 0 33.3%", minWidth: 0, overflow: "hidden",
+            padding: "1.8rem 2.5vw",
+            display: "flex", flexDirection: "column", gap: "0.45rem",
+          }}>
+            <p ref={stackLblRef} style={{
+              ...TEXT_HIDDEN,
+              fontFamily: "var(--font-inter)", fontSize: 10, fontWeight: 600,
+              letterSpacing: "0.2em", color: "rgba(255,255,255,0.35)",
+              textTransform: "uppercase", margin: 0, marginBottom: "0.8rem",
+            }}>STACK //</p>
+            <div ref={tagsRef} style={{ display: "flex", flexDirection: "column", gap: "0.45rem", alignItems: "flex-start" }}>
+              {project.stack.map((tech) => (
+                <span key={tech} style={{
+                  ...TEXT_HIDDEN,
+                  border: "1px solid rgba(255,255,255,0.3)",
+                  padding: "4px 12px",
+                  fontFamily: "var(--font-inter)", fontSize: 11, fontWeight: 500,
+                  letterSpacing: "0.06em", color: "rgba(255,255,255,0.75)",
+                }}>{tech}</span>
+              ))}
+            </div>
+          </div>
+
+          {/* V divider 1 */}
+          <div ref={vDiv1Ref} style={{
+            ...LINE_STYLE, flexShrink: 0, width: 1,
+            transformOrigin: "top center", transform: "scaleY(0)",
+          }} />
+
+          {/* Links col — 22.2% */}
+          <div style={{ flex: "0 0 22.2%", minWidth: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
+              <a ref={link1Ref} href={hasGH ? project.github : undefined}
+                target="_blank" rel="noopener noreferrer"
+                className="pn-link-row"
+                style={{
+                  ...TEXT_HIDDEN, flex: 1, minHeight: 0,
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  padding: "0 1.5vw",
+                  fontFamily: "var(--font-inter)", fontSize: 11, fontWeight: 600,
+                  letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none",
+                  color: hasGH ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.2)",
+                  cursor: hasGH ? "pointer" : "default",
+                }}>
+                <span>GITHUB</span>{hasGH && <span style={{ fontSize: 14 }}>↗</span>}
+              </a>
+
+              <div ref={hLink1Ref} style={{
+                ...LINE_STYLE, flexShrink: 0, height: 1,
+                transformOrigin: "left center", transform: "scaleX(0)",
+              }} />
+
+              <a ref={link2Ref} href={hasDemo ? project.demo : undefined}
+                target="_blank" rel="noopener noreferrer"
+                className="pn-link-row"
+                style={{
+                  ...TEXT_HIDDEN, flex: 1, minHeight: 0,
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  padding: "0 1.5vw",
+                  fontFamily: "var(--font-inter)", fontSize: 11, fontWeight: 600,
+                  letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none",
+                  color: hasDemo ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.2)",
+                  cursor: hasDemo ? "pointer" : "default",
+                }}>
+                <span>DEMO VIDEO</span>{hasDemo && <span style={{ fontSize: 14 }}>↗</span>}
+              </a>
+
+              <div ref={hLink2Ref} style={{
+                ...LINE_STYLE, flexShrink: 0, height: 1,
+                transformOrigin: "left center", transform: "scaleX(0)",
+              }} />
+
+              <a ref={link3Ref} href={hasLive ? project.live : undefined}
+                target="_blank" rel="noopener noreferrer"
+                className="pn-link-row"
+                style={{
+                  ...TEXT_HIDDEN, flex: 1, minHeight: 0,
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  padding: "0 1.5vw",
+                  fontFamily: "var(--font-inter)", fontSize: 11, fontWeight: 600,
+                  letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none",
+                  color: hasLive ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.2)",
+                  cursor: hasLive ? "pointer" : "default",
+                }}>
+                <span>LIVE SITE</span>{hasLive && <span style={{ fontSize: 14 }}>↗</span>}
+              </a>
+            </div>
+          </div>
+
+          {/* V divider 2 */}
+          <div ref={vDiv2Ref} style={{
+            ...LINE_STYLE, flexShrink: 0, width: 1,
+            transformOrigin: "top center", transform: "scaleY(0)",
+          }} />
+
+          {/* Video col — flex-1, takes remaining width */}
+          <div ref={videoRef} style={{
+            flex: 1, minWidth: 0, position: "relative", overflow: "hidden",
+            ...TEXT_HIDDEN,
+          }}>
+            <p style={{
+              position: "absolute", top: "1.2rem", left: "1.5vw", zIndex: 2,
+              fontFamily: "var(--font-inter)", fontSize: 10, fontWeight: 600,
+              letterSpacing: "0.2em", color: "rgba(255,255,255,0.45)",
+              textTransform: "uppercase", margin: 0,
+            }}>PREVIEW //</p>
+            <video src={project.video} autoPlay loop muted playsInline
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+          </div>
+        </div>
+
+        {/* Type row — fixed 40px, always at the very bottom */}
+        <div style={{
+          flexShrink: 0, height: 40,
+          borderTop: "1px solid rgba(255,255,255,0.15)",
+          display: "flex", alignItems: "center",
+          padding: "0 5vw",
+          position: "relative", zIndex: 2,
+        }}>
+          <p ref={typeRef} style={{
+            ...TEXT_HIDDEN,
+            fontFamily: "var(--font-inter)", fontSize: 10, fontWeight: 500,
+            letterSpacing: "0.18em", color: "rgba(255,255,255,0.6)",
+            textTransform: "uppercase", margin: 0,
+          }}>{project.type}</p>
+        </div>
+
+      </div>{/* /content area */}
 
       <style>{`
         .pn-link-row:hover { background: rgba(255,255,255,0.95) !important; color: #000 !important; }
