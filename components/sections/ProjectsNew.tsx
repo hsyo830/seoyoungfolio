@@ -180,8 +180,9 @@ function Card({ project, onRef }: { project: Project; onRef: (r: CardRef) => voi
   const hasDemo = !!project.demo;
   const hasLive = !!project.live;
 
-  const titleH  = `calc((100vh - ${MARQUEE_H}px) * 0.45)`;
-  const bottomH = `calc((100vh - ${MARQUEE_H}px) * 0.55 - 1px)`;
+  const titleH   = `calc((100vh - ${MARQUEE_H}px) * 0.45)`;
+  const bottomH  = `calc((100vh - ${MARQUEE_H}px) * 0.50 - 1px)`;
+  const typeRowH = `calc((100vh - ${MARQUEE_H}px) * 0.05)`;
 
   return (
     <div style={{
@@ -356,15 +357,6 @@ function Card({ project, onRef }: { project: Project; onRef: (r: CardRef) => voi
             </a>
           </div>
 
-          {/* Type text */}
-          <div style={{ padding: "0.75rem 1.5vw", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-            <p ref={typeRef} style={{
-              ...TEXT_HIDDEN,
-              fontFamily: "var(--font-inter)", fontSize: 10, fontWeight: 500,
-              letterSpacing: "0.14em", color: "rgba(255,255,255,0.6)",
-              textTransform: "uppercase", margin: 0,
-            }}>{project.type}</p>
-          </div>
         </div>
 
         {/* V divider 2 */}
@@ -387,6 +379,22 @@ function Card({ project, onRef }: { project: Project; onRef: (r: CardRef) => voi
           <video src={project.video} autoPlay loop muted playsInline
             style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
         </div>
+      </div>
+
+      {/* ── Type row — 5%, full-width, below bottom zone ── */}
+      <div style={{
+        height: typeRowH,
+        borderTop: "1px solid rgba(255,255,255,0.15)",
+        display: "flex", alignItems: "center",
+        padding: "0 5vw",
+        position: "relative", zIndex: 2,
+      }}>
+        <p ref={typeRef} style={{
+          ...TEXT_HIDDEN,
+          fontFamily: "var(--font-inter)", fontSize: 10, fontWeight: 500,
+          letterSpacing: "0.18em", color: "rgba(255,255,255,0.6)",
+          textTransform: "uppercase", margin: 0,
+        }}>{project.type}</p>
       </div>
 
       <style>{`
@@ -446,12 +454,12 @@ function buildCardInTl(refs: CardRef, fast: boolean): gsap.core.Timeline {
   if (indexEl)    tl.fromTo(indexEl,    { y: 10 }, { opacity: 1, y: 0, duration: 0.25, ease: "power2.out" }, "phase2");
   if (titleEl)    tl.fromTo(titleEl,    { y: 20 }, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, "phase2+=0.08");
   if (subEl)      tl.to(subEl,          { opacity: 1, duration: 0.25 }, "phase2+=0.15");
-  if (typeEl)     tl.to(typeEl,         { opacity: 0.6, duration: 0.2 }, "phase2+=0.2");
   if (stackLabel) tl.to(stackLabel,     { opacity: 1, duration: 0.25 }, "phase2+=0.15");
   if (tagEls.length) tl.fromTo(tagEls, { y: 6 }, { opacity: 1, y: 0, duration: 0.25, stagger: 0.04, ease: "power2.out" }, "phase2+=0.2");
   const links = [link1El, link2El, link3El].filter(Boolean);
   if (links.length) tl.to(links, { opacity: 1, duration: 0.2, stagger: 0.06 }, "phase2+=0.25");
   if (videoEl)    tl.to(videoEl,        { opacity: 1, duration: 0.4 }, "phase2+=0.3");
+  if (typeEl)     tl.to(typeEl,         { opacity: 0.6, duration: 0.3 }, "phase2+=0.5");
 
   return tl;
 }
