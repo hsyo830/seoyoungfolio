@@ -3,8 +3,8 @@ import MetalHeroText from "@/components/ui/MetalHeroText";
 import HeroAnimText from "@/components/ui/HeroAnimText";
 import HeroLines from "@/components/ui/HeroLines";
 import ScrollIndicator from "@/components/ui/ScrollIndicator";
-import ProjectsIntro from "@/components/sections/ProjectsIntro";
-import Projects from "@/components/sections/Projects";
+import ProjectsMarquee from "@/components/sections/ProjectsMarquee";
+import ProjectsNew from "@/components/sections/ProjectsNew";
 import CharcoalLayout from "@/components/sections/CharcoalLayout";
 
 export default function Home() {
@@ -30,8 +30,10 @@ export default function Home() {
         <ScrollIndicator />
       </main>
 
-      <ProjectsIntro />
-      <Projects />
+      <div>
+        <ProjectsMarquee />
+        <ProjectsNew />
+      </div>
       <CharcoalLayout />
     </>
   );
