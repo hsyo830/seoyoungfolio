@@ -649,6 +649,7 @@ function Card({
             minWidth: 0,
             overflow: "hidden",
             position: "relative",
+            isolation: "isolate",
             ...TEXT_HIDDEN,
           }}
         >
