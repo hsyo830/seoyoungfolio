@@ -203,8 +203,8 @@ const TEXT_HIDDEN: React.CSSProperties = {
   willChange: "opacity, transform",
 };
 
-const TYPE_ROW_H = 40;
-const CONTENT_H = `calc(100vh - ${MARQUEE_H}px)`;
+const TYPE_ROW_H = 56;
+const CONTENT_H = `calc(100vh - ${MARQUEE_H}px - 2px)`; // card has 1px border top+bottom (border-box)
 
 function Card({
   project,
@@ -263,10 +263,8 @@ function Card({
   const hasDemo = !!project.demo;
   const hasLive = !!project.live;
 
-  // Title zone height = 45% of content area (excluding marquee bar and type row)
-  const INNER_H = `calc(100vh - ${MARQUEE_H}px - ${TYPE_ROW_H}px)`;
+  // Title zone = 45% of the zone between marquee and type row
   const TITLE_H = `calc((100vh - ${MARQUEE_H}px - ${TYPE_ROW_H}px) * 0.45)`;
-  const BOTTOM_H = `calc((100vh - ${MARQUEE_H}px - ${TYPE_ROW_H}px) * 0.55)`;
 
   return (
     <div
@@ -348,7 +346,7 @@ function Card({
       <div style={{ flexShrink: 0, height: MARQUEE_H }} />
 
       {/* Content area — everything below sticky bar */}
-      <div style={{ height: CONTENT_H, overflow: "hidden" }}>
+      <div style={{ height: CONTENT_H, overflow: "hidden", display: "flex", flexDirection: "column", flexShrink: 0, paddingLeft: BOX_INSET, paddingRight: BOX_INSET, paddingBottom: BOX_INSET, boxSizing: "border-box" }}>
 
       {/* Title zone — explicit height, no flex growth */}
       <div
@@ -359,7 +357,6 @@ function Card({
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          padding: "0 5vw",
           position: "relative",
           zIndex: 2,
         }}
@@ -428,15 +425,16 @@ function Card({
         }}
       />
 
-      {/* Bottom zone — explicit height, no flex growth */}
+      {/* Bottom zone — flex:1 absorbs the 1px rounding surplus from the divider */}
       <div
         style={{
-          flexShrink: 0,
-          height: BOTTOM_H,
+          flex: 1,
+          minHeight: 0,
           display: "flex",
           overflow: "hidden",
           position: "relative",
           zIndex: 2,
+          willChange: "transform",
         }}
       >
         {/* Stack col — 33.3% */}
@@ -696,7 +694,6 @@ function Card({
           borderTop: "1px solid rgba(255,255,255,0.15)",
           display: "flex",
           alignItems: "center",
-          padding: "0 5vw",
           position: "relative",
           zIndex: 2,
           overflow: "hidden",
@@ -713,6 +710,7 @@ function Card({
             color: "rgba(255,255,255,0.6)",
             textTransform: "uppercase",
             margin: 0,
+            lineHeight: 1,
           }}
         >
           {project.type}

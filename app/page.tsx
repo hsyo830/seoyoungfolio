@@ -12,18 +12,19 @@ export default function Home() {
     <>
       {/* Fixed grainy gradient background */}
       <div className="fixed inset-0 -z-10">
-        <Grainient
-          color1="#8C8B88"
-          color2="#71716F"
-          color3="#6E6D6D"
-        />
+        <Grainient color1="#8C8B88" color2="#71716F" color3="#6E6D6D" />
       </div>
 
       {/* Hero */}
-      <main style={{ position: "relative", minHeight: "100vh", zIndex: 10 }}
-        className="flex flex-col items-center justify-center px-6 text-center select-none">
+      <main
+        style={{ position: "relative", minHeight: "100vh", zIndex: 10 }}
+        className="flex flex-col items-center justify-center px-6 text-center select-none"
+      >
         <HeroLines />
-        <div className="relative flex flex-col items-center" style={{ zIndex: 10 }}>
+        <div
+          className="relative flex flex-col items-center"
+          style={{ zIndex: 10 }}
+        >
           <MetalHeroText />
           <HeroAnimText />
         </div>
