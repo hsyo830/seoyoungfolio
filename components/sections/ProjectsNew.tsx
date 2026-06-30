@@ -449,10 +449,10 @@ function Card({
             <div
               ref={tagsRef}
               style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.3rem",
-                alignItems: "flex-start",
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "0.4rem",
+                alignItems: "start",
               }}
             >
               {project.stack.map((tech) => (
@@ -463,13 +463,17 @@ function Card({
                     background: "#000000",
                     borderRadius: "999px",
                     border: "none",
-                    padding: "4px 12px",
+                    padding: "5px 12px",
                     fontFamily: "var(--font-inter)",
                     fontSize: 10,
                     fontWeight: 700,
-                    letterSpacing: "0.06em",
-                    color: "#f2e8c9",
+                    letterSpacing: "0.05em",
+                    color: "#EFEDE7",
                     textTransform: "uppercase",
+                    textAlign: "center",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
                   }}
                 >
                   {tech}
