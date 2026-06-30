@@ -42,8 +42,8 @@ const projects: Project[] = [
   {
     index: "002",
     title: "Global Nomad",
-    subtitle: "ACTIVITY RESERVATION PLATFORM. TEAM PROJECT OF 6.",
-    type: "TEAM PROJECT OF 6  //  2026",
+    subtitle: "ACTIVITY RESERVATION PLATFORM. TEAM PROJECT OF 4.",
+    type: "TEAM PROJECT OF 4  //  2026",
     stack: ["Next.js", "TypeScript", "React Query", "Tailwind CSS", "Axios"],
     github: "https://github.com/GlobalNomad-20/GlobalNomad",
     demo: "",
@@ -53,8 +53,8 @@ const projects: Project[] = [
   {
     index: "003",
     title: "The Julge",
-    subtitle: "JOB LISTING PLATFORM FOR PART-TIME WORKERS. TEAM PROJECT OF 5.",
-    type: "TEAM PROJECT OF 5  //  2025-2026",
+    subtitle: "JOB LISTING PLATFORM FOR PART-TIME WORKERS. TEAM PROJECT OF 3.",
+    type: "TEAM PROJECT OF 3  //  2025-2026",
     stack: ["Next.js", "TypeScript", "React Hook Form", "Tailwind CSS"],
     github: "https://github.com/albaform-team/albaform",
     demo: "",
@@ -64,8 +64,8 @@ const projects: Project[] = [
   {
     index: "004",
     title: "Rolling",
-    subtitle: "MESSAGE CARD SHARING SERVICE. TEAM PROJECT OF 6.",
-    type: "TEAM PROJECT OF 6  //  2025",
+    subtitle: "MESSAGE CARD SHARING SERVICE. TEAM PROJECT OF 5.",
+    type: "TEAM PROJECT OF 5  //  2025",
     stack: ["React", "JavaScript", "Styled Components", "Axios"],
     github: "https://github.com/Jieunsse/codeit-rolling",
     demo: "",
@@ -74,101 +74,6 @@ const projects: Project[] = [
   },
 ];
 
-interface GridProps {
-  hLine1Ref: React.RefObject<SVGLineElement | null>;
-  hLine2Ref: React.RefObject<SVGLineElement | null>;
-  vLine1Ref: React.RefObject<SVGLineElement | null>;
-  vLine2Ref: React.RefObject<SVGLineElement | null>;
-  hDash1Ref: React.RefObject<SVGLineElement | null>;
-  hDash2Ref: React.RefObject<SVGLineElement | null>;
-}
-
-function BgGrid({
-  hLine1Ref,
-  hLine2Ref,
-  vLine1Ref,
-  vLine2Ref,
-  hDash1Ref,
-  hDash2Ref,
-}: GridProps) {
-  return (
-    <svg
-      style={{
-        position: "absolute",
-        inset: 0,
-        width: "100%",
-        height: "100%",
-        pointerEvents: "none",
-        zIndex: 1,
-      }}
-      preserveAspectRatio="none"
-      viewBox="0 0 100 100"
-    >
-      <line
-        ref={hLine1Ref as React.RefObject<SVGLineElement>}
-        x1="0"
-        y1="5"
-        x2="100"
-        y2="5"
-        stroke="rgba(0,0,0,0.12)"
-        strokeWidth="0.25"
-        style={{ transformOrigin: "0 5%", transform: "scaleX(0)" }}
-      />
-      <line
-        ref={hLine2Ref as React.RefObject<SVGLineElement>}
-        x1="0"
-        y1="37"
-        x2="100"
-        y2="37"
-        stroke="rgba(0,0,0,0.12)"
-        strokeWidth="0.25"
-        style={{ transformOrigin: "0 37%", transform: "scaleX(0)" }}
-      />
-      <line
-        ref={vLine1Ref as React.RefObject<SVGLineElement>}
-        x1="33.3"
-        y1="37"
-        x2="33.3"
-        y2="100"
-        stroke="rgba(0,0,0,0.12)"
-        strokeWidth="0.25"
-        style={{ transformOrigin: "33.3% 37%", transform: "scaleY(0)" }}
-      />
-      <line
-        ref={vLine2Ref as React.RefObject<SVGLineElement>}
-        x1="55.6"
-        y1="37"
-        x2="55.6"
-        y2="100"
-        stroke="rgba(0,0,0,0.12)"
-        strokeWidth="0.25"
-        style={{ transformOrigin: "55.6% 37%", transform: "scaleY(0)" }}
-      />
-      <line
-        ref={hDash1Ref as React.RefObject<SVGLineElement>}
-        x1="33.3"
-        y1="58"
-        x2="55.6"
-        y2="58"
-        stroke="rgba(0,0,0,0.1)"
-        strokeWidth="0.2"
-        strokeDasharray="0.8 1.2"
-        style={{ transformOrigin: "33.3% 58%", transform: "scaleX(0)" }}
-      />
-      <line
-        ref={hDash2Ref as React.RefObject<SVGLineElement>}
-        x1="33.3"
-        y1="79"
-        x2="55.6"
-        y2="79"
-        stroke="rgba(0,0,0,0.1)"
-        strokeWidth="0.2"
-        strokeDasharray="0.8 1.2"
-        style={{ transformOrigin: "33.3% 79%", transform: "scaleX(0)" }}
-      />
-    </svg>
-  );
-}
 
 interface CardRef {
   boxTopEl: HTMLElement | null;
@@ -957,38 +862,7 @@ export default function ProjectsNew() {
   const cardRefsMap = useRef<Map<number, CardRef>>(new Map());
   const activeTlRef = useRef<gsap.core.Timeline | null>(null);
   const squareRotationTlRef = useRef<gsap.core.Timeline | null>(null);
-  const gridAnimDone = useRef(false);
   const isInSection = useRef(false);
-
-  const hLine1Ref = useRef<SVGLineElement>(null);
-  const hLine2Ref = useRef<SVGLineElement>(null);
-  const vLine1Ref = useRef<SVGLineElement>(null);
-  const vLine2Ref = useRef<SVGLineElement>(null);
-  const hDash1Ref = useRef<SVGLineElement>(null);
-  const hDash2Ref = useRef<SVGLineElement>(null);
-
-  const animateBgGrid = useCallback(() => {
-    if (gridAnimDone.current) return;
-    gridAnimDone.current = true;
-    gsap
-      .timeline()
-      .to([hLine1Ref.current, hLine2Ref.current], {
-        scaleX: 1,
-        duration: 0.3,
-        ease: "power2.out",
-        stagger: 0.05,
-      })
-      .to(
-        [vLine1Ref.current, vLine2Ref.current],
-        { scaleY: 1, duration: 0.3, ease: "power2.out", stagger: 0.1 },
-        "-=0.1",
-      )
-      .to(
-        [hDash1Ref.current, hDash2Ref.current],
-        { scaleX: 1, duration: 0.2, ease: "power2.out", stagger: 0.1 },
-        "-=0.05",
-      );
-  }, []);
 
   const runCardIn = useCallback((idx: number, fast: boolean) => {
     const refs = cardRefsMap.current.get(idx);
@@ -1108,24 +982,11 @@ export default function ProjectsNew() {
         invalidateOnRefresh: true,
         onEnter() {
           isInSection.current = true;
-          animateBgGrid();
           scrollIdxRef.current = 0;
           setActiveIdx(0);
         },
         onLeaveBack() {
           isInSection.current = false;
-          gridAnimDone.current = false;
-          gsap.set(
-            [
-              hLine1Ref.current,
-              hLine2Ref.current,
-              vLine1Ref.current,
-              vLine2Ref.current,
-              hDash1Ref.current,
-              hDash2Ref.current,
-            ],
-            { scaleX: 0, scaleY: 0 },
-          );
           scrollIdxRef.current = -1;
           setActiveIdx(-1);
         },
@@ -1135,7 +996,7 @@ export default function ProjectsNew() {
     });
 
     return () => ctx.revert();
-  }, [animateBgGrid]);
+  }, []);
 
   useEffect(() => {
     const prev = prevIdxRef.current;
@@ -1163,14 +1024,6 @@ export default function ProjectsNew() {
       ref={sectionRef}
       style={{ position: "relative", overflow: "hidden" }}
     >
-      <BgGrid
-        hLine1Ref={hLine1Ref}
-        hLine2Ref={hLine2Ref}
-        vLine1Ref={vLine1Ref}
-        vLine2Ref={vLine2Ref}
-        hDash1Ref={hDash1Ref}
-        hDash2Ref={hDash2Ref}
-      />
 
       <div
         ref={trackRef}
