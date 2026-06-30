@@ -166,11 +166,19 @@ export default function About({
   gridRef,
 }: AboutProps = {}) {
   const [emailCopied, setEmailCopied] = useState(false);
+  const [phoneCopied, setPhoneCopied] = useState(false);
 
   const handleEmailCopy = () => {
     navigator.clipboard.writeText("nah830@gmail.com").then(() => {
       setEmailCopied(true);
       setTimeout(() => setEmailCopied(false), 1500);
+    });
+  };
+
+  const handlePhoneCopy = () => {
+    navigator.clipboard.writeText("010-8252-8608").then(() => {
+      setPhoneCopied(true);
+      setTimeout(() => setPhoneCopied(false), 1500);
     });
   };
 
@@ -840,7 +848,8 @@ export default function About({
           color: rgba(255,255,255,0.75); font-size: 13px; letter-spacing: 0.2em;
           transition: color 0.3s ease, opacity 0.3s ease;
         }
-        .contact-link:hover { opacity: 1; color: rgba(255,255,255,0.95); }
+        .contact-link:hover { opacity: 1; color: #ea5d2a; }
+        .contact-link:active { color: #c44a1a; }
         .contact-link::before { content:""; position:absolute; top:-7px; left:-7px; width:9px; height:9px; border-top:1px solid rgba(255,255,255,0.8); border-left:1px solid rgba(255,255,255,0.8); opacity:0; transition:all .3s ease; }
         .contact-link::after  { content:""; position:absolute; top:-7px; right:-7px; width:9px; height:9px; border-top:1px solid rgba(255,255,255,0.8); border-right:1px solid rgba(255,255,255,0.8); opacity:0; transition:all .3s ease; }
         .contact-link .cb-l { position:absolute; bottom:-7px; left:-7px; width:9px; height:9px; border-bottom:1px solid rgba(255,255,255,0.8); border-left:1px solid rgba(255,255,255,0.8); opacity:0; transition:all .3s ease; }
@@ -1174,23 +1183,28 @@ export default function About({
             ref={(el) => {
               linksRef.current[1] = el;
             }}
-            href="mailto:nah830@gmail.com"
+            href="#"
+            onClick={(e) => e.preventDefault()}
             className="contact-link"
           >
             <span className="cb-l" />
             <span className="cb-r" />
-            EMAIL ↗
+            RESUME ↗
           </a>
           <a
             ref={(el) => {
               linksRef.current[2] = el;
             }}
-            href="tel:01082528608"
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              handlePhoneCopy();
+            }}
             className="contact-link"
           >
             <span className="cb-l" />
             <span className="cb-r" />
-            PHONE ↗
+            {phoneCopied ? "COPIED!" : "PHONE ↗"}
           </a>
         </div>
 
