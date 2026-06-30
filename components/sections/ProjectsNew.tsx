@@ -24,9 +24,9 @@ interface Project {
 const projects: Project[] = [
   {
     index: "001",
-    title: "직관GO",
+    title: "Jikgwan GO",
     subtitle: "KBO BASEBALL GAME INFORMATION SERVICE. SOLO PROJECT.",
-    type: "SOLO PROJECT  //  2024",
+    type: "SOLO PROJECT  //  2026",
     stack: [
       "Next.js",
       "TypeScript",
@@ -43,33 +43,33 @@ const projects: Project[] = [
     index: "002",
     title: "Global Nomad",
     subtitle: "ACTIVITY RESERVATION PLATFORM. TEAM PROJECT OF 6.",
-    type: "TEAM PROJECT OF 6  //  2024",
+    type: "TEAM PROJECT OF 6  //  2026",
     stack: ["Next.js", "TypeScript", "React Query", "Tailwind CSS", "Axios"],
     github: "https://github.com/GlobalNomad-20/GlobalNomad",
     demo: "",
-    live: "",
+    live: "https://global-nomad-woad.vercel.app/activities",
     video: "/videos/jikgwango.mp4",
   },
   {
     index: "003",
     title: "The Julge",
     subtitle: "JOB LISTING PLATFORM FOR PART-TIME WORKERS. TEAM PROJECT OF 5.",
-    type: "TEAM PROJECT OF 5  //  2024",
+    type: "TEAM PROJECT OF 5  //  2025-2026",
     stack: ["Next.js", "TypeScript", "React Hook Form", "Tailwind CSS"],
     github: "https://github.com/albaform-team/albaform",
     demo: "",
-    live: "",
+    live: "https://albaform-rust.vercel.app/store",
     video: "/videos/jikgwango.mp4",
   },
   {
     index: "004",
     title: "Rolling",
     subtitle: "MESSAGE CARD SHARING SERVICE. TEAM PROJECT OF 6.",
-    type: "TEAM PROJECT OF 6  //  2023",
+    type: "TEAM PROJECT OF 6  //  2025",
     stack: ["React", "JavaScript", "Styled Components", "Axios"],
     github: "https://github.com/Jieunsse/codeit-rolling",
     demo: "",
-    live: "",
+    live: "https://codeit-rolling.vercel.app/",
     video: "/videos/jikgwango.mp4",
   },
 ];
@@ -465,8 +465,12 @@ function Card({
               lineHeight: 1,
               letterSpacing: "-0.02em",
               color: "#ea5d2a",
-              WebkitTextStroke: "1px #000000",
-              textShadow: "1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000",
+              textShadow: `
+  0.9px 0.9px 0 #000,
+  -0.9px 0.9px 0 #000,
+  0.9px -0.9px 0 #000,
+  -0.9px -0.9px 0 #000
+`,
               margin: 0,
               marginBottom: "0.4em",
             }}
@@ -566,7 +570,7 @@ function Card({
                     fontSize: 11,
                     fontWeight: 700,
                     letterSpacing: "0.06em",
-                    color: "#EFEDE7",
+                    color: "#f2e8c9",
                     textTransform: "uppercase",
                   }}
                 >
@@ -618,9 +622,7 @@ function Card({
                 letterSpacing: "0.14em",
                 textTransform: "uppercase",
                 textDecoration: "none",
-                color: hasGH
-                  ? "rgba(0,0,0,0.8)"
-                  : "rgba(0,0,0,0.25)",
+                color: hasGH ? "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.25)",
                 cursor: hasGH ? "pointer" : "default",
               }}
             >
@@ -659,9 +661,7 @@ function Card({
                 letterSpacing: "0.14em",
                 textTransform: "uppercase",
                 textDecoration: "none",
-                color: hasDemo
-                  ? "rgba(0,0,0,0.8)"
-                  : "rgba(0,0,0,0.25)",
+                color: hasDemo ? "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.25)",
                 cursor: hasDemo ? "pointer" : "default",
               }}
             >
@@ -700,9 +700,7 @@ function Card({
                 letterSpacing: "0.14em",
                 textTransform: "uppercase",
                 textDecoration: "none",
-                color: hasLive
-                  ? "rgba(0,0,0,0.8)"
-                  : "rgba(0,0,0,0.25)",
+                color: hasLive ? "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.25)",
                 cursor: hasLive ? "pointer" : "default",
               }}
             >
@@ -744,9 +742,13 @@ function Card({
                 fontSize: 10,
                 fontWeight: 600,
                 letterSpacing: "0.2em",
-                color: "rgba(0,0,0,0.55)",
+                color: "rgba(255,255,255,0.9)",
                 textTransform: "uppercase",
                 margin: 0,
+                background: "rgba(255,255,255,0.18)",
+                backdropFilter: "blur(4px)",
+                padding: "4px 10px",
+                borderRadius: 2,
               }}
             >
               PREVIEW //
