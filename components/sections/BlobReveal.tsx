@@ -163,11 +163,17 @@ export default function BlobReveal({ gridRef }: BlobRevealProps = {}) {
         }}
       >
         <p style={{
-          fontFamily: "'KblJumpExtended', sans-serif",
-          fontWeight: 800,
+          fontFamily: "var(--font-anton)",
+          fontWeight: 400,
           fontSize: "clamp(48px, 6vw, 96px)",
-          lineHeight: 1.2,
-          color: "rgba(255,255,255,0.95)",
+          lineHeight: 1.1,
+          color: "#ea5d2a",
+          textShadow: [
+            "0.9px 0.9px 0 #000",
+            "-0.9px 0.9px 0 #000",
+            "0.9px -0.9px 0 #000",
+            "-0.9px -0.9px 0 #000",
+          ].join(", "),
           margin: 0,
         }}>
           FROM PIXELS<br />TO PURPOSE
