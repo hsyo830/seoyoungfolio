@@ -110,7 +110,7 @@ function BgGrid({
         y1="5"
         x2="100"
         y2="5"
-        stroke="rgba(255,255,255,0.12)"
+        stroke="rgba(0,0,0,0.12)"
         strokeWidth="0.25"
         style={{ transformOrigin: "0 5%", transform: "scaleX(0)" }}
       />
@@ -120,7 +120,7 @@ function BgGrid({
         y1="37"
         x2="100"
         y2="37"
-        stroke="rgba(255,255,255,0.12)"
+        stroke="rgba(0,0,0,0.12)"
         strokeWidth="0.25"
         style={{ transformOrigin: "0 37%", transform: "scaleX(0)" }}
       />
@@ -130,7 +130,7 @@ function BgGrid({
         y1="37"
         x2="33.3"
         y2="100"
-        stroke="rgba(255,255,255,0.12)"
+        stroke="rgba(0,0,0,0.12)"
         strokeWidth="0.25"
         style={{ transformOrigin: "33.3% 37%", transform: "scaleY(0)" }}
       />
@@ -140,7 +140,7 @@ function BgGrid({
         y1="37"
         x2="55.6"
         y2="100"
-        stroke="rgba(255,255,255,0.12)"
+        stroke="rgba(0,0,0,0.12)"
         strokeWidth="0.25"
         style={{ transformOrigin: "55.6% 37%", transform: "scaleY(0)" }}
       />
@@ -150,7 +150,7 @@ function BgGrid({
         y1="58"
         x2="55.6"
         y2="58"
-        stroke="rgba(255,255,255,0.1)"
+        stroke="rgba(0,0,0,0.1)"
         strokeWidth="0.2"
         strokeDasharray="0.8 1.2"
         style={{ transformOrigin: "33.3% 58%", transform: "scaleX(0)" }}
@@ -161,7 +161,7 @@ function BgGrid({
         y1="79"
         x2="55.6"
         y2="79"
-        stroke="rgba(255,255,255,0.1)"
+        stroke="rgba(0,0,0,0.1)"
         strokeWidth="0.2"
         strokeDasharray="0.8 1.2"
         style={{ transformOrigin: "33.3% 79%", transform: "scaleX(0)" }}
@@ -193,18 +193,18 @@ interface CardRef {
   squareEls: HTMLElement[];
 }
 
-const LINE_COLOR = "rgba(255,255,255,0.18)";
+const LINE_COLOR = "rgba(0,0,0,0.18)";
 const LINE_STYLE: React.CSSProperties = {
   background: LINE_COLOR,
   flexShrink: 0,
 };
-const BOX_COLOR = "rgba(255,255,255,0.25)";
+const BOX_COLOR = "rgba(0,0,0,0.25)";
 
 const SQUARE_STYLE: React.CSSProperties = {
   position: "absolute",
   width: 32,
   height: 32,
-  border: "2px dashed rgba(255,255,255,0.2)",
+  border: "2px dashed rgba(0,0,0,0.2)",
   pointerEvents: "auto",
   zIndex: 6,
 };
@@ -304,7 +304,7 @@ function Card({
         height: "100vh",
         flexShrink: 0,
         position: "relative",
-        border: "2px dashed rgba(255,255,255,0.14)",
+        border: "2px dashed rgba(0,0,0,0.14)",
         boxSizing: "border-box",
         overflow: "hidden",
         display: "flex",
@@ -446,7 +446,7 @@ function Card({
               fontSize: 11,
               fontWeight: 600,
               letterSpacing: "0.25em",
-              color: "rgba(255,255,255,0.4)",
+              color: "rgba(0,0,0,0.5)",
               textTransform: "uppercase",
               margin: 0,
               marginBottom: "0.6em",
@@ -464,7 +464,9 @@ function Card({
               fontWeight: 800,
               lineHeight: 1,
               letterSpacing: "-0.02em",
-              color: "#ffffff",
+              color: "#ea5d2a",
+              WebkitTextStroke: "1px #000000",
+              textShadow: "1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000",
               margin: 0,
               marginBottom: "0.4em",
             }}
@@ -480,7 +482,7 @@ function Card({
               fontSize: "clamp(10px, 1vw, 13px)",
               fontWeight: 400,
               letterSpacing: "0.12em",
-              color: "rgba(255,255,255,0.45)",
+              color: "rgba(0,0,0,0.55)",
               textTransform: "uppercase",
               margin: 0,
             }}
@@ -534,7 +536,7 @@ function Card({
                 fontSize: 10,
                 fontWeight: 600,
                 letterSpacing: "0.2em",
-                color: "rgba(255,255,255,0.35)",
+                color: "rgba(0,0,0,0.45)",
                 textTransform: "uppercase",
                 margin: 0,
                 marginBottom: "0.8rem",
@@ -556,13 +558,16 @@ function Card({
                   key={tech}
                   style={{
                     ...TEXT_HIDDEN,
-                    border: "1px solid rgba(255,255,255,0.3)",
-                    padding: "4px 12px",
+                    background: "#000000",
+                    borderRadius: "999px",
+                    border: "none",
+                    padding: "6px 16px",
                     fontFamily: "var(--font-inter)",
                     fontSize: 11,
-                    fontWeight: 500,
+                    fontWeight: 700,
                     letterSpacing: "0.06em",
-                    color: "rgba(255,255,255,0.75)",
+                    color: "#EFEDE7",
+                    textTransform: "uppercase",
                   }}
                 >
                   {tech}
@@ -614,8 +619,8 @@ function Card({
                 textTransform: "uppercase",
                 textDecoration: "none",
                 color: hasGH
-                  ? "rgba(255,255,255,0.75)"
-                  : "rgba(255,255,255,0.2)",
+                  ? "rgba(0,0,0,0.8)"
+                  : "rgba(0,0,0,0.25)",
                 cursor: hasGH ? "pointer" : "default",
               }}
             >
@@ -655,8 +660,8 @@ function Card({
                 textTransform: "uppercase",
                 textDecoration: "none",
                 color: hasDemo
-                  ? "rgba(255,255,255,0.75)"
-                  : "rgba(255,255,255,0.2)",
+                  ? "rgba(0,0,0,0.8)"
+                  : "rgba(0,0,0,0.25)",
                 cursor: hasDemo ? "pointer" : "default",
               }}
             >
@@ -696,8 +701,8 @@ function Card({
                 textTransform: "uppercase",
                 textDecoration: "none",
                 color: hasLive
-                  ? "rgba(255,255,255,0.75)"
-                  : "rgba(255,255,255,0.2)",
+                  ? "rgba(0,0,0,0.8)"
+                  : "rgba(0,0,0,0.25)",
                 cursor: hasLive ? "pointer" : "default",
               }}
             >
@@ -739,7 +744,7 @@ function Card({
                 fontSize: 10,
                 fontWeight: 600,
                 letterSpacing: "0.2em",
-                color: "rgba(255,255,255,0.45)",
+                color: "rgba(0,0,0,0.55)",
                 textTransform: "uppercase",
                 margin: 0,
               }}
@@ -769,7 +774,7 @@ function Card({
           style={{
             flexShrink: 0,
             height: TYPE_ROW_H,
-            borderTop: "1px solid rgba(255,255,255,0.15)",
+            borderTop: "1px solid rgba(0,0,0,0.15)",
             display: "flex",
             alignItems: "center",
             padding: "0 5vw",
@@ -786,7 +791,7 @@ function Card({
               fontSize: 10,
               fontWeight: 500,
               letterSpacing: "0.18em",
-              color: "rgba(255,255,255,0.6)",
+              color: "rgba(0,0,0,0.6)",
               textTransform: "uppercase",
               margin: 0,
               lineHeight: 1,
@@ -799,8 +804,8 @@ function Card({
       {/* /content area */}
 
       <style>{`
-        .pn-link-row:hover { background: rgba(255,255,255,0.95) !important; color: #000 !important; }
-        .pn-link-row:hover span { color: #000 !important; }
+        .pn-link-row:hover { background: rgba(0,0,0,0.9) !important; color: #EFEDE7 !important; }
+        .pn-link-row:hover span { color: #EFEDE7 !important; }
       `}</style>
     </div>
   );
