@@ -111,7 +111,7 @@ function BgGrid({
         x2="100"
         y2="5"
         stroke="rgba(255,255,255,0.12)"
-        strokeWidth="0.15"
+        strokeWidth="0.25"
         style={{ transformOrigin: "0 5%", transform: "scaleX(0)" }}
       />
       <line
@@ -121,7 +121,7 @@ function BgGrid({
         x2="100"
         y2="37"
         stroke="rgba(255,255,255,0.12)"
-        strokeWidth="0.15"
+        strokeWidth="0.25"
         style={{ transformOrigin: "0 37%", transform: "scaleX(0)" }}
       />
       <line
@@ -131,7 +131,7 @@ function BgGrid({
         x2="33.3"
         y2="100"
         stroke="rgba(255,255,255,0.12)"
-        strokeWidth="0.15"
+        strokeWidth="0.25"
         style={{ transformOrigin: "33.3% 37%", transform: "scaleY(0)" }}
       />
       <line
@@ -141,7 +141,7 @@ function BgGrid({
         x2="55.6"
         y2="100"
         stroke="rgba(255,255,255,0.12)"
-        strokeWidth="0.15"
+        strokeWidth="0.25"
         style={{ transformOrigin: "55.6% 37%", transform: "scaleY(0)" }}
       />
       <line
@@ -151,7 +151,7 @@ function BgGrid({
         x2="55.6"
         y2="58"
         stroke="rgba(255,255,255,0.1)"
-        strokeWidth="0.12"
+        strokeWidth="0.2"
         strokeDasharray="0.8 1.2"
         style={{ transformOrigin: "33.3% 58%", transform: "scaleX(0)" }}
       />
@@ -162,7 +162,7 @@ function BgGrid({
         x2="55.6"
         y2="79"
         stroke="rgba(255,255,255,0.1)"
-        strokeWidth="0.12"
+        strokeWidth="0.2"
         strokeDasharray="0.8 1.2"
         style={{ transformOrigin: "33.3% 79%", transform: "scaleX(0)" }}
       />
@@ -263,8 +263,8 @@ function Card({
   const hasDemo = !!project.demo;
   const hasLive = !!project.live;
 
-  // Title zone = 45% of the zone between marquee and type row
-  const TITLE_H = `calc((100vh - ${MARQUEE_H}px - ${TYPE_ROW_H}px) * 0.45)`;
+  // Title zone = 55% of the zone between marquee and type row
+  const TITLE_H = `calc((100vh - ${MARQUEE_H}px - ${TYPE_ROW_H}px) * 0.55)`;
 
   return (
     <div
@@ -273,7 +273,7 @@ function Card({
         height: "100vh",
         flexShrink: 0,
         position: "relative",
-        border: "1px dashed rgba(255,255,255,0.14)",
+        border: "2px dashed rgba(255,255,255,0.14)",
         boxSizing: "border-box",
         overflow: "hidden",
         display: "flex",
@@ -288,7 +288,7 @@ function Card({
           top: MARQUEE_H + BOX_INSET,
           left: BOX_INSET,
           right: BOX_INSET,
-          height: 2,
+          height: 3,
           background: BOX_COLOR,
           transformOrigin: "left center",
           transform: "scaleX(0)",
@@ -303,7 +303,7 @@ function Card({
           top: MARQUEE_H + BOX_INSET,
           right: BOX_INSET,
           bottom: BOX_INSET,
-          width: 2,
+          width: 3,
           background: BOX_COLOR,
           transformOrigin: "top center",
           transform: "scaleY(0)",
@@ -318,7 +318,7 @@ function Card({
           bottom: BOX_INSET,
           left: BOX_INSET,
           right: BOX_INSET,
-          height: 2,
+          height: 3,
           background: BOX_COLOR,
           transformOrigin: "right center",
           transform: "scaleX(0)",
@@ -333,7 +333,7 @@ function Card({
           top: MARQUEE_H + BOX_INSET,
           left: BOX_INSET,
           bottom: BOX_INSET,
-          width: 2,
+          width: 3,
           background: BOX_COLOR,
           transformOrigin: "bottom center",
           transform: "scaleY(0)",
@@ -417,7 +417,7 @@ function Card({
         ref={hDivRef}
         style={{
           ...LINE_STYLE,
-          height: 1,
+          height: 2,
           transformOrigin: "left center",
           transform: "scaleX(0)",
           position: "relative",
@@ -437,11 +437,11 @@ function Card({
           willChange: "transform",
         }}
       >
-        {/* Stack col — 33.3% */}
+        {/* Stack col — 22% */}
         <div
           style={{
             flexShrink: 0,
-            width: "33.3%",
+            width: "22%",
             overflow: "hidden",
             padding: "1.8rem 2.5vw",
             display: "flex",
@@ -500,17 +500,17 @@ function Card({
           style={{
             ...LINE_STYLE,
             flexShrink: 0,
-            width: 1,
+            width: 2,
             transformOrigin: "top center",
             transform: "scaleY(0)",
           }}
         />
 
-        {/* Links col — 22.2% */}
+        {/* Links col — 20% */}
         <div
           style={{
             flexShrink: 0,
-            width: "22.2%",
+            width: "20%",
             overflow: "hidden",
             display: "flex",
             flexDirection: "column",
@@ -549,7 +549,7 @@ function Card({
             style={{
               ...LINE_STYLE,
               flexShrink: 0,
-              height: 1,
+              height: 2,
               transformOrigin: "left center",
               transform: "scaleX(0)",
             }}
@@ -590,7 +590,7 @@ function Card({
             style={{
               ...LINE_STYLE,
               flexShrink: 0,
-              height: 1,
+              height: 2,
               transformOrigin: "left center",
               transform: "scaleX(0)",
             }}
@@ -633,7 +633,7 @@ function Card({
           style={{
             ...LINE_STYLE,
             flexShrink: 0,
-            width: 1,
+            width: 2,
             transformOrigin: "top center",
             transform: "scaleY(0)",
           }}
