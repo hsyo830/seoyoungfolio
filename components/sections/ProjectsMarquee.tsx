@@ -67,6 +67,17 @@ export default function ProjectsMarquee() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Beige overlay slide-up/down driven by isStuck
+  useEffect(() => {
+    const overlay = document.getElementById("beige-overlay");
+    if (!overlay) return;
+    if (isStuck) {
+      gsap.to(overlay, { y: "0%", duration: 1.0, ease: "power3.inOut" });
+    } else {
+      gsap.to(overlay, { y: "100%", duration: 0.5, ease: "power2.in" });
+    }
+  }, [isStuck]);
+
   const height = isStuck ? 48 : 72;
 
   return (

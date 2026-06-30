@@ -15,6 +15,17 @@ export default function Home() {
         <Grainient color1="#8C8B88" color2="#71716F" color3="#6E6D6D" />
       </div>
 
+      {/* Beige slide-up overlay — hidden below viewport until Projects sticky triggers */}
+      <div
+        id="beige-overlay"
+        className="fixed inset-0 -z-10"
+        style={{
+          backgroundColor: "#EFEDE7",
+          transform: "translateY(100%)",
+          willChange: "transform",
+        }}
+      />
+
       {/* Hero */}
       <main
         style={{ position: "relative", minHeight: "100vh", zIndex: 10 }}
