@@ -27,13 +27,7 @@ const projects: Project[] = [
     title: "Jikgwan GO",
     subtitle: "KBO BASEBALL GAME INFORMATION SERVICE. SOLO PROJECT.",
     type: "SOLO PROJECT  //  2026",
-    stack: [
-      "Next.js",
-      "TypeScript",
-      "TanStack Query",
-      "Tailwind CSS",
-      "Supabase",
-    ],
+    stack: ["Next.js", "React", "TypeScript", "Tailwind CSS", "TanStack Query", "Swiper"],
     github: "https://github.com/hsyo830/jikgwango",
     demo: "",
     live: "https://jikgwango.vercel.app",
@@ -44,7 +38,7 @@ const projects: Project[] = [
     title: "Global Nomad",
     subtitle: "ACTIVITY RESERVATION PLATFORM. TEAM PROJECT OF 4.",
     type: "TEAM PROJECT OF 4  //  2026",
-    stack: ["Next.js", "TypeScript", "React Query", "Tailwind CSS", "Axios"],
+    stack: ["Next.js", "React", "TypeScript", "Axios", "TanStack Query", "Tailwind CSS", "Framer Motion", "Swiper"],
     github: "https://github.com/GlobalNomad-20/GlobalNomad",
     demo: "",
     live: "https://global-nomad-woad.vercel.app/activities",
@@ -55,7 +49,7 @@ const projects: Project[] = [
     title: "The Julge",
     subtitle: "JOB LISTING PLATFORM FOR PART-TIME WORKERS. TEAM PROJECT OF 3.",
     type: "TEAM PROJECT OF 3  //  2025-2026",
-    stack: ["Next.js", "TypeScript", "React Hook Form", "Tailwind CSS"],
+    stack: ["Next.js", "React", "TypeScript", "Axios", "Emotion", "MUI", "Lottie"],
     github: "https://github.com/albaform-team/albaform",
     demo: "",
     live: "https://albaform-rust.vercel.app/store",
@@ -66,7 +60,7 @@ const projects: Project[] = [
     title: "Rolling",
     subtitle: "MESSAGE CARD SHARING SERVICE. TEAM PROJECT OF 5.",
     type: "TEAM PROJECT OF 5  //  2025",
-    stack: ["React", "JavaScript", "Styled Components", "Axios"],
+    stack: ["React", "React Router DOM", "CSS Modules", "MUI"],
     github: "https://github.com/Jieunsse/codeit-rolling",
     demo: "https://youtu.be/SJL-az9JhT4?si=aLWeCLv5qv0JGNJi",
     live: "https://codeit-rolling.vercel.app/",
@@ -447,7 +441,7 @@ function Card({
                 color: "rgba(0,0,0,0.45)",
                 textTransform: "uppercase",
                 margin: 0,
-                marginBottom: "0.8rem",
+                marginBottom: "0.5rem",
               }}
             >
               STACK //
@@ -457,7 +451,7 @@ function Card({
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "0.45rem",
+                gap: "0.3rem",
                 alignItems: "flex-start",
               }}
             >
@@ -469,9 +463,9 @@ function Card({
                     background: "#000000",
                     borderRadius: "999px",
                     border: "none",
-                    padding: "6px 16px",
+                    padding: "4px 12px",
                     fontFamily: "var(--font-inter)",
-                    fontSize: 11,
+                    fontSize: 10,
                     fontWeight: 700,
                     letterSpacing: "0.06em",
                     color: "#f2e8c9",
