@@ -253,7 +253,7 @@ export default function MetalHeroText() {
           right: 0,
           width: "45%",
           height: "6px",
-          background: "#ea5c2a",
+          background: "rgba(255,255,255,0.4)",
           transform: "scaleX(0)",
           transformOrigin: "right center",
         }}
