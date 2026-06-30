@@ -48,7 +48,7 @@ const projects: Project[] = [
     github: "https://github.com/GlobalNomad-20/GlobalNomad",
     demo: "",
     live: "https://global-nomad-woad.vercel.app/activities",
-    video: "/videos/jikgwango.mp4",
+    video: "/videos/globalnomad.mp4",
   },
   {
     index: "003",
@@ -59,7 +59,7 @@ const projects: Project[] = [
     github: "https://github.com/albaform-team/albaform",
     demo: "",
     live: "https://albaform-rust.vercel.app/store",
-    video: "/videos/jikgwango.mp4",
+    video: "/videos/thejulge.mp4",
   },
   {
     index: "004",
@@ -68,12 +68,11 @@ const projects: Project[] = [
     type: "TEAM PROJECT OF 5  //  2025",
     stack: ["React", "JavaScript", "Styled Components", "Axios"],
     github: "https://github.com/Jieunsse/codeit-rolling",
-    demo: "",
+    demo: "https://youtu.be/SJL-az9JhT4?si=aLWeCLv5qv0JGNJi",
     live: "https://codeit-rolling.vercel.app/",
-    video: "/videos/jikgwango.mp4",
+    video: "/videos/rolling.mp4",
   },
 ];
-
 
 interface CardRef {
   boxTopEl: HTMLElement | null;
@@ -132,7 +131,7 @@ const TEXT_HIDDEN: React.CSSProperties = {
   willChange: "opacity, transform",
 };
 
-const TYPE_ROW_H = 56;
+const TYPE_ROW_H = 58;
 const CONTENT_H = `calc(100vh - ${MARQUEE_H}px - 2px)`; // card has 1px border top+bottom (border-box)
 
 function Card({
@@ -364,7 +363,7 @@ function Card({
             ref={titleRef}
             style={{
               ...TEXT_HIDDEN,
-              fontFamily: "'KblJumpExtended', sans-serif",
+              fontFamily: "var(--font-anton)",
               fontSize: "clamp(2.5rem, 6vw, 5.5rem)",
               fontWeight: 800,
               lineHeight: 1,
@@ -548,45 +547,6 @@ function Card({
 
             <a
               ref={link2Ref}
-              href={hasDemo ? project.demo : undefined}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="pn-link-row"
-              style={{
-                ...TEXT_HIDDEN,
-                flex: 1,
-                minHeight: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "0 1.5vw",
-                fontFamily: "var(--font-inter)",
-                fontSize: 11,
-                fontWeight: 600,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                textDecoration: "none",
-                color: hasDemo ? "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.25)",
-                cursor: hasDemo ? "pointer" : "default",
-              }}
-            >
-              <span>DEMO VIDEO</span>
-              {hasDemo && <span style={{ fontSize: 14 }}>↗</span>}
-            </a>
-
-            <div
-              ref={hLink2Ref}
-              style={{
-                ...LINE_STYLE,
-                flexShrink: 0,
-                height: 2,
-                transformOrigin: "left center",
-                transform: "scaleX(0)",
-              }}
-            />
-
-            <a
-              ref={link3Ref}
               href={hasLive ? project.live : undefined}
               target="_blank"
               rel="noopener noreferrer"
@@ -611,6 +571,45 @@ function Card({
             >
               <span>LIVE SITE</span>
               {hasLive && <span style={{ fontSize: 14 }}>↗</span>}
+            </a>
+
+            <div
+              ref={hLink2Ref}
+              style={{
+                ...LINE_STYLE,
+                flexShrink: 0,
+                height: 2,
+                transformOrigin: "left center",
+                transform: "scaleX(0)",
+              }}
+            />
+
+            <a
+              ref={link3Ref}
+              href={hasDemo ? project.demo : undefined}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="pn-link-row"
+              style={{
+                ...TEXT_HIDDEN,
+                flex: 1,
+                minHeight: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "0 1.5vw",
+                fontFamily: "var(--font-inter)",
+                fontSize: 11,
+                fontWeight: 600,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                textDecoration: "none",
+                color: hasDemo ? "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.25)",
+                cursor: hasDemo ? "pointer" : "default",
+              }}
+            >
+              <span>{hasDemo ? "DEMO VIDEO" : "DEMO VIDEO (COMING SOON)"}</span>
+              {hasDemo && <span style={{ fontSize: 14 }}>↗</span>}
             </a>
           </div>
 
@@ -1024,7 +1023,6 @@ export default function ProjectsNew() {
       ref={sectionRef}
       style={{ position: "relative", overflow: "hidden" }}
     >
-
       <div
         ref={trackRef}
         style={{
