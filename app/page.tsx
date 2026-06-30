@@ -12,7 +12,7 @@ export default function Home() {
     <>
       {/* Fixed grainy gradient background */}
       <div className="fixed inset-0 -z-10">
-        <Grainient color1="#8C8B88" color2="#71716F" color3="#6E6D6D" />
+        <Grainient color1="#e4825e" color2="#ea5d2a" color3="#c87455" />
       </div>
 
       {/* Beige slide-up overlay — hidden below viewport until Projects sticky triggers */}

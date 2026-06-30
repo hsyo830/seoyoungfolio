@@ -187,12 +187,12 @@ export default function MetalHeroText() {
     mouseRef.current.active = false;
   }, []);
 
-  const sharedH1: React.CSSProperties = { fontSize: 'inherit', fontWeight: 'inherit', margin: 0, padding: 0, backgroundColor: 'transparent' };
+  const sharedH1: React.CSSProperties = { fontSize: 'inherit', fontWeight: 400, margin: 0, padding: 0, backgroundColor: 'transparent', fontFamily: "var(--font-anton)", textTransform: 'uppercase', letterSpacing: '0.02em', lineHeight: '0.87' };
 
   return (
     <div
       className="relative leading-none tracking-tighter"
-      style={{ fontSize: 'clamp(3.2rem, 11vw, 8.5rem)', fontFamily: "'KblJumpExtended', sans-serif", backgroundColor: 'transparent' }}
+      style={{ fontSize: 'clamp(1.9rem, 6.5vw, 5.2rem)', fontFamily: "'KblJumpExtended', sans-serif", backgroundColor: 'transparent' }}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
     >
@@ -274,11 +274,7 @@ export default function MetalHeroText() {
         style={
           {
             ...sharedH1,
-            color: 'transparent',
-            backgroundImage:
-              'linear-gradient(180deg, #ffffff 0%, #c6cad2 48%, #f2f2f4 78%, #ffffff 100%)',
-            WebkitBackgroundClip: 'text',
-            backgroundClip: 'text',
+            color: '#F8F8F8',
             textShadow: [
               '0 1px 0 rgba(255,255,255,0.9)',
               '0 -1px 1px rgba(0,0,0,0.15)',
@@ -289,12 +285,8 @@ export default function MetalHeroText() {
           } as React.CSSProperties
         }
       >
-        {'FRONTEND'.split('').map((char, i) => (
-          <span key={`f-${i}`} className="metal-char" style={{ display: 'inline-block', opacity: 0 }}>{char}</span>
-        ))}
-        <br />
-        {'DEVELOPER'.split('').map((char, i) => (
-          <span key={`d-${i}`} className="metal-char" style={{ display: 'inline-block', opacity: 0 }}>{char}</span>
+        {'FRONTEND DEVELOPER'.split('').map((char, i) => (
+          <span key={i} className="metal-char" style={{ display: 'inline-block', opacity: 0 }}>{char}</span>
         ))}
       </h1>
 
@@ -317,9 +309,7 @@ export default function MetalHeroText() {
           } as React.CSSProperties
         }
       >
-        FRONTEND
-        <br />
-        DEVELOPER
+        FRONTEND DEVELOPER
       </h1>
     </div>
   );
