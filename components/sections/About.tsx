@@ -4,67 +4,96 @@ import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
-import VariableProximity from "@/components/ui/VariableProximity";
+import OrbitSkills from "@/components/ui/OrbitSkills";
 import type { DashedGridOverlayHandle } from "@/components/ui/DashedGridOverlay";
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
-const SKILLS_TITLE = [..."SKILLS & STACK"];
 const EXP_TITLE = [..."EXPERIENCE"];
 
 const SKILLS = [
-  "Next.js",
+  "HTML",
+  "CSS",
+  "JavaScript",
   "TypeScript",
   "React",
+  "Next.js",
   "TanStack Query",
   "Tailwind CSS",
   "GSAP",
   "Framer Motion",
-  "Supabase",
+  "Axios",
+  "Emotion",
+  "MUI",
+  "Swiper",
 ];
 
 const EXPERIENCES = [
   {
-    id: 1, year: "2025.09 - 2026.02", company: "Codeit",
+    id: 1,
+    year: "2025.09 - 2026.02",
+    company: "Codeit",
     role: "Frontend Engineering Bootcamp",
     desc: "React, TypeScript, Next.js 기반 프로젝트 수행",
-    type: "education", position: "bottom", checkpointProgress: 0.22,
+    type: "education",
+    position: "bottom",
+    checkpointProgress: 0.22,
     videoSrc: "/videos/jikgwango.mp4",
   },
   {
-    id: 2, year: "2023.01 - 2024.05", company: "Seoul Game Art Academy",
+    id: 2,
+    year: "2023.01 - 2024.05",
+    company: "Seoul Game Art Academy",
     role: "Game Engine & AI Programming",
     desc: "C++, Unreal Engine 기반 게임 개발 학습",
-    type: "education", position: "bottom", checkpointProgress: 0.36,
+    type: "education",
+    position: "bottom",
+    checkpointProgress: 0.36,
     videoSrc: "/videos/jikgwango.mp4",
   },
   {
-    id: 3, year: "2022.09 - 2022.12", company: "Carrysoft",
+    id: 3,
+    year: "2022.09 - 2022.12",
+    company: "Carrysoft",
     role: "3D Animator Intern",
     desc: "MAYA 기반 3D 애니메이팅, 장편 애니메이션 제작 참여",
-    type: "work", position: "top", checkpointProgress: 0.50,
+    type: "work",
+    position: "top",
+    checkpointProgress: 0.5,
     videoSrc: "/videos/jikgwango.mp4",
   },
   {
-    id: 4, year: "2022.04 - 2022.08", company: "Seoul Metropolitan Gov.",
+    id: 4,
+    year: "2022.04 - 2022.08",
+    company: "Seoul Metropolitan Gov.",
     role: "Virtual Space Creator Training",
     desc: "Unreal Engine 기반 가상공간 콘텐츠 제작",
-    type: "education", position: "bottom", checkpointProgress: 0.63,
+    type: "education",
+    position: "bottom",
+    checkpointProgress: 0.63,
     videoSrc: "/videos/jikgwango.mp4",
   },
   {
-    id: 5, year: "2021.10 - 2022.02", company: "Wonderful Platform",
+    id: 5,
+    year: "2021.10 - 2022.02",
+    company: "Wonderful Platform",
     role: "Frontend Intern",
     desc: "모바일 웹 브릿지 페이지 UI 구현, Cafe24 웹페이지 개발",
-    type: "work", position: "top", checkpointProgress: 0.76,
+    type: "work",
+    position: "top",
+    checkpointProgress: 0.76,
     videoSrc: null,
   },
   {
-    id: 6, year: "2021.07 - 2021.08", company: "TheHigh Company",
+    id: 6,
+    year: "2021.07 - 2021.08",
+    company: "TheHigh Company",
     role: "Design Intern",
     desc: "광고 배너, 웹사이트 시안 디자인 제작",
-    type: "work", position: "bottom", checkpointProgress: 0.88,
+    type: "work",
+    position: "bottom",
+    checkpointProgress: 0.88,
     videoSrc: null,
   },
 ];
@@ -95,17 +124,6 @@ const OUTLINE: React.CSSProperties = {
     "0.9px -0.9px 0 #000",
     "-0.9px -0.9px 0 #000",
   ].join(", "),
-};
-
-const BACKDROP: React.CSSProperties = {
-  position: "absolute",
-  inset: "-60px",
-  background:
-    "radial-gradient(ellipse at center, rgba(0,0,0,0.22) 0%, transparent 70%)",
-  filter: "blur(20px)",
-  opacity: 0,
-  pointerEvents: "none",
-  zIndex: 0,
 };
 
 // ─── Helper ──────────────────────────────────────────────────────────────────
@@ -142,7 +160,11 @@ interface AboutProps {
   gridRef?: React.RefObject<DashedGridOverlayHandle | null>;
 }
 
-export default function About({ sectionRef, contactRef, gridRef }: AboutProps = {}) {
+export default function About({
+  sectionRef,
+  contactRef,
+  gridRef,
+}: AboutProps = {}) {
   const [emailCopied, setEmailCopied] = useState(false);
 
   const handleEmailCopy = () => {
@@ -153,39 +175,36 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
   };
 
   const ownRef = useRef<HTMLElement>(null);
-  const bd2 = useRef<HTMLDivElement>(null);
-
   const sub2 = useRef<HTMLDivElement>(null);
   const sub3 = useRef<HTMLDivElement>(null);
   const sub4 = useRef<HTMLDivElement>(null);
 
-  const skillsChars = useRef<(HTMLSpanElement | null)[]>([]);
   const expChars = useRef<(HTMLSpanElement | null)[]>([]);
 
   // Experience timeline
-  const trackRef        = useRef<HTMLDivElement>(null);
-  const svgRef          = useRef<SVGSVGElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
   const progressPathRef = useRef<SVGPathElement>(null);
-  const cardRefs        = useRef<(HTMLDivElement | null)[]>([]);
-  const checkpointRefs  = useRef<(SVGRectElement | null)[]>([]);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const checkpointRefs = useRef<(SVGRectElement | null)[]>([]);
 
   // Floating video preview
-  const floatingRef    = useRef<HTMLDivElement>(null);
+  const floatingRef = useRef<HTMLDivElement>(null);
   const floatCanvasRef = useRef<HTMLCanvasElement>(null);
-  const floatVideoRef  = useRef<HTMLVideoElement>(null);
-  const activeExpRef   = useRef<(typeof EXPERIENCES)[number] | null>(null);
-  const targetXRef     = useRef(0);
-  const targetYRef     = useRef(0);
-  const currentXRef    = useRef(0);
-  const currentYRef    = useRef(0);
-  const floatRafRef    = useRef<number | null>(null);
+  const floatVideoRef = useRef<HTMLVideoElement>(null);
+  const activeExpRef = useRef<(typeof EXPERIENCES)[number] | null>(null);
+  const targetXRef = useRef(0);
+  const targetYRef = useRef(0);
+  const currentXRef = useRef(0);
+  const currentYRef = useRef(0);
+  const floatRafRef = useRef<number | null>(null);
 
-  const c2026Ref        = useRef<HTMLDivElement>(null);
-  const panelRef        = useRef<HTMLDivElement>(null);
-  const linksRef        = useRef<(HTMLAnchorElement | null)[]>([]);
-  const emailLinkRef     = useRef<HTMLDivElement>(null);
+  const c2026Ref = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const linksRef = useRef<(HTMLAnchorElement | null)[]>([]);
+  const emailLinkRef = useRef<HTMLDivElement>(null);
   const portfolioLinkRef = useRef<HTMLDivElement>(null);
-  const gridCanvasRef   = useRef<HTMLCanvasElement>(null);
+  const gridCanvasRef = useRef<HTMLCanvasElement>(null);
 
   const charcoalRef = sectionRef ?? ownRef;
 
@@ -200,29 +219,6 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
     );
 
     const ctx = gsap.context(() => {
-      // ── Backdrop (sub2, sub4) ──
-      const animBd = (
-        el: HTMLDivElement | null,
-        trigger: HTMLDivElement | null,
-      ) => {
-        if (!el || !trigger) return;
-        gsap.fromTo(
-          el,
-          { opacity: 0 },
-          {
-            opacity: 1,
-            duration: 1,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger,
-              start: "top 75%",
-              toggleActions: "play none none none",
-            },
-          },
-        );
-      };
-      animBd(bd2.current, sub2.current);
-
       // ── Title chars ──
       const animTitle = (
         refs: React.RefObject<(HTMLSpanElement | null)[]>,
@@ -251,7 +247,6 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
           },
         );
       };
-      animTitle(skillsChars, sub2.current);
       animTitle(expChars, sub3.current, "top 90%");
 
       // ── EXPERIENCE: SVG path timeline pin + horizontal scroll ──
@@ -264,7 +259,7 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
           if (rand < 0.75) {
             const v = 38 + Math.floor(Math.random() * 12);
             return `rgb(${v},${v},${v + 2})`;
-          } else if (rand < 0.90) {
+          } else if (rand < 0.9) {
             const v = 55 + Math.floor(Math.random() * 15);
             return `rgb(${v},${v},${v + 3})`;
           } else if (rand < 0.97) {
@@ -282,7 +277,8 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
           if (!cv || !vd) return;
           const ctx2d = cv.getContext("2d");
           if (!ctx2d) return;
-          const W = cv.width, H = cv.height;
+          const W = cv.width,
+            H = cv.height;
           cv.style.opacity = "1";
           vd.style.opacity = "0";
           vd.play().catch(() => {});
@@ -298,7 +294,12 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
             for (let r = 0; r < rows; r++) {
               for (let c = 0; c < cols; c++) {
                 ctx2d.fillStyle = getMosaicColor();
-                ctx2d.fillRect(c * blockSize, r * blockSize, blockSize, blockSize);
+                ctx2d.fillRect(
+                  c * blockSize,
+                  r * blockSize,
+                  blockSize,
+                  blockSize,
+                );
               }
             }
             if (Math.random() < ns * 0.25) {
@@ -325,7 +326,8 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
           if (!cv || !vd) return;
           const ctx2d = cv.getContext("2d");
           if (!ctx2d) return;
-          const W = cv.width, H = cv.height;
+          const W = cv.width,
+            H = cv.height;
           ctx2d.drawImage(vd, 0, 0, W, H);
           gsap.to(vd, { opacity: 0, duration: 0.1 });
           gsap.to(cv, { opacity: 1, duration: 0.1 });
@@ -340,7 +342,12 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
             for (let r = 0; r < rows; r++) {
               for (let c = 0; c < cols; c++) {
                 ctx2d.fillStyle = getMosaicColor();
-                ctx2d.fillRect(c * blockSize, r * blockSize, blockSize, blockSize);
+                ctx2d.fillRect(
+                  c * blockSize,
+                  r * blockSize,
+                  blockSize,
+                  blockSize,
+                );
               }
             }
             frame++;
@@ -373,21 +380,34 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
 
               // Checkpoint 도달 → 카드/원 등장
               EXPERIENCES.forEach((exp, i) => {
-                if (p >= exp.checkpointProgress - 0.02 && !triggeredCheckpoints.has(i)) {
+                if (
+                  p >= exp.checkpointProgress - 0.02 &&
+                  !triggeredCheckpoints.has(i)
+                ) {
                   triggeredCheckpoints.add(i);
                   const rect = checkpointRefs.current[i];
                   if (rect) gsap.to(rect, { opacity: 1, duration: 0.3 });
                   const card = cardRefs.current[i];
                   const initY = exp.position === "top" ? -20 : 20;
                   if (card) {
-                    gsap.fromTo(card,
+                    gsap.fromTo(
+                      card,
                       { opacity: 0, y: initY },
-                      { opacity: 1, y: 0, duration: 0.6, delay: 0.3, ease: "power2.out" },
+                      {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.6,
+                        delay: 0.3,
+                        ease: "power2.out",
+                      },
                     );
                   }
                 }
                 // scrub 역방향 처리
-                if (p < exp.checkpointProgress - 0.04 && triggeredCheckpoints.has(i)) {
+                if (
+                  p < exp.checkpointProgress - 0.04 &&
+                  triggeredCheckpoints.has(i)
+                ) {
                   triggeredCheckpoints.delete(i);
                   const rect = checkpointRefs.current[i];
                   if (rect) gsap.to(rect, { opacity: 0, duration: 0.2 });
@@ -397,8 +417,11 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
               });
 
               // Active experience tracking → floating video 전환
-              const active = EXPERIENCES.reduce<(typeof EXPERIENCES)[number] | null>(
-                (prev, curr) => (p >= curr.checkpointProgress - 0.02 ? curr : prev),
+              const active = EXPERIENCES.reduce<
+                (typeof EXPERIENCES)[number] | null
+              >(
+                (prev, curr) =>
+                  p >= curr.checkpointProgress - 0.02 ? curr : prev,
                 null,
               );
               if (active?.id !== activeExpRef.current?.id) {
@@ -410,7 +433,10 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
                   dissolveVideo(() => {
                     if (active?.videoSrc) {
                       const vd = floatVideoRef.current;
-                      if (vd) { vd.src = active.videoSrc; vd.load(); }
+                      if (vd) {
+                        vd.src = active.videoSrc;
+                        vd.load();
+                      }
                       gsap.to(floating, { opacity: 1, duration: 0.3 });
                       revealVideo();
                     } else {
@@ -419,7 +445,10 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
                   });
                 } else if (active?.videoSrc) {
                   const vd = floatVideoRef.current;
-                  if (vd) { vd.src = active.videoSrc; vd.load(); }
+                  if (vd) {
+                    vd.src = active.videoSrc;
+                    vd.load();
+                  }
                   gsap.to(floating, { opacity: 1, duration: 0.2 });
                   revealVideo();
                 } else {
@@ -438,7 +467,10 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
         // 초기 상태 설정
         gsap.set(c2026Ref.current, { y: 160, opacity: 0 });
         gsap.set(linksRef.current.filter(Boolean), { y: 30, opacity: 0 });
-        gsap.set([emailLinkRef.current, portfolioLinkRef.current], { y: 30, opacity: 0 });
+        gsap.set([emailLinkRef.current, portfolioLinkRef.current], {
+          y: 30,
+          opacity: 0,
+        });
 
         // 1단계: 검정 패널 슬라이드업
         gsap.to(panelRef.current, {
@@ -462,16 +494,28 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
               onComplete: () => {
                 // 3단계: 이메일 링크
                 gsap.to(emailLinkRef.current, {
-                  opacity: 1, y: 0, duration: 0.6, delay: 0.2, ease: "power2.out",
+                  opacity: 1,
+                  y: 0,
+                  duration: 0.6,
+                  delay: 0.2,
+                  ease: "power2.out",
                 });
                 // 4단계: 포트폴리오 링크
                 gsap.to(portfolioLinkRef.current, {
-                  opacity: 1, y: 0, duration: 0.6, delay: 0.35, ease: "power2.out",
+                  opacity: 1,
+                  y: 0,
+                  duration: 0.6,
+                  delay: 0.35,
+                  ease: "power2.out",
                 });
                 // 5단계: GITHUB/EMAIL/PHONE 버튼
                 gsap.to(linksRef.current.filter(Boolean), {
-                  opacity: 1, y: 0, duration: 0.6, delay: 0.5,
-                  stagger: 0.1, ease: "power2.out",
+                  opacity: 1,
+                  y: 0,
+                  duration: 0.6,
+                  delay: 0.5,
+                  stagger: 0.1,
+                  ease: "power2.out",
                 });
               },
             });
@@ -521,13 +565,12 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
           const cssY = (pt.y / 800) * svgH;
           // Safe Area 침범 시 강제 bottom 배치
           const effectivePos =
-            exp.position === "top" && (cssY - 220) < SAFE_AREA_TOP_PX
+            exp.position === "top" && cssY - 220 < SAFE_AREA_TOP_PX
               ? "bottom"
               : exp.position;
           card.style.left = `${cssX - 120}px`;
-          card.style.top  = effectivePos === "top"
-            ? `${cssY - 220}px`
-            : `${cssY + 24}px`;
+          card.style.top =
+            effectivePos === "top" ? `${cssY - 220}px` : `${cssY + 24}px`;
         }
       });
     });
@@ -537,12 +580,12 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
 
   // ── Floating video: 캔버스 크기 설정 + 마우스 추적 lerp 루프 ──
   useEffect(() => {
-    const section  = sub3.current;
+    const section = sub3.current;
     const floating = floatingRef.current;
-    const cv       = floatCanvasRef.current;
+    const cv = floatCanvasRef.current;
     if (!section || !floating || !cv) return;
 
-    cv.width  = 280;
+    cv.width = 280;
     cv.height = 157;
 
     const onMouseMove = (e: MouseEvent) => {
@@ -566,12 +609,13 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
       currentYRef.current += (targetYRef.current - currentYRef.current) * 0.08;
 
       const rect = section.getBoundingClientRect();
-      const W = 280, H = 157;
+      const W = 280,
+        H = 157;
       let posX = currentXRef.current + 24;
       let posY = currentYRef.current - 80;
 
-      if (posX + W > rect.width  - 20) posX = currentXRef.current - W - 24;
-      if (posY < 20)                   posY = currentYRef.current + 24;
+      if (posX + W > rect.width - 20) posX = currentXRef.current - W - 24;
+      if (posY < 20) posY = currentYRef.current + 24;
       if (posY + H > rect.height - 20) posY = rect.height - H - 20;
 
       floating.style.transform = `translate(${posX}px, ${posY}px)`;
@@ -579,22 +623,23 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
     };
     floatRafRef.current = requestAnimationFrame(loop);
 
-    section.addEventListener("mousemove",  onMouseMove);
+    section.addEventListener("mousemove", onMouseMove);
     section.addEventListener("mouseleave", onMouseLeave);
     section.addEventListener("mouseenter", onMouseEnter);
 
     return () => {
-      section.removeEventListener("mousemove",  onMouseMove);
+      section.removeEventListener("mousemove", onMouseMove);
       section.removeEventListener("mouseleave", onMouseLeave);
       section.removeEventListener("mouseenter", onMouseEnter);
-      if (floatRafRef.current !== null) cancelAnimationFrame(floatRafRef.current);
+      if (floatRafRef.current !== null)
+        cancelAnimationFrame(floatRafRef.current);
     };
   }, []);
 
   // ── Contact 패널 grid cell edge hover ──
   useEffect(() => {
     const canvas = gridCanvasRef.current;
-    const panel  = panelRef.current;
+    const panel = panelRef.current;
     if (!canvas || !panel) return;
 
     const CELL = 100;
@@ -602,33 +647,37 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
     const BASE = "234, 93, 42";
 
     const NEIGHBOR_OFFSETS = [
-      { dc:  0, dr: -1 },
-      { dc:  0, dr:  1 },
-      { dc: -1, dr:  0 },
-      { dc:  1, dr:  0 },
+      { dc: 0, dr: -1 },
+      { dc: 0, dr: 1 },
+      { dc: -1, dr: 0 },
+      { dc: 1, dr: 0 },
     ] as const;
 
-    let mouseX = -1, mouseY = -1;
-    let lastCol = -1, lastRow = -1;
+    let mouseX = -1,
+      mouseY = -1;
+    let lastCol = -1,
+      lastRow = -1;
     let isHovering = false;
     let raf: number | null = null;
-    let cols = 0, rows = 0;
+    let cols = 0,
+      rows = 0;
 
     // 인접 셀 / 중심 셀 lerp opacity
     const neighborOps = [0, 0, 0, 0];
     let centerOp = 0;
 
     const resize = () => {
-      canvas.width  = window.innerWidth;
+      canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      cols = Math.ceil(canvas.width  / CELL);
+      cols = Math.ceil(canvas.width / CELL);
       rows = Math.ceil(canvas.height / CELL);
     };
     resize();
 
     const drawDot = (
       ctx: CanvasRenderingContext2D,
-      cx: number, cy: number,
+      cx: number,
+      cy: number,
       opacity: number,
       flicker: number,
     ) => {
@@ -641,7 +690,10 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
 
     const draw = () => {
       const ctx = canvas.getContext("2d");
-      if (!ctx) { raf = null; return; }
+      if (!ctx) {
+        raf = null;
+        return;
+      }
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -655,7 +707,13 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
           const nc = lastCol + dc;
           const nr = lastRow + dr;
           neighborOps[i] += (nTarget - neighborOps[i]) * 0.08;
-          if (neighborOps[i] > 0.001 && nc >= 0 && nr >= 0 && nc < cols && nr < rows) {
+          if (
+            neighborOps[i] > 0.001 &&
+            nc >= 0 &&
+            nr >= 0 &&
+            nc < cols &&
+            nr < rows
+          ) {
             anyVisible = true;
             ctx.fillStyle = `rgba(${BASE}, ${neighborOps[i]})`;
             ctx.fillRect(nc * CELL, nr * CELL, CELL, CELL);
@@ -676,49 +734,61 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
         anyVisible = true;
         const col = Math.floor(mouseX / CELL);
         const row = Math.floor(mouseY / CELL);
-        const x   = col * CELL;
-        const y   = row * CELL;
+        const x = col * CELL;
+        const y = row * CELL;
 
         const dx = mouseX - (x + HALF);
         const dy = mouseY - (y + HALF);
 
         const lp = Math.max(0, -dx / HALF);
-        const rp = Math.max(0,  dx / HALF);
+        const rp = Math.max(0, dx / HALF);
         const tp = Math.max(0, -dy / HALF);
-        const bp = Math.max(0,  dy / HALF);
+        const bp = Math.max(0, dy / HALF);
 
         const centerProx = 1 - Math.max(Math.abs(dx), Math.abs(dy)) / HALF;
-        const minOp      = Math.max(0, centerProx * 0.6);
+        const minOp = Math.max(0, centerProx * 0.6);
 
         const flp = Math.max(lp, minOp);
         const frp = Math.max(rp, minOp);
         const ftp = Math.max(tp, minOp);
         const fbp = Math.max(bp, minOp);
 
-        const flicker = Math.sin(Date.now() / 1000 * 8) * 0.15 + 0.85;
+        const flicker = Math.sin((Date.now() / 1000) * 8) * 0.15 + 0.85;
 
         ctx.lineWidth = 1.5;
 
         if (flp > 0.05) {
           ctx.strokeStyle = `rgba(${BASE}, ${flp * 0.7 * flicker})`;
-          ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + CELL); ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x, y + CELL);
+          ctx.stroke();
         }
         if (frp > 0.05) {
           ctx.strokeStyle = `rgba(${BASE}, ${frp * 0.7 * flicker})`;
-          ctx.beginPath(); ctx.moveTo(x + CELL, y); ctx.lineTo(x + CELL, y + CELL); ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(x + CELL, y);
+          ctx.lineTo(x + CELL, y + CELL);
+          ctx.stroke();
         }
         if (ftp > 0.05) {
           ctx.strokeStyle = `rgba(${BASE}, ${ftp * 0.7 * flicker})`;
-          ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + CELL, y); ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x + CELL, y);
+          ctx.stroke();
         }
         if (fbp > 0.05) {
           ctx.strokeStyle = `rgba(${BASE}, ${fbp * 0.7 * flicker})`;
-          ctx.beginPath(); ctx.moveTo(x, y + CELL); ctx.lineTo(x + CELL, y + CELL); ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(x, y + CELL);
+          ctx.lineTo(x + CELL, y + CELL);
+          ctx.stroke();
         }
 
-        drawDot(ctx, x,        y,        flp * ftp, flicker);
-        drawDot(ctx, x + CELL, y,        frp * ftp, flicker);
-        drawDot(ctx, x,        y + CELL, flp * fbp, flicker);
+        drawDot(ctx, x, y, flp * ftp, flicker);
+        drawDot(ctx, x + CELL, y, frp * ftp, flicker);
+        drawDot(ctx, x, y + CELL, flp * fbp, flicker);
         drawDot(ctx, x + CELL, y + CELL, frp * fbp, flicker);
       }
 
@@ -731,8 +801,8 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
 
     const onMouseMove = (e: MouseEvent) => {
       const rect = panel.getBoundingClientRect();
-      mouseX  = e.clientX - rect.left;
-      mouseY  = e.clientY - rect.top;
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
       lastCol = Math.floor(mouseX / CELL);
       lastRow = Math.floor(mouseY / CELL);
       isHovering = true;
@@ -757,8 +827,6 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
       if (raf !== null) cancelAnimationFrame(raf);
     };
   }, []);
-
-
 
   return (
     <section
@@ -833,50 +901,12 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
           position: "relative",
           minHeight: "80vh",
           display: "flex",
-          flexDirection: "column",
+          alignItems: "center",
           justifyContent: "center",
-          padding: "10vh 8vw 10vh 52vw",
+          paddingBottom: "12vh",
         }}
       >
-        <div ref={bd2} style={BACKDROP} />
-        <SplitTitle
-          chars={SKILLS_TITLE}
-          refsArr={skillsChars}
-          style={{
-            fontSize: "clamp(24px, 3.2vw, 52px)",
-            marginBottom: "2.5rem",
-            position: "relative",
-            zIndex: 1,
-          }}
-        />
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "10px",
-            position: "relative",
-            zIndex: 1,
-          }}
-        >
-          {SKILLS.map((skill) => (
-            <VariableProximity
-              key={skill}
-              text={skill}
-              splitBy="char"
-              minWeight={300}
-              maxWeight={700}
-              style={{
-                fontSize: "clamp(11px, 1vw, 15px)",
-                color: "rgba(255,255,255,0.78)",
-                letterSpacing: "0.1em",
-                padding: "6px 14px",
-                border: "1px solid rgba(255,255,255,0.22)",
-                borderRadius: "3px",
-                ...TS,
-              }}
-            />
-          ))}
-        </div>
+        <OrbitSkills skills={SKILLS} />
       </div>
 
       {/* ──────────── 3. EXPERIENCE ──────────── */}
@@ -948,7 +978,9 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
             {EXPERIENCES.map((exp, i) => (
               <rect
                 key={exp.id}
-                ref={el => { checkpointRefs.current[i] = el; }}
+                ref={(el) => {
+                  checkpointRefs.current[i] = el;
+                }}
                 width={12}
                 height={12}
                 fill="#ea5d2a"
@@ -962,7 +994,9 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
           {EXPERIENCES.map((exp, i) => (
             <div
               key={exp.id}
-              ref={el => { cardRefs.current[i] = el; }}
+              ref={(el) => {
+                cardRefs.current[i] = el;
+              }}
               style={{
                 position: "absolute",
                 width: 240,
@@ -972,25 +1006,58 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
               }}
             >
               {/* 카드 본문 — 텍스트 정보만 */}
-              <div style={{
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,255,255,0.12)",
-                borderRadius: 8,
-                padding: 16,
-                backdropFilter: "blur(8px)",
-                WebkitBackdropFilter: "blur(8px)",
-                transition: "box-shadow 0.3s ease",
-              }}>
-                <p style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", margin: "0 0 4px", letterSpacing: "0.1em" }}>
+              <div
+                style={{
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  borderRadius: 8,
+                  padding: 16,
+                  backdropFilter: "blur(8px)",
+                  WebkitBackdropFilter: "blur(8px)",
+                  transition: "box-shadow 0.3s ease",
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: 10,
+                    color: "rgba(255,255,255,0.45)",
+                    margin: "0 0 4px",
+                    letterSpacing: "0.1em",
+                  }}
+                >
                   {exp.year}
                 </p>
-                <p style={{ fontSize: 13, color: "rgba(255,255,255,1.0)", fontWeight: 700, margin: "0 0 4px", letterSpacing: "0.02em", ...TS }}>
+                <p
+                  style={{
+                    fontSize: 13,
+                    color: "rgba(255,255,255,1.0)",
+                    fontWeight: 700,
+                    margin: "0 0 4px",
+                    letterSpacing: "0.02em",
+                    ...TS,
+                  }}
+                >
                   {exp.company}
                 </p>
-                <p style={{ fontSize: 10, color: "rgba(255,255,255,0.75)", margin: "0 0 6px", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                <p
+                  style={{
+                    fontSize: 10,
+                    color: "rgba(255,255,255,0.75)",
+                    margin: "0 0 6px",
+                    letterSpacing: "0.05em",
+                    textTransform: "uppercase",
+                  }}
+                >
                   {exp.role}
                 </p>
-                <p style={{ fontSize: 10, color: "rgba(255,255,255,0.55)", margin: 0, lineHeight: 1.6 }}>
+                <p
+                  style={{
+                    fontSize: 10,
+                    color: "rgba(255,255,255,0.55)",
+                    margin: 0,
+                    lineHeight: 1.6,
+                  }}
+                >
                   {exp.desc}
                 </p>
               </div>
@@ -1020,7 +1087,12 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
             ref={floatCanvasRef}
             width={280}
             height={157}
-            style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+            }}
           />
           <video
             ref={floatVideoRef}
@@ -1086,7 +1158,9 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
           }}
         >
           <a
-            ref={el => { linksRef.current[0] = el; }}
+            ref={(el) => {
+              linksRef.current[0] = el;
+            }}
             href="https://github.com/hsyo830"
             className="contact-link"
             target="_blank"
@@ -1097,7 +1171,9 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
             GITHUB ↗
           </a>
           <a
-            ref={el => { linksRef.current[1] = el; }}
+            ref={(el) => {
+              linksRef.current[1] = el;
+            }}
             href="mailto:nah830@gmail.com"
             className="contact-link"
           >
@@ -1106,7 +1182,9 @@ export default function About({ sectionRef, contactRef, gridRef }: AboutProps = 
             EMAIL ↗
           </a>
           <a
-            ref={el => { linksRef.current[2] = el; }}
+            ref={(el) => {
+              linksRef.current[2] = el;
+            }}
             href="tel:01082528608"
             className="contact-link"
           >
