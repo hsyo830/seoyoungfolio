@@ -190,6 +190,7 @@ interface CardRef {
   link2El: HTMLElement | null;
   link3El: HTMLElement | null;
   videoEl: HTMLElement | null;
+  squareEls: HTMLElement[];
 }
 
 const LINE_COLOR = "rgba(255,255,255,0.18)";
@@ -198,6 +199,29 @@ const LINE_STYLE: React.CSSProperties = {
   flexShrink: 0,
 };
 const BOX_COLOR = "rgba(255,255,255,0.25)";
+
+const SQUARE_STYLE: React.CSSProperties = {
+  position: "absolute",
+  width: 32,
+  height: 32,
+  border: "2px dashed rgba(255,255,255,0.2)",
+  pointerEvents: "auto",
+  zIndex: 6,
+};
+
+const SQUARES_ODD: React.CSSProperties[] = [
+  { top: 24, right: 24 },
+  { top: "calc(45% - 16px)", left: "20%" },
+  { bottom: 24, left: "30%" },
+];
+
+const SQUARES_EVEN: React.CSSProperties[] = [
+  { top: 24, left: "20%" },
+  { top: "calc(40% - 16px)", right: 24 },
+  { top: "calc(60% - 16px)", left: "22%" },
+  { bottom: 16, left: "28%" },
+];
+
 const TEXT_HIDDEN: React.CSSProperties = {
   opacity: 0,
   willChange: "opacity, transform",
@@ -208,9 +232,11 @@ const CONTENT_H = `calc(100vh - ${MARQUEE_H}px - 2px)`; // card has 1px border t
 
 function Card({
   project,
+  index,
   onRef,
 }: {
   project: Project;
+  index: number;
   onRef: (r: CardRef) => void;
 }) {
   const boxTopRef = useRef<HTMLDivElement>(null);
@@ -232,6 +258,8 @@ function Card({
   const link2Ref = useRef<HTMLAnchorElement>(null);
   const link3Ref = useRef<HTMLAnchorElement>(null);
   const videoRef = useRef<HTMLDivElement>(null);
+  const squareRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const squares = index % 2 === 0 ? SQUARES_ODD : SQUARES_EVEN;
 
   useEffect(() => {
     onRef({
@@ -256,6 +284,9 @@ function Card({
       link2El: link2Ref.current,
       link3El: link3Ref.current,
       videoEl: videoRef.current,
+      squareEls: squareRefs.current.filter(
+        (el): el is HTMLDivElement => el !== null,
+      ),
     });
   });
 
@@ -288,7 +319,7 @@ function Card({
           top: MARQUEE_H + BOX_INSET,
           left: BOX_INSET,
           right: BOX_INSET,
-          height: 3,
+          height: 2,
           background: BOX_COLOR,
           transformOrigin: "left center",
           transform: "scaleX(0)",
@@ -303,7 +334,7 @@ function Card({
           top: MARQUEE_H + BOX_INSET,
           right: BOX_INSET,
           bottom: BOX_INSET,
-          width: 3,
+          width: 2,
           background: BOX_COLOR,
           transformOrigin: "top center",
           transform: "scaleY(0)",
@@ -318,7 +349,7 @@ function Card({
           bottom: BOX_INSET,
           left: BOX_INSET,
           right: BOX_INSET,
-          height: 3,
+          height: 2,
           background: BOX_COLOR,
           transformOrigin: "right center",
           transform: "scaleX(0)",
@@ -333,7 +364,7 @@ function Card({
           top: MARQUEE_H + BOX_INSET,
           left: BOX_INSET,
           bottom: BOX_INSET,
-          width: 3,
+          width: 2,
           background: BOX_COLOR,
           transformOrigin: "bottom center",
           transform: "scaleY(0)",
@@ -342,382 +373,430 @@ function Card({
         }}
       />
 
+      {/* Dashed square markers */}
+      {squares.map((pos, i) => (
+        <div
+          key={i}
+          ref={(el) => {
+            squareRefs.current[i] = el;
+          }}
+          style={{
+            ...SQUARE_STYLE,
+            ...pos,
+            opacity: 0,
+            transform: "scale(0.8)",
+          }}
+          onMouseEnter={(e) =>
+            gsap.to(e.currentTarget, {
+              scale: 1.3,
+              duration: 0.25,
+              ease: "power2.out",
+              overwrite: "auto",
+            })
+          }
+          onMouseLeave={(e) =>
+            gsap.to(e.currentTarget, {
+              scale: 1,
+              duration: 0.25,
+              ease: "power2.out",
+              overwrite: "auto",
+            })
+          }
+        />
+      ))}
+
       {/* Sticky placeholder */}
       <div style={{ flexShrink: 0, height: MARQUEE_H }} />
 
       {/* Content area — everything below sticky bar */}
-      <div style={{ height: CONTENT_H, overflow: "hidden", display: "flex", flexDirection: "column", flexShrink: 0, paddingLeft: BOX_INSET, paddingRight: BOX_INSET, paddingBottom: BOX_INSET, boxSizing: "border-box" }}>
-
-      {/* Title zone — explicit height, no flex growth */}
       <div
         style={{
-          flexShrink: 0,
-          height: TITLE_H,
+          height: CONTENT_H,
           overflow: "hidden",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "center",
+          flexShrink: 0,
+          paddingLeft: BOX_INSET,
+          paddingRight: BOX_INSET,
+          paddingBottom: BOX_INSET,
+          boxSizing: "border-box",
           position: "relative",
-          zIndex: 2,
+          zIndex: 1,
         }}
       >
-        <p
-          ref={indexRef}
-          style={{
-            ...TEXT_HIDDEN,
-            fontFamily: "var(--font-inter)",
-            fontSize: 11,
-            fontWeight: 600,
-            letterSpacing: "0.25em",
-            color: "rgba(255,255,255,0.4)",
-            textTransform: "uppercase",
-            margin: 0,
-            marginBottom: "0.6em",
-          }}
-        >
-          PROJECT // {project.index}
-        </p>
-
-        <h2
-          ref={titleRef}
-          style={{
-            ...TEXT_HIDDEN,
-            fontFamily: "'KblJumpExtended', sans-serif",
-            fontSize: "clamp(2.5rem, 6vw, 5.5rem)",
-            fontWeight: 800,
-            lineHeight: 1,
-            letterSpacing: "-0.02em",
-            color: "#ffffff",
-            margin: 0,
-            marginBottom: "0.4em",
-          }}
-        >
-          {project.title}
-        </h2>
-
-        <p
-          ref={subRef}
-          style={{
-            ...TEXT_HIDDEN,
-            fontFamily: "var(--font-inter)",
-            fontSize: "clamp(10px, 1vw, 13px)",
-            fontWeight: 400,
-            letterSpacing: "0.12em",
-            color: "rgba(255,255,255,0.45)",
-            textTransform: "uppercase",
-            margin: 0,
-          }}
-        >
-          {project.subtitle}
-        </p>
-      </div>
-
-      {/* H divider */}
-      <div
-        ref={hDivRef}
-        style={{
-          ...LINE_STYLE,
-          height: 2,
-          transformOrigin: "left center",
-          transform: "scaleX(0)",
-          position: "relative",
-          zIndex: 2,
-        }}
-      />
-
-      {/* Bottom zone — flex:1 absorbs the 1px rounding surplus from the divider */}
-      <div
-        style={{
-          flex: 1,
-          minHeight: 0,
-          display: "flex",
-          overflow: "hidden",
-          position: "relative",
-          zIndex: 2,
-          willChange: "transform",
-        }}
-      >
-        {/* Stack col — 22% */}
+        {/* Title zone — explicit height, no flex growth */}
         <div
           style={{
             flexShrink: 0,
-            width: "22%",
+            height: TITLE_H,
             overflow: "hidden",
-            padding: "1.8rem 2.5vw",
             display: "flex",
             flexDirection: "column",
-            gap: "0.45rem",
+            justifyContent: "center",
+            padding: "3rem 5vw 0",
+            position: "relative",
+            zIndex: 2,
           }}
         >
           <p
-            ref={stackLblRef}
+            ref={indexRef}
             style={{
               ...TEXT_HIDDEN,
               fontFamily: "var(--font-inter)",
-              fontSize: 10,
+              fontSize: 11,
               fontWeight: 600,
-              letterSpacing: "0.2em",
-              color: "rgba(255,255,255,0.35)",
+              letterSpacing: "0.25em",
+              color: "rgba(255,255,255,0.4)",
               textTransform: "uppercase",
               margin: 0,
-              marginBottom: "0.8rem",
+              marginBottom: "0.6em",
             }}
           >
-            STACK //
+            PROJECT // {project.index}
           </p>
-          <div
-            ref={tagsRef}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.45rem",
-              alignItems: "flex-start",
-            }}
-          >
-            {project.stack.map((tech) => (
-              <span
-                key={tech}
-                style={{
-                  ...TEXT_HIDDEN,
-                  border: "1px solid rgba(255,255,255,0.3)",
-                  padding: "4px 12px",
-                  fontFamily: "var(--font-inter)",
-                  fontSize: 11,
-                  fontWeight: 500,
-                  letterSpacing: "0.06em",
-                  color: "rgba(255,255,255,0.75)",
-                }}
-              >
-                {tech}
-              </span>
-            ))}
-          </div>
-        </div>
 
-        {/* V divider 1 */}
-        <div
-          ref={vDiv1Ref}
-          style={{
-            ...LINE_STYLE,
-            flexShrink: 0,
-            width: 2,
-            transformOrigin: "top center",
-            transform: "scaleY(0)",
-          }}
-        />
-
-        {/* Links col — 20% */}
-        <div
-          style={{
-            flexShrink: 0,
-            width: "20%",
-            overflow: "hidden",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <a
-            ref={link1Ref}
-            href={hasGH ? project.github : undefined}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="pn-link-row"
+          <h2
+            ref={titleRef}
             style={{
               ...TEXT_HIDDEN,
-              flex: 1,
-              minHeight: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: "0 1.5vw",
-              fontFamily: "var(--font-inter)",
-              fontSize: 11,
-              fontWeight: 600,
-              letterSpacing: "0.14em",
-              textTransform: "uppercase",
-              textDecoration: "none",
-              color: hasGH ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.2)",
-              cursor: hasGH ? "pointer" : "default",
+              fontFamily: "'KblJumpExtended', sans-serif",
+              fontSize: "clamp(2.5rem, 6vw, 5.5rem)",
+              fontWeight: 800,
+              lineHeight: 1,
+              letterSpacing: "-0.02em",
+              color: "#ffffff",
+              margin: 0,
+              marginBottom: "0.4em",
             }}
           >
-            <span>GITHUB</span>
-            {hasGH && <span style={{ fontSize: 14 }}>↗</span>}
-          </a>
+            {project.title}
+          </h2>
 
-          <div
-            ref={hLink1Ref}
-            style={{
-              ...LINE_STYLE,
-              flexShrink: 0,
-              height: 2,
-              transformOrigin: "left center",
-              transform: "scaleX(0)",
-            }}
-          />
-
-          <a
-            ref={link2Ref}
-            href={hasDemo ? project.demo : undefined}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="pn-link-row"
-            style={{
-              ...TEXT_HIDDEN,
-              flex: 1,
-              minHeight: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: "0 1.5vw",
-              fontFamily: "var(--font-inter)",
-              fontSize: 11,
-              fontWeight: 600,
-              letterSpacing: "0.14em",
-              textTransform: "uppercase",
-              textDecoration: "none",
-              color: hasDemo
-                ? "rgba(255,255,255,0.75)"
-                : "rgba(255,255,255,0.2)",
-              cursor: hasDemo ? "pointer" : "default",
-            }}
-          >
-            <span>DEMO VIDEO</span>
-            {hasDemo && <span style={{ fontSize: 14 }}>↗</span>}
-          </a>
-
-          <div
-            ref={hLink2Ref}
-            style={{
-              ...LINE_STYLE,
-              flexShrink: 0,
-              height: 2,
-              transformOrigin: "left center",
-              transform: "scaleX(0)",
-            }}
-          />
-
-          <a
-            ref={link3Ref}
-            href={hasLive ? project.live : undefined}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="pn-link-row"
-            style={{
-              ...TEXT_HIDDEN,
-              flex: 1,
-              minHeight: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: "0 1.5vw",
-              fontFamily: "var(--font-inter)",
-              fontSize: 11,
-              fontWeight: 600,
-              letterSpacing: "0.14em",
-              textTransform: "uppercase",
-              textDecoration: "none",
-              color: hasLive
-                ? "rgba(255,255,255,0.75)"
-                : "rgba(255,255,255,0.2)",
-              cursor: hasLive ? "pointer" : "default",
-            }}
-          >
-            <span>LIVE SITE</span>
-            {hasLive && <span style={{ fontSize: 14 }}>↗</span>}
-          </a>
-        </div>
-
-        {/* V divider 2 */}
-        <div
-          ref={vDiv2Ref}
-          style={{
-            ...LINE_STYLE,
-            flexShrink: 0,
-            width: 2,
-            transformOrigin: "top center",
-            transform: "scaleY(0)",
-          }}
-        />
-
-        {/* Video col — takes remaining width */}
-        <div
-          ref={videoRef}
-          style={{
-            flex: 1,
-            minWidth: 0,
-            overflow: "hidden",
-            position: "relative",
-            isolation: "isolate",
-            ...TEXT_HIDDEN,
-          }}
-        >
           <p
+            ref={subRef}
             style={{
-              position: "absolute",
-              top: "1.2rem",
-              left: "1.5vw",
-              zIndex: 2,
+              ...TEXT_HIDDEN,
               fontFamily: "var(--font-inter)",
-              fontSize: 10,
-              fontWeight: 600,
-              letterSpacing: "0.2em",
+              fontSize: "clamp(10px, 1vw, 13px)",
+              fontWeight: 400,
+              letterSpacing: "0.12em",
               color: "rgba(255,255,255,0.45)",
               textTransform: "uppercase",
               margin: 0,
             }}
           >
-            PREVIEW //
+            {project.subtitle}
           </p>
-          <video
-            src={project.video}
-            autoPlay
-            loop
-            muted
-            playsInline
-            style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              display: "block",
-            }}
-          />
         </div>
-      </div>
 
-      {/* Type row — fixed height, always at bottom */}
-      <div
-        style={{
-          flexShrink: 0,
-          height: TYPE_ROW_H,
-          borderTop: "1px solid rgba(255,255,255,0.15)",
-          display: "flex",
-          alignItems: "center",
-          position: "relative",
-          zIndex: 2,
-          overflow: "hidden",
-        }}
-      >
-        <p
-          ref={typeRef}
+        {/* H divider */}
+        <div
+          ref={hDivRef}
           style={{
-            ...TEXT_HIDDEN,
-            fontFamily: "var(--font-inter)",
-            fontSize: 10,
-            fontWeight: 500,
-            letterSpacing: "0.18em",
-            color: "rgba(255,255,255,0.6)",
-            textTransform: "uppercase",
-            margin: 0,
-            lineHeight: 1,
+            ...LINE_STYLE,
+            height: 2,
+            transformOrigin: "left center",
+            transform: "scaleX(0)",
+            position: "relative",
+            zIndex: 2,
+          }}
+        />
+
+        {/* Bottom zone — flex:1 absorbs the 1px rounding surplus from the divider */}
+        <div
+          style={{
+            flex: 1,
+            minHeight: 0,
+            display: "flex",
+            overflow: "hidden",
+            position: "relative",
+            zIndex: 2,
+            willChange: "transform",
           }}
         >
-          {project.type}
-        </p>
-      </div>
+          {/* Stack col — 22% */}
+          <div
+            style={{
+              flexShrink: 0,
+              width: "22%",
+              overflow: "hidden",
+              padding: "1.8rem 2.5vw",
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.45rem",
+            }}
+          >
+            <p
+              ref={stackLblRef}
+              style={{
+                ...TEXT_HIDDEN,
+                fontFamily: "var(--font-inter)",
+                fontSize: 10,
+                fontWeight: 600,
+                letterSpacing: "0.2em",
+                color: "rgba(255,255,255,0.35)",
+                textTransform: "uppercase",
+                margin: 0,
+                marginBottom: "0.8rem",
+              }}
+            >
+              STACK //
+            </p>
+            <div
+              ref={tagsRef}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.45rem",
+                alignItems: "flex-start",
+              }}
+            >
+              {project.stack.map((tech) => (
+                <span
+                  key={tech}
+                  style={{
+                    ...TEXT_HIDDEN,
+                    border: "1px solid rgba(255,255,255,0.3)",
+                    padding: "4px 12px",
+                    fontFamily: "var(--font-inter)",
+                    fontSize: 11,
+                    fontWeight: 500,
+                    letterSpacing: "0.06em",
+                    color: "rgba(255,255,255,0.75)",
+                  }}
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
 
-      </div>{/* /content area */}
+          {/* V divider 1 */}
+          <div
+            ref={vDiv1Ref}
+            style={{
+              ...LINE_STYLE,
+              flexShrink: 0,
+              width: 2,
+              transformOrigin: "top center",
+              transform: "scaleY(0)",
+            }}
+          />
+
+          {/* Links col — 20% */}
+          <div
+            style={{
+              flexShrink: 0,
+              width: "20%",
+              overflow: "hidden",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <a
+              ref={link1Ref}
+              href={hasGH ? project.github : undefined}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="pn-link-row"
+              style={{
+                ...TEXT_HIDDEN,
+                flex: 1,
+                minHeight: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "0 1.5vw",
+                fontFamily: "var(--font-inter)",
+                fontSize: 11,
+                fontWeight: 600,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                textDecoration: "none",
+                color: hasGH
+                  ? "rgba(255,255,255,0.75)"
+                  : "rgba(255,255,255,0.2)",
+                cursor: hasGH ? "pointer" : "default",
+              }}
+            >
+              <span>GITHUB</span>
+              {hasGH && <span style={{ fontSize: 14 }}>↗</span>}
+            </a>
+
+            <div
+              ref={hLink1Ref}
+              style={{
+                ...LINE_STYLE,
+                flexShrink: 0,
+                height: 2,
+                transformOrigin: "left center",
+                transform: "scaleX(0)",
+              }}
+            />
+
+            <a
+              ref={link2Ref}
+              href={hasDemo ? project.demo : undefined}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="pn-link-row"
+              style={{
+                ...TEXT_HIDDEN,
+                flex: 1,
+                minHeight: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "0 1.5vw",
+                fontFamily: "var(--font-inter)",
+                fontSize: 11,
+                fontWeight: 600,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                textDecoration: "none",
+                color: hasDemo
+                  ? "rgba(255,255,255,0.75)"
+                  : "rgba(255,255,255,0.2)",
+                cursor: hasDemo ? "pointer" : "default",
+              }}
+            >
+              <span>DEMO VIDEO</span>
+              {hasDemo && <span style={{ fontSize: 14 }}>↗</span>}
+            </a>
+
+            <div
+              ref={hLink2Ref}
+              style={{
+                ...LINE_STYLE,
+                flexShrink: 0,
+                height: 2,
+                transformOrigin: "left center",
+                transform: "scaleX(0)",
+              }}
+            />
+
+            <a
+              ref={link3Ref}
+              href={hasLive ? project.live : undefined}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="pn-link-row"
+              style={{
+                ...TEXT_HIDDEN,
+                flex: 1,
+                minHeight: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "0 1.5vw",
+                fontFamily: "var(--font-inter)",
+                fontSize: 11,
+                fontWeight: 600,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                textDecoration: "none",
+                color: hasLive
+                  ? "rgba(255,255,255,0.75)"
+                  : "rgba(255,255,255,0.2)",
+                cursor: hasLive ? "pointer" : "default",
+              }}
+            >
+              <span>LIVE SITE</span>
+              {hasLive && <span style={{ fontSize: 14 }}>↗</span>}
+            </a>
+          </div>
+
+          {/* V divider 2 */}
+          <div
+            ref={vDiv2Ref}
+            style={{
+              ...LINE_STYLE,
+              flexShrink: 0,
+              width: 2,
+              transformOrigin: "top center",
+              transform: "scaleY(0)",
+            }}
+          />
+
+          {/* Video col — takes remaining width */}
+          <div
+            ref={videoRef}
+            style={{
+              flex: 1,
+              minWidth: 0,
+              overflow: "hidden",
+              position: "relative",
+              ...TEXT_HIDDEN,
+            }}
+          >
+            <p
+              style={{
+                position: "absolute",
+                top: "1.2rem",
+                left: "1.5vw",
+                zIndex: 2,
+                fontFamily: "var(--font-inter)",
+                fontSize: 10,
+                fontWeight: 600,
+                letterSpacing: "0.2em",
+                color: "rgba(255,255,255,0.45)",
+                textTransform: "uppercase",
+                margin: 0,
+              }}
+            >
+              PREVIEW //
+            </p>
+            <video
+              src={project.video}
+              autoPlay
+              loop
+              muted
+              playsInline
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                display: "block",
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Type row — fixed height, always at bottom */}
+        <div
+          style={{
+            flexShrink: 0,
+            height: TYPE_ROW_H,
+            borderTop: "1px solid rgba(255,255,255,0.15)",
+            display: "flex",
+            alignItems: "center",
+            padding: "0 5vw",
+            position: "relative",
+            zIndex: 2,
+            overflow: "hidden",
+          }}
+        >
+          <p
+            ref={typeRef}
+            style={{
+              ...TEXT_HIDDEN,
+              fontFamily: "var(--font-inter)",
+              fontSize: 10,
+              fontWeight: 500,
+              letterSpacing: "0.18em",
+              color: "rgba(255,255,255,0.6)",
+              textTransform: "uppercase",
+              margin: 0,
+              lineHeight: 1,
+            }}
+          >
+            {project.type}
+          </p>
+        </div>
+      </div>
+      {/* /content area */}
 
       <style>{`
         .pn-link-row:hover { background: rgba(255,255,255,0.95) !important; color: #000 !important; }
@@ -748,6 +827,7 @@ function buildCardInTl(refs: CardRef, fast: boolean): gsap.core.Timeline {
     link2El,
     link3El,
     videoEl,
+    squareEls,
   } = refs;
 
   const d = fast ? 0.5 : 1;
@@ -757,6 +837,8 @@ function buildCardInTl(refs: CardRef, fast: boolean): gsap.core.Timeline {
     scaleY: 0,
   });
   gsap.set([hDivEl, hLink1El, hLink2El].filter(Boolean), { scaleX: 0 });
+  if (squareEls.length)
+    gsap.set(squareEls, { opacity: 0, scale: 0.8, rotation: 0 });
   gsap.set(
     [
       indexEl,
@@ -797,6 +879,20 @@ function buildCardInTl(refs: CardRef, fast: boolean): gsap.core.Timeline {
     )
     .addLabel("phase2");
 
+  if (squareEls.length)
+    tl.fromTo(
+      squareEls,
+      { opacity: 0, scale: 0.8 },
+      {
+        opacity: 1,
+        scale: 1,
+        duration: 0.4 * d,
+        stagger: 0.08 * d,
+        ease: "back.out(1.7)",
+      },
+      `phase1+=${0.7 * d}`,
+    );
+
   if (indexEl)
     tl.fromTo(
       indexEl,
@@ -830,6 +926,18 @@ function buildCardInTl(refs: CardRef, fast: boolean): gsap.core.Timeline {
   return tl;
 }
 
+function startSquareRotation(squareEls: HTMLElement[]): gsap.core.Timeline {
+  const tl = gsap.timeline({ repeat: -1 });
+  squareEls.forEach((el, i) => {
+    tl.to(
+      el,
+      { rotation: "+=720", duration: 0.6, ease: "power2.inOut" },
+      i * 0.4,
+    ).to({}, { duration: 1.4 });
+  });
+  return tl;
+}
+
 const ENTRY_DWELL = 500;
 const EXIT_DWELL = 400;
 
@@ -841,6 +949,7 @@ export default function ProjectsNew() {
   const scrollIdxRef = useRef(-1);
   const cardRefsMap = useRef<Map<number, CardRef>>(new Map());
   const activeTlRef = useRef<gsap.core.Timeline | null>(null);
+  const squareRotationTlRef = useRef<gsap.core.Timeline | null>(null);
   const gridAnimDone = useRef(false);
   const isInSection = useRef(false);
 
@@ -878,10 +987,19 @@ export default function ProjectsNew() {
     const refs = cardRefsMap.current.get(idx);
     if (!refs) return;
     activeTlRef.current?.kill();
+    squareRotationTlRef.current?.kill();
+    squareRotationTlRef.current = null;
     activeTlRef.current = buildCardInTl(refs, fast);
+    activeTlRef.current.eventCallback("onComplete", () => {
+      if (refs.squareEls.length) {
+        squareRotationTlRef.current = startSquareRotation(refs.squareEls);
+      }
+    });
   }, []);
 
   const runCardOut = useCallback((idx: number) => {
+    squareRotationTlRef.current?.kill();
+    squareRotationTlRef.current = null;
     const refs = cardRefsMap.current.get(idx);
     if (!refs) return;
     const {
@@ -895,7 +1013,10 @@ export default function ProjectsNew() {
       link2El,
       link3El,
       videoEl,
+      squareEls,
     } = refs;
+    if (squareEls.length)
+      gsap.to(squareEls, { opacity: 0, duration: 0.15, overwrite: true });
     const all = [
       indexEl,
       titleEl,
@@ -1055,7 +1176,7 @@ export default function ProjectsNew() {
         }}
       >
         {projects.map((p, i) => (
-          <Card key={p.index} project={p} onRef={setCardRef(i)} />
+          <Card key={p.index} project={p} index={i} onRef={setCardRef(i)} />
         ))}
       </div>
     </section>
