@@ -84,14 +84,17 @@ const PATH_D =
 const TS: React.CSSProperties = { textShadow: "0 1px 12px rgba(0,0,0,0.4)" };
 
 const OUTLINE: React.CSSProperties = {
-  fontFamily: "'KblJumpExtended', sans-serif",
-  fontWeight: 800,
+  fontFamily: "var(--font-anton)",
+  fontWeight: 400,
   lineHeight: 1,
-  letterSpacing: "-0.03em",
-  color: "rgba(255,255,255,0.06)",
-  WebkitTextStroke: "0.3px rgba(255,255,255,0.5)" as string,
-  textShadow:
-    "0 0 18px rgba(255,255,255,0.14), 0 12px 40px rgba(120,90,180,0.12)",
+  letterSpacing: "-0.02em",
+  color: "#ea5d2a",
+  textShadow: [
+    "0.9px 0.9px 0 #000",
+    "-0.9px 0.9px 0 #000",
+    "0.9px -0.9px 0 #000",
+    "-0.9px -0.9px 0 #000",
+  ].join(", "),
 };
 
 const BACKDROP: React.CSSProperties = {
