@@ -261,7 +261,7 @@ export default function About({
       if (totalWidth > 0) {
         const triggeredCheckpoints = new Set<number>();
 
-        // 75% 차콜 / 15% 밝은차콜 / 7% 미디엄그레이 / 3% 연보라
+        // 75% 차콜 / 15% 밝은차콜 / 10% 밝은 회색(#c9c9c9)
         const getMosaicColor = () => {
           const rand = Math.random();
           if (rand < 0.75) {
@@ -270,11 +270,8 @@ export default function About({
           } else if (rand < 0.9) {
             const v = 55 + Math.floor(Math.random() * 15);
             return `rgb(${v},${v},${v + 3})`;
-          } else if (rand < 0.97) {
-            const v = 165 + Math.floor(Math.random() * 20);
-            return `rgb(${v},${v},${v})`;
           } else {
-            return `rgba(180, 180, 180, 1)`;
+            return "#c9c9c9";
           }
         };
 
