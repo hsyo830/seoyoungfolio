@@ -25,7 +25,7 @@ const projects: Project[] = [
   {
     index: "001",
     title: "Jikgwan GO",
-    subtitle: "KBO BASEBALL GAME INFORMATION SERVICE. SOLO PROJECT.",
+    subtitle: "KBO 야구 직관을 앞둔 팬을 위한 경기 일정·구장·음식 부스·날씨 통합 서비스",
     type: "SOLO PROJECT  //  2026",
     stack: [
       "Next.js",
@@ -43,7 +43,7 @@ const projects: Project[] = [
   {
     index: "002",
     title: "Global Nomad",
-    subtitle: "ACTIVITY RESERVATION PLATFORM. TEAM PROJECT OF 4.",
+    subtitle: "체험 액티비티 탐색·예약 웹 서비스. TanStack Query 기반 무한스크롤·페이지네이션 UX 구현",
     type: "TEAM PROJECT OF 4  //  2026",
     stack: [
       "Next.js",
@@ -63,7 +63,7 @@ const projects: Project[] = [
   {
     index: "003",
     title: "The Julge",
-    subtitle: "JOB LISTING PLATFORM FOR PART-TIME WORKERS. TEAM PROJECT OF 3.",
+    subtitle: "구인·구직 매칭 웹 서비스. 검색·필터·정렬 기반 공고 탐색과 예약·지원 흐름 전반 개발",
     type: "TEAM PROJECT OF 3  //  2025-2026",
     stack: [
       "Next.js",
@@ -82,7 +82,7 @@ const projects: Project[] = [
   {
     index: "004",
     title: "Rolling",
-    subtitle: "MESSAGE CARD SHARING SERVICE. TEAM PROJECT OF 5.",
+    subtitle: "익명 롤링페이퍼 생성·공유 웹 서비스. 배경 커스터마이징과 카드 UI 인터랙션 구현",
     type: "TEAM PROJECT OF 5  //  2025",
     stack: ["React", "React Router DOM", "CSS Modules", "MUI"],
     github: "https://github.com/Jieunsse/codeit-rolling",
@@ -812,6 +812,65 @@ function buildCardInTl(refs: CardRef, fast: boolean): gsap.core.Timeline {
     )
     .addLabel("phase2");
 
+  // ── Phase 2: 텍스트 순차 등장 ─────────────────────────────────────────────
+  // 각 요소가 이전 요소 등장 완료 후 순서대로 나타남
+  if (indexEl)
+    tl.fromTo(
+      indexEl,
+      { y: 8, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.2, ease: "power2.out" },
+      "phase2",
+    );
+
+  if (titleEl)
+    tl.fromTo(
+      titleEl,
+      { y: 24, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.35, ease: "power3.out" },
+      `phase2+=${0.12 * d}`,
+    );
+
+  if (subEl)
+    tl.fromTo(
+      subEl,
+      { y: 10, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.25, ease: "power2.out" },
+      `phase2+=${0.38 * d}`,
+    );
+
+  if (stackLabel)
+    tl.fromTo(
+      stackLabel,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.2, ease: "power2.out" },
+      `phase2+=${0.55 * d}`,
+    );
+
+  if (tagEls.length)
+    tl.fromTo(
+      tagEls,
+      { y: 8, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.18, stagger: 0.05, ease: "power2.out" },
+      `phase2+=${0.65 * d}`,
+    );
+
+  const links = [link1El, link2El, link3El].filter(Boolean);
+  if (links.length)
+    tl.fromTo(
+      links,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.18, stagger: 0.08, ease: "power2.out" },
+      `phase2+=${0.75 * d}`,
+    );
+
+  if (videoEl)
+    tl.fromTo(
+      videoEl,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.35, ease: "power2.out" },
+      `phase2+=${0.85 * d}`,
+    );
+
   if (squareEls.length)
     tl.fromTo(
       squareEls,
@@ -819,42 +878,20 @@ function buildCardInTl(refs: CardRef, fast: boolean): gsap.core.Timeline {
       {
         opacity: 1,
         scale: 1,
-        duration: 0.4 * d,
-        stagger: 0.08 * d,
-        ease: "back.out(1.7)",
+        duration: 0.3,
+        stagger: 0.06,
+        ease: "back.out(1.4)",
       },
-      `phase1+=${0.7 * d}`,
+      `phase2+=${0.9 * d}`,
     );
 
-  if (indexEl)
+  if (typeEl)
     tl.fromTo(
-      indexEl,
-      { y: 10 },
-      { opacity: 1, y: 0, duration: 0.25, ease: "power2.out" },
-      "phase2",
+      typeEl,
+      { opacity: 0 },
+      { opacity: 0.6, duration: 0.2, ease: "power2.out" },
+      `phase2+=${1.05 * d}`,
     );
-  if (titleEl)
-    tl.fromTo(
-      titleEl,
-      { y: 20 },
-      { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" },
-      "phase2+=0.08",
-    );
-  if (subEl) tl.to(subEl, { opacity: 1, duration: 0.25 }, "phase2+=0.15");
-  if (stackLabel)
-    tl.to(stackLabel, { opacity: 1, duration: 0.25 }, "phase2+=0.15");
-  if (tagEls.length)
-    tl.fromTo(
-      tagEls,
-      { y: 6 },
-      { opacity: 1, y: 0, duration: 0.25, stagger: 0.04, ease: "power2.out" },
-      "phase2+=0.2",
-    );
-  const links = [link1El, link2El, link3El].filter(Boolean);
-  if (links.length)
-    tl.to(links, { opacity: 1, duration: 0.2, stagger: 0.06 }, "phase2+=0.25");
-  if (videoEl) tl.to(videoEl, { opacity: 1, duration: 0.4 }, "phase2+=0.3");
-  if (typeEl) tl.to(typeEl, { opacity: 0.6, duration: 0.3 }, "phase2+=0.5");
 
   return tl;
 }
