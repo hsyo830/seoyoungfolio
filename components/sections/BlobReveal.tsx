@@ -176,7 +176,7 @@ export default function BlobReveal({ gridRef }: BlobRevealProps = {}) {
           ].join(", "),
           margin: 0,
         }}>
-          FROM PIXELS<br />TO PURPOSE
+          EVERY PIXEL<br />HAS PURPOSE
         </p>
 
         <p style={{
@@ -187,9 +187,9 @@ export default function BlobReveal({ gridRef }: BlobRevealProps = {}) {
           color: "rgba(255,255,255,0.75)",
           marginTop: "2em",
         }}>
-          3D animation과 디자인 백그라운드에서 출발해<br />
-          프론트엔드 개발자로 전환.<br />
-          성능과 미감 둘 다 타협하지 않는 개발을 추구합니다.
+          사용자가 불편함을 인식하기 전에 먼저 발견하고,<br />
+          수치로 증명하며 개선하는 프론트엔드 개발자입니다.<br />
+          작은 구현 차이가 사용자의 선택을 바꾼다고 믿습니다.
         </p>
 
         <p style={{
