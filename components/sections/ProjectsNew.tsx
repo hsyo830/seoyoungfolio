@@ -27,7 +27,14 @@ const projects: Project[] = [
     title: "Jikgwan GO",
     subtitle: "KBO BASEBALL GAME INFORMATION SERVICE. SOLO PROJECT.",
     type: "SOLO PROJECT  //  2026",
-    stack: ["Next.js", "React", "TypeScript", "Tailwind CSS", "TanStack Query", "Swiper"],
+    stack: [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Tailwind CSS",
+      "TanStack Query",
+      "Swiper",
+    ],
     github: "https://github.com/hsyo830/jikgwango",
     demo: "",
     live: "https://jikgwango.vercel.app",
@@ -38,7 +45,16 @@ const projects: Project[] = [
     title: "Global Nomad",
     subtitle: "ACTIVITY RESERVATION PLATFORM. TEAM PROJECT OF 4.",
     type: "TEAM PROJECT OF 4  //  2026",
-    stack: ["Next.js", "React", "TypeScript", "Axios", "TanStack Query", "Tailwind CSS", "Framer Motion", "Swiper"],
+    stack: [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Axios",
+      "TanStack Query",
+      "Tailwind CSS",
+      "Framer Motion",
+      "Swiper",
+    ],
     github: "https://github.com/GlobalNomad-20/GlobalNomad",
     demo: "",
     live: "https://global-nomad-woad.vercel.app/activities",
@@ -49,7 +65,15 @@ const projects: Project[] = [
     title: "The Julge",
     subtitle: "JOB LISTING PLATFORM FOR PART-TIME WORKERS. TEAM PROJECT OF 3.",
     type: "TEAM PROJECT OF 3  //  2025-2026",
-    stack: ["Next.js", "React", "TypeScript", "Axios", "Emotion", "MUI", "Lottie"],
+    stack: [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Axios",
+      "Emotion",
+      "MUI",
+      "Lottie",
+    ],
     github: "https://github.com/albaform-team/albaform",
     demo: "",
     live: "https://albaform-rust.vercel.app/store",
@@ -125,7 +149,7 @@ const TEXT_HIDDEN: React.CSSProperties = {
   willChange: "opacity, transform",
 };
 
-const TYPE_ROW_H = 58;
+const TYPE_ROW_H = 60;
 const CONTENT_H = `calc(100vh - ${MARQUEE_H}px - 2px)`; // card has 1px border top+bottom (border-box)
 
 function Card({
