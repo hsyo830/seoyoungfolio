@@ -39,7 +39,7 @@ const EXPERIENCES = [
     type: "education",
     position: "bottom",
     checkpointProgress: 0.22,
-    videoSrc: "/videos/jikgwango.mp4",
+    videoSrc: "/videos/globalnomad.mp4",
   },
   {
     id: 2,
@@ -50,7 +50,7 @@ const EXPERIENCES = [
     type: "education",
     position: "bottom",
     checkpointProgress: 0.36,
-    videoSrc: "/videos/jikgwango.mp4",
+    videoSrc: "/videos/seoulgame.MP4",
   },
   {
     id: 3,
@@ -61,7 +61,7 @@ const EXPERIENCES = [
     type: "work",
     position: "top",
     checkpointProgress: 0.5,
-    videoSrc: "/videos/jikgwango.mp4",
+    videoSrc: "/videos/carrysoft.mp4",
   },
   {
     id: 4,
@@ -72,7 +72,7 @@ const EXPERIENCES = [
     type: "education",
     position: "bottom",
     checkpointProgress: 0.63,
-    videoSrc: "/videos/jikgwango.mp4",
+    videoSrc: "/videos/virtual.mp4",
   },
   {
     id: 5,
