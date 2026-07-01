@@ -149,7 +149,7 @@ const TEXT_HIDDEN: React.CSSProperties = {
   willChange: "opacity, transform",
 };
 
-const TYPE_ROW_H = 60;
+const TYPE_ROW_H = 63;
 const CONTENT_H = `calc(100vh - ${MARQUEE_H}px - 2px)`; // card has 1px border top+bottom (border-box)
 
 function Card({
