@@ -98,6 +98,17 @@ const EXPERIENCES = [
   },
 ];
 
+// videoSrc가 있는 경력 순서대로 (id 1,2,3,4 → index 0,1,2,3)
+const REVEAL_CONFIG = [
+  { expandOrigin: "top left", collapseOrigin: "bottom right" }, // 1번: 점1→점4 확장, 점4쪽으로 수축
+  { expandOrigin: "bottom right", collapseOrigin: "top left" }, // 2번: 점4→점1 확장, 점1쪽으로 수축
+  { expandOrigin: "bottom left", collapseOrigin: "top right" }, // 3번: 점3→점2 확장, 점2쪽으로 수축
+  { expandOrigin: "top right", collapseOrigin: "bottom left" }, // 4번: 점2→점3 확장, 점3쪽으로 수축
+] as const;
+
+// videoSrc가 있는 경력만 순서대로 인덱싱
+const VIDEO_EXP_IDS = EXPERIENCES.filter((e) => e.videoSrc).map((e) => e.id); // [1, 2, 3, 4]
+
 // Safe area: path Y 최고점이 280 이상이 되도록 조정 (CSS 200px safe area 대응)
 const SAFE_AREA_TOP_PX = 200;
 
@@ -198,7 +209,7 @@ export default function About({
 
   // Floating video preview
   const floatingRef = useRef<HTMLDivElement>(null);
-  const floatCanvasRef = useRef<HTMLCanvasElement>(null);
+  const floatScaleRef = useRef<HTMLDivElement>(null);
   const floatVideoRef = useRef<HTMLVideoElement>(null);
   const activeExpRef = useRef<(typeof EXPERIENCES)[number] | null>(null);
   const targetXRef = useRef(0);
@@ -261,108 +272,53 @@ export default function About({
       if (totalWidth > 0) {
         const triggeredCheckpoints = new Set<number>();
 
-        // 75% 차콜 / 15% 밝은차콜 / 10% 밝은 회색(#c9c9c9)
-        const getMosaicColor = () => {
-          const rand = Math.random();
-          if (rand < 0.75) {
-            const v = 38 + Math.floor(Math.random() * 12);
-            return `rgb(${v},${v},${v + 2})`;
-          } else if (rand < 0.9) {
-            const v = 55 + Math.floor(Math.random() * 15);
-            return `rgb(${v},${v},${v + 3})`;
-          } else {
-            return "#c9c9c9";
-          }
-        };
-
-        // ── Mosaic reveal: noise → video ──
-        const revealVideo = (onDone?: () => void) => {
-          const cv = floatCanvasRef.current;
+        // ── 꼭짓점 확장 reveal: 지정 origin에서 scale 0 → 1 ──
+        const revealVideo = (expId: number, onDone?: () => void) => {
+          const scaleEl = floatScaleRef.current;
           const vd = floatVideoRef.current;
-          if (!cv || !vd) return;
-          const ctx2d = cv.getContext("2d");
-          if (!ctx2d) return;
-          const W = cv.width,
-            H = cv.height;
-          cv.style.opacity = "1";
-          vd.style.opacity = "0";
+          if (!scaleEl || !vd) return;
+
+          const idx = VIDEO_EXP_IDS.indexOf(expId);
+          const config = REVEAL_CONFIG[idx] ?? REVEAL_CONFIG[0];
+
+          gsap.set(scaleEl, {
+            transformOrigin: config.expandOrigin,
+            scaleX: 0,
+            scaleY: 0,
+          });
+
           vd.play().catch(() => {});
-          let frame = 0;
-          const total = 30;
-          const loop = () => {
-            const progress = frame / total;
-            const blockSize = Math.max(1, Math.floor(32 * (1 - progress)));
-            ctx2d.clearRect(0, 0, W, H);
-            const cols = Math.ceil(W / blockSize);
-            const rows = Math.ceil(H / blockSize);
-            const ns = 1 - progress;
-            for (let r = 0; r < rows; r++) {
-              for (let c = 0; c < cols; c++) {
-                ctx2d.fillStyle = getMosaicColor();
-                ctx2d.fillRect(
-                  c * blockSize,
-                  r * blockSize,
-                  blockSize,
-                  blockSize,
-                );
-              }
-            }
-            if (Math.random() < ns * 0.25) {
-              const lineY = Math.floor(Math.random() * H);
-              const offset = Math.floor((Math.random() - 0.5) * 12 * ns);
-              ctx2d.drawImage(cv, offset, lineY, W, 2, 0, lineY, W, 2);
-            }
-            frame++;
-            if (frame < total) {
-              requestAnimationFrame(loop);
-            } else {
-              gsap.to(cv, { opacity: 0, duration: 0.2 });
-              gsap.to(vd, { opacity: 1, duration: 0.2 });
-              onDone?.();
-            }
-          };
-          requestAnimationFrame(loop);
+
+          gsap.to(scaleEl, {
+            scaleX: 1,
+            scaleY: 1,
+            duration: 0.5,
+            ease: "power3.out",
+            onComplete: onDone,
+          });
         };
 
-        // ── Mosaic dissolve: video → noise → done ──
-        const dissolveVideo = (onDone?: () => void) => {
-          const cv = floatCanvasRef.current;
+        // ── 꼭짓점 수축 dissolve: 지정 origin으로 scale 1 → 0 ──
+        const dissolveVideo = (expId: number, onDone?: () => void) => {
+          const scaleEl = floatScaleRef.current;
           const vd = floatVideoRef.current;
-          if (!cv || !vd) return;
-          const ctx2d = cv.getContext("2d");
-          if (!ctx2d) return;
-          const W = cv.width,
-            H = cv.height;
-          ctx2d.drawImage(vd, 0, 0, W, H);
-          gsap.to(vd, { opacity: 0, duration: 0.1 });
-          gsap.to(cv, { opacity: 1, duration: 0.1 });
-          let frame = 0;
-          const total = 25;
-          const loop = () => {
-            const progress = frame / total;
-            const blockSize = Math.max(1, Math.floor(32 * progress));
-            const cols = Math.ceil(W / blockSize);
-            const rows = Math.ceil(H / blockSize);
-            ctx2d.clearRect(0, 0, W, H);
-            for (let r = 0; r < rows; r++) {
-              for (let c = 0; c < cols; c++) {
-                ctx2d.fillStyle = getMosaicColor();
-                ctx2d.fillRect(
-                  c * blockSize,
-                  r * blockSize,
-                  blockSize,
-                  blockSize,
-                );
-              }
-            }
-            frame++;
-            if (frame < total) {
-              requestAnimationFrame(loop);
-            } else {
+          if (!scaleEl || !vd) return;
+
+          const idx = VIDEO_EXP_IDS.indexOf(expId);
+          const config = REVEAL_CONFIG[idx] ?? REVEAL_CONFIG[0];
+
+          gsap.set(scaleEl, { transformOrigin: config.collapseOrigin });
+
+          gsap.to(scaleEl, {
+            scaleX: 0,
+            scaleY: 0,
+            duration: 0.3,
+            ease: "power2.in",
+            onComplete: () => {
+              vd.pause();
               onDone?.();
-            }
-          };
-          requestAnimationFrame(loop);
+            },
+          });
         };
 
         const tl = gsap.timeline({
@@ -435,7 +391,7 @@ export default function About({
                 const floating = floatingRef.current;
                 if (!floating) return;
                 if (prev?.videoSrc) {
-                  dissolveVideo(() => {
+                  dissolveVideo(prev.id, () => {
                     if (active?.videoSrc) {
                       const vd = floatVideoRef.current;
                       if (vd) {
@@ -443,7 +399,7 @@ export default function About({
                         vd.load();
                       }
                       gsap.to(floating, { opacity: 1, duration: 0.3 });
-                      revealVideo();
+                      revealVideo(active.id);
                     } else {
                       gsap.to(floating, { opacity: 0, duration: 0.3 });
                     }
@@ -455,11 +411,20 @@ export default function About({
                     vd.load();
                   }
                   gsap.to(floating, { opacity: 1, duration: 0.2 });
-                  revealVideo();
+                  revealVideo(active.id);
                 } else {
                   gsap.to(floating, { opacity: 0, duration: 0.3 });
                 }
               }
+            },
+            onLeaveBack: () => {
+              activeExpRef.current = null;
+              const floating = floatingRef.current;
+              if (floating) gsap.set(floating, { opacity: 0 });
+              const scaleEl = floatScaleRef.current;
+              if (scaleEl) gsap.set(scaleEl, { scaleX: 0, scaleY: 0 });
+              const vd = floatVideoRef.current;
+              if (vd) vd.pause();
             },
           },
         });
@@ -583,15 +548,11 @@ export default function About({
     return () => cancelAnimationFrame(raf);
   }, []);
 
-  // ── Floating video: 캔버스 크기 설정 + 마우스 추적 lerp 루프 ──
+  // ── Floating video: 마우스 추적 lerp 루프 ──
   useEffect(() => {
     const section = sub3.current;
     const floating = floatingRef.current;
-    const cv = floatCanvasRef.current;
-    if (!section || !floating || !cv) return;
-
-    cv.width = 280;
-    cv.height = 157;
+    if (!section || !floating) return;
 
     const onMouseMove = (e: MouseEvent) => {
       const rect = section.getBoundingClientRect();
@@ -1082,39 +1043,99 @@ export default function About({
             height: 157,
             zIndex: 50,
             pointerEvents: "none",
-            borderRadius: 6,
-            overflow: "hidden",
-            border: "1px solid rgba(255,255,255,0.15)",
-            boxShadow: "0 0 16px rgba(180,180,180,0.15)",
             opacity: 0,
           }}
         >
-          <canvas
-            ref={floatCanvasRef}
-            width={280}
-            height={157}
+          <div
+            ref={floatScaleRef}
             style={{
               position: "absolute",
               inset: 0,
-              width: "100%",
-              height: "100%",
+              overflow: "visible",
             }}
-          />
-          <video
-            ref={floatVideoRef}
-            autoPlay
-            muted
-            loop
-            playsInline
-            style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              opacity: 0,
-            }}
-          />
+          >
+            {/* 꼭짓점을 잇는 흰색 실선 4개 — 마커와 동일 레이어(video 앞) */}
+            <div
+              style={{
+                position: "absolute",
+                top: -1,
+                left: 0,
+                right: 0,
+                height: "1.5px",
+                background: "rgba(255,255,255,0.9)",
+                zIndex: 10,
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                bottom: -1,
+                left: 0,
+                right: 0,
+                height: "1.5px",
+                background: "rgba(255,255,255,0.9)",
+                zIndex: 10,
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                left: -1,
+                top: 0,
+                bottom: 0,
+                width: "1.5px",
+                background: "rgba(255,255,255,0.9)",
+                zIndex: 10,
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                right: -1,
+                top: 0,
+                bottom: 0,
+                width: "1.5px",
+                background: "rgba(255,255,255,0.9)",
+                zIndex: 10,
+              }}
+            />
+
+            {/* 꼭지점 마커 4개 — 주황색 정사각형 */}
+            {[
+              { top: -5, left: -5 }, // 점1 좌상단
+              { top: -5, right: -5 }, // 점2 우상단
+              { bottom: -5, left: -5 }, // 점3 좌하단
+              { bottom: -5, right: -5 }, // 점4 우하단
+            ].map((pos, i) => (
+              <div
+                key={i}
+                style={{
+                  position: "absolute",
+                  width: 8,
+                  height: 8,
+                  background: "#ea5d2a",
+                  border: "1.5px solid rgba(255,255,255,0.9)",
+                  zIndex: 10,
+                  ...pos,
+                }}
+              />
+            ))}
+
+            <video
+              ref={floatVideoRef}
+              autoPlay
+              muted
+              loop
+              playsInline
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              }}
+            />
+          </div>
         </div>
       </div>
 
