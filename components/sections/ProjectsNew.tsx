@@ -113,6 +113,7 @@ interface CardRef {
   link3El: HTMLElement | null;
   videoEl: HTMLElement | null;
   squareEls: HTMLElement[];
+  dotPatternEl: SVGSVGElement | null;
 }
 
 const LINE_COLOR = "rgba(0,0,0,0.18)";
@@ -181,6 +182,7 @@ function Card({
   const link3Ref = useRef<HTMLAnchorElement>(null);
   const videoRef = useRef<HTMLDivElement>(null);
   const squareRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const dotPatternRef = useRef<SVGSVGElement>(null);
   const squares = index % 2 === 0 ? SQUARES_ODD : SQUARES_EVEN;
 
   useEffect(() => {
@@ -209,6 +211,7 @@ function Card({
       squareEls: squareRefs.current.filter(
         (el): el is HTMLDivElement => el !== null,
       ),
+      dotPatternEl: dotPatternRef.current,
     });
   });
 
@@ -360,6 +363,58 @@ function Card({
             zIndex: 2,
           }}
         >
+          {/* 도트 패턴 배경 — 최하단 레이어, GSAP으로 페이드 인 */}
+          <svg
+            ref={dotPatternRef}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              pointerEvents: "none",
+              zIndex: 0,
+              opacity: 0,
+            }}
+          >
+            <defs>
+              <pattern
+                id={`dot-pattern-${project.index}`}
+                x="0"
+                y="0"
+                width="12"
+                height="12"
+                patternUnits="userSpaceOnUse"
+              >
+                <circle cx="6" cy="6" r="1.8" fill="#D4C9B8" />
+              </pattern>
+
+              <radialGradient
+                id={`dot-mask-${project.index}`}
+                cx="40%"
+                cy="60%"
+                r="65%"
+              >
+                <stop offset="0%" stopColor="white" stopOpacity="1" />
+                <stop offset="60%" stopColor="white" stopOpacity="0.5" />
+                <stop offset="100%" stopColor="white" stopOpacity="0" />
+              </radialGradient>
+              <mask id={`spotlight-mask-${project.index}`}>
+                <rect
+                  width="100%"
+                  height="100%"
+                  fill={`url(#dot-mask-${project.index})`}
+                />
+              </mask>
+            </defs>
+
+            <rect
+              width="100%"
+              height="100%"
+              fill={`url(#dot-pattern-${project.index})`}
+              mask={`url(#spotlight-mask-${project.index})`}
+            />
+          </svg>
+
           <p
             ref={indexRef}
             style={{
@@ -372,6 +427,8 @@ function Card({
               textTransform: "uppercase",
               margin: 0,
               marginBottom: "0.6em",
+              position: "relative",
+              zIndex: 1,
             }}
           >
             PROJECT // {project.index}
@@ -395,6 +452,8 @@ function Card({
 `,
               margin: 0,
               marginBottom: "0.4em",
+              position: "relative",
+              zIndex: 1,
             }}
           >
             {project.title}
@@ -411,6 +470,8 @@ function Card({
               color: "rgba(0,0,0,0.55)",
               textTransform: "uppercase",
               margin: 0,
+              position: "relative",
+              zIndex: 1,
             }}
           >
             {project.subtitle}
@@ -761,6 +822,7 @@ function buildCardInTl(refs: CardRef, fast: boolean): gsap.core.Timeline {
     link3El,
     videoEl,
     squareEls,
+    dotPatternEl,
   } = refs;
 
   const d = fast ? 0.5 : 1;
@@ -772,6 +834,7 @@ function buildCardInTl(refs: CardRef, fast: boolean): gsap.core.Timeline {
   gsap.set([hDivEl, hLink1El, hLink2El].filter(Boolean), { scaleX: 0 });
   if (squareEls.length)
     gsap.set(squareEls, { opacity: 0, scale: 0.8, rotation: 0 });
+  if (dotPatternEl) gsap.set(dotPatternEl, { opacity: 0 });
   gsap.set(
     [
       indexEl,
@@ -811,6 +874,14 @@ function buildCardInTl(refs: CardRef, fast: boolean): gsap.core.Timeline {
       `phase1+=${0.6 * d}`,
     )
     .addLabel("phase2");
+
+  // 선이 다 그어진 직후, 텍스트 등장 시작 직전 — 타이틀 도트 패턴 페이드 인
+  if (dotPatternEl)
+    tl.to(
+      dotPatternEl,
+      { opacity: 1, duration: 0.4, ease: "power2.out" },
+      `phase1+=${0.75 * d}`,
+    );
 
   // ── Phase 2: 텍스트 순차 등장 ─────────────────────────────────────────────
   // 각 요소가 이전 요소 등장 완료 후 순서대로 나타남
@@ -953,9 +1024,12 @@ export default function ProjectsNew() {
       link3El,
       videoEl,
       squareEls,
+      dotPatternEl,
     } = refs;
     if (squareEls.length)
       gsap.to(squareEls, { opacity: 0, duration: 0.15, overwrite: true });
+    if (dotPatternEl)
+      gsap.to(dotPatternEl, { opacity: 0, duration: 0.2, overwrite: true });
     const all = [
       indexEl,
       titleEl,
