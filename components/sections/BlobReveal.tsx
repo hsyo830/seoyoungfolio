@@ -15,6 +15,9 @@ export default function BlobReveal({ gridRef }: BlobRevealProps = {}) {
   const sectionRef    = useRef<HTMLElement>(null);
   const canvasRef     = useRef<HTMLCanvasElement>(null);
   const textRef       = useRef<HTMLDivElement>(null);
+  const line1Ref      = useRef<HTMLParagraphElement>(null);
+  const line2Ref      = useRef<HTMLParagraphElement>(null);
+  const line3Ref      = useRef<HTMLParagraphElement>(null);
   const timeRef       = useRef(0);
   const progressProxy = useRef({ value: 0 });
 
@@ -88,7 +91,11 @@ export default function BlobReveal({ gridRef }: BlobRevealProps = {}) {
     // ── ScrollTrigger + grid/text trigger at progress 0.85 ───────────────
     const showFromPixelsText = () => {
       if (!textRef.current) return;
-      gsap.to(textRef.current, { opacity: 1, duration: 0.6, ease: "power2.out" });
+      gsap.to(textRef.current, { opacity: 1, duration: 0, ease: "power2.out" });
+      gsap.timeline()
+        .to(line1Ref.current, { opacity: 1, duration: 0.6, ease: "power2.out" })
+        .to(line2Ref.current, { opacity: 1, duration: 0.6, ease: "power2.out" }, "+=0.15")
+        .to(line3Ref.current, { opacity: 1, duration: 0.6, ease: "power2.out" }, "+=0.15");
     };
 
     let gridTriggered = false;
@@ -113,7 +120,9 @@ export default function BlobReveal({ gridRef }: BlobRevealProps = {}) {
           } else if (p < 0.55 && gridTriggered) {
             gridTriggered = false;
             gridRef?.current?.hideGrid();
+            gsap.killTweensOf([line1Ref.current, line2Ref.current, line3Ref.current]);
             if (textRef.current) gsap.to(textRef.current, { opacity: 0, duration: 0 });
+            gsap.set([line1Ref.current, line2Ref.current, line3Ref.current], { opacity: 0 });
           }
         },
       },
@@ -162,7 +171,7 @@ export default function BlobReveal({ gridRef }: BlobRevealProps = {}) {
           padding: "0 24px",
         }}
       >
-        <p style={{
+        <p ref={line1Ref} style={{
           fontFamily: "var(--font-anton)",
           fontWeight: 400,
           fontSize: "clamp(48px, 6vw, 96px)",
@@ -175,30 +184,33 @@ export default function BlobReveal({ gridRef }: BlobRevealProps = {}) {
             "-0.9px -0.9px 0 #000",
           ].join(", "),
           margin: 0,
+          opacity: 0,
         }}>
           EVERY PIXEL<br />HAS PURPOSE
         </p>
 
-        <p style={{
+        <p ref={line2Ref} style={{
           fontFamily: "'Inter', sans-serif",
           fontWeight: 300,
           fontSize: 16,
           lineHeight: "26px",
           color: "rgba(255,255,255,0.75)",
           marginTop: "2em",
+          opacity: 0,
         }}>
           사용자가 불편함을 인식하기 전에 먼저 발견하고,<br />
           수치로 증명하며 개선하는 프론트엔드 개발자입니다.<br />
           작은 구현 차이가 사용자의 선택을 바꾼다고 믿습니다.
         </p>
 
-        <p style={{
+        <p ref={line3Ref} style={{
           fontFamily: "'Inter', sans-serif",
           fontWeight: 300,
           fontSize: 13,
           lineHeight: "20px",
           color: "rgba(255,255,255,0.5)",
           marginTop: "1.2em",
+          opacity: 0,
         }}>
           Performance | Interaction | Aesthetics<br />
           Clean Code | User Experience | Creativity
