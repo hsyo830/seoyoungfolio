@@ -27,6 +27,9 @@ export default function OrbitSkills({ skills }: OrbitSkillsProps) {
   );
   // 전역 궤도 상태 (hover 시 함께 보간)
   const orbitStateRef = useRef({ radiusScale: 1, sizeScale: 1 });
+  // 개별 뱃지 hover 상태 및 보간 스케일
+  const skillHoverRef  = useRef(skills.map(() => false));
+  const skillScaleRef  = useRef(skills.map(() => 1));
 
   // ── Orbit animation loop ─────────────────────────────────────────────────
   useEffect(() => {
@@ -75,8 +78,14 @@ export default function OrbitSkills({ skills }: OrbitSkillsProps) {
           pos.y += (targetY - pos.y) * 0.12;
         }
 
+        // 개별 뱃지 hover 스케일 보간
+        const hoverTarget = skillHoverRef.current[i] ? 1.2 : 1;
+        skillScaleRef.current[i] +=
+          (hoverTarget - skillScaleRef.current[i]) * 0.18;
+        const finalScale = os.sizeScale * skillScaleRef.current[i];
+
         el.style.transform =
-          `translate(${pos.x}px, ${pos.y}px) translate(-50%, -50%) scale(${os.sizeScale.toFixed(4)})`;
+          `translate(${pos.x}px, ${pos.y}px) translate(-50%, -50%) scale(${finalScale.toFixed(4)})`;
       });
 
       if (!snappedRef.current) snappedRef.current = true;
@@ -176,6 +185,16 @@ export default function OrbitSkills({ skills }: OrbitSkillsProps) {
         <div
           key={skill}
           ref={el => { skillRefs.current[i] = el; }}
+          onMouseEnter={(e) => {
+            skillHoverRef.current[i] = true;
+            e.currentTarget.style.color = "#ea5d2a";
+            e.currentTarget.style.borderColor = "#ea5d2a";
+          }}
+          onMouseLeave={(e) => {
+            skillHoverRef.current[i] = false;
+            e.currentTarget.style.color = "rgba(255,255,255,0.78)";
+            e.currentTarget.style.borderColor = "rgba(255,255,255,0.22)";
+          }}
           style={{
             position: "absolute",
             top: 0,
@@ -188,8 +207,10 @@ export default function OrbitSkills({ skills }: OrbitSkillsProps) {
             borderRadius: "999px",
             whiteSpace: "nowrap",
             opacity: 0,
-            pointerEvents: "none",
+            cursor: "default",
+            pointerEvents: "auto",
             willChange: "transform",
+            transition: "color 0.25s ease, border-color 0.25s ease",
             ...TS,
           }}
         >
