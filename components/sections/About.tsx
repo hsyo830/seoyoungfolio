@@ -1201,8 +1201,9 @@ export default function About({
             ref={(el) => {
               linksRef.current[1] = el;
             }}
-            href="#"
-            onClick={(e) => e.preventDefault()}
+            href="https://app.notion.com/p/Portfolio-35efb7a813f88072ac2af3fd6a574392?source=copy_link"
+            target="_blank"
+            rel="noopener noreferrer"
             className="contact-link"
           >
             <span className="cb-l" />
