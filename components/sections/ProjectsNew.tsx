@@ -553,7 +553,7 @@ function Card({
                     fontSize: 10,
                     fontWeight: 700,
                     letterSpacing: "0.05em",
-                    color: "#EFEDE7",
+                    color: "#f7eddc",
                     textTransform: "uppercase",
                     textAlign: "center",
                     whiteSpace: "nowrap",
@@ -729,7 +729,7 @@ function Card({
                 fontSize: 10,
                 fontWeight: 600,
                 letterSpacing: "0.2em",
-                color: "rgba(255,255,255,0.9)",
+                color: "#d6d6d6",
                 textTransform: "uppercase",
                 margin: 0,
                 background: "rgba(255,255,255,0.18)",
@@ -793,8 +793,8 @@ function Card({
       {/* /content area */}
 
       <style>{`
-        .pn-link-row:hover { background: rgba(0,0,0,0.9) !important; color: #EFEDE7 !important; }
-        .pn-link-row:hover span { color: #EFEDE7 !important; }
+        .pn-link-row:hover { background: rgba(0,0,0,0.9) !important; color: #f7eddc !important; }
+        .pn-link-row:hover span { color: #f7eddc !important; }
       `}</style>
     </div>
   );
