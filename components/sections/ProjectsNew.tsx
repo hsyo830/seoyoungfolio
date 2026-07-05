@@ -25,7 +25,8 @@ const projects: Project[] = [
   {
     index: "001",
     title: "Jikgwan GO",
-    subtitle: "KBO 야구 직관을 앞둔 팬을 위한 경기 일정·구장·음식 부스·날씨 통합 서비스",
+    subtitle:
+      "KBO 야구 직관을 앞둔 팬을 위한 경기 일정·구장·음식 부스·날씨 통합 서비스",
     type: "SOLO PROJECT  //  2026",
     stack: [
       "Next.js",
@@ -43,7 +44,8 @@ const projects: Project[] = [
   {
     index: "002",
     title: "Global Nomad",
-    subtitle: "체험 액티비티 탐색·예약 웹 서비스. TanStack Query 기반 무한스크롤·페이지네이션 UX 구현",
+    subtitle:
+      "체험 액티비티 탐색·예약 웹 서비스. TanStack Query 기반 무한스크롤·페이지네이션 UX 구현",
     type: "TEAM PROJECT OF 4  //  2026",
     stack: [
       "Next.js",
@@ -63,7 +65,8 @@ const projects: Project[] = [
   {
     index: "003",
     title: "The Julge",
-    subtitle: "구인·구직 매칭 웹 서비스. 검색·필터·정렬 기반 공고 탐색과 예약·지원 흐름 전반 개발",
+    subtitle:
+      "구인·구직 매칭 웹 서비스. 검색·필터·정렬 기반 공고 탐색과 예약·지원 흐름 전반 개발",
     type: "TEAM PROJECT OF 3  //  2025-2026",
     stack: [
       "Next.js",
@@ -82,7 +85,8 @@ const projects: Project[] = [
   {
     index: "004",
     title: "Rolling",
-    subtitle: "익명 롤링페이퍼 생성·공유 웹 서비스. 배경 커스터마이징과 카드 UI 인터랙션 구현",
+    subtitle:
+      "익명 롤링페이퍼 생성·공유 웹 서비스. 배경 커스터마이징과 카드 UI 인터랙션 구현",
     type: "TEAM PROJECT OF 5  //  2025",
     stack: ["React", "React Router DOM", "CSS Modules", "MUI"],
     github: "https://github.com/Jieunsse/codeit-rolling",
@@ -113,7 +117,7 @@ interface CardRef {
   link3El: HTMLElement | null;
   videoEl: HTMLElement | null;
   squareEls: HTMLElement[];
-  dotPatternEl: SVGSVGElement | null;
+  plusEls: SVGSVGElement[];
 }
 
 const LINE_COLOR = "rgba(0,0,0,0.18)";
@@ -150,7 +154,7 @@ const TEXT_HIDDEN: React.CSSProperties = {
   willChange: "opacity, transform",
 };
 
-const TYPE_ROW_H = 63;
+const TYPE_ROW_H = 65;
 const CONTENT_H = `calc(100vh - ${MARQUEE_H}px - 2px)`; // card has 1px border top+bottom (border-box)
 
 function Card({
@@ -182,7 +186,7 @@ function Card({
   const link3Ref = useRef<HTMLAnchorElement>(null);
   const videoRef = useRef<HTMLDivElement>(null);
   const squareRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const dotPatternRef = useRef<SVGSVGElement>(null);
+  const plusRefs = useRef<(SVGSVGElement | null)[]>([]);
   const squares = index % 2 === 0 ? SQUARES_ODD : SQUARES_EVEN;
 
   useEffect(() => {
@@ -211,7 +215,9 @@ function Card({
       squareEls: squareRefs.current.filter(
         (el): el is HTMLDivElement => el !== null,
       ),
-      dotPatternEl: dotPatternRef.current,
+      plusEls: plusRefs.current.filter(
+        (el): el is SVGSVGElement => el !== null,
+      ),
     });
   });
 
@@ -363,57 +369,51 @@ function Card({
             zIndex: 2,
           }}
         >
-          {/* 도트 패턴 배경 — 최하단 레이어, GSAP으로 페이드 인 */}
-          <svg
-            ref={dotPatternRef}
+          {/* + 아이콘 4개 — 우측 상단 */}
+          <div
             style={{
               position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
+              top: "1.5rem",
+              right: "0.75rem",
+              display: "flex",
+              gap: "12px",
+              alignItems: "center",
+              zIndex: 3,
               pointerEvents: "none",
-              zIndex: 0,
-              opacity: 0,
             }}
           >
-            <defs>
-              <pattern
-                id={`dot-pattern-${project.index}`}
-                x="0"
-                y="0"
-                width="12"
-                height="12"
-                patternUnits="userSpaceOnUse"
+            {[0, 1, 2, 3].map((i) => (
+              <svg
+                key={i}
+                ref={(el) => {
+                  plusRefs.current[i] = el;
+                }}
+                width="68"
+                height="68"
+                viewBox="0 0 68 68"
+                style={{ opacity: 0, overflow: "visible" }}
               >
-                <circle cx="6" cy="6" r="1.8" fill="#D4C9B8" />
-              </pattern>
-
-              <radialGradient
-                id={`dot-mask-${project.index}`}
-                cx="40%"
-                cy="60%"
-                r="65%"
-              >
-                <stop offset="0%" stopColor="white" stopOpacity="1" />
-                <stop offset="60%" stopColor="white" stopOpacity="0.5" />
-                <stop offset="100%" stopColor="white" stopOpacity="0" />
-              </radialGradient>
-              <mask id={`spotlight-mask-${project.index}`}>
-                <rect
-                  width="100%"
-                  height="100%"
-                  fill={`url(#dot-mask-${project.index})`}
+                <line
+                  x1="0"
+                  y1="34"
+                  x2="68"
+                  y2="34"
+                  stroke="rgba(0,0,0,0.5)"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
                 />
-              </mask>
-            </defs>
-
-            <rect
-              width="100%"
-              height="100%"
-              fill={`url(#dot-pattern-${project.index})`}
-              mask={`url(#spotlight-mask-${project.index})`}
-            />
-          </svg>
+                <line
+                  x1="34"
+                  y1="0"
+                  x2="34"
+                  y2="68"
+                  stroke="rgba(0,0,0,0.5)"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+            ))}
+          </div>
 
           <p
             ref={indexRef}
@@ -822,7 +822,7 @@ function buildCardInTl(refs: CardRef, fast: boolean): gsap.core.Timeline {
     link3El,
     videoEl,
     squareEls,
-    dotPatternEl,
+    plusEls,
   } = refs;
 
   const d = fast ? 0.5 : 1;
@@ -834,7 +834,12 @@ function buildCardInTl(refs: CardRef, fast: boolean): gsap.core.Timeline {
   gsap.set([hDivEl, hLink1El, hLink2El].filter(Boolean), { scaleX: 0 });
   if (squareEls.length)
     gsap.set(squareEls, { opacity: 0, scale: 0.8, rotation: 0 });
-  if (dotPatternEl) gsap.set(dotPatternEl, { opacity: 0 });
+  if (plusEls.length) {
+    gsap.set(plusEls, { opacity: 0, rotation: 0 });
+    plusEls.forEach((el) => {
+      gsap.set(el.querySelectorAll("line"), { strokeDasharray: "none" });
+    });
+  }
   gsap.set(
     [
       indexEl,
@@ -872,16 +877,18 @@ function buildCardInTl(refs: CardRef, fast: boolean): gsap.core.Timeline {
       [hLink1El, hLink2El],
       { scaleX: 1, duration: 0.2 * d, stagger: 0.08 * d, ease: "power2.out" },
       `phase1+=${0.6 * d}`,
-    )
-    .addLabel("phase2");
-
-  // 선이 다 그어진 직후, 텍스트 등장 시작 직전 — 타이틀 도트 패턴 페이드 인
-  if (dotPatternEl)
-    tl.to(
-      dotPatternEl,
-      { opacity: 1, duration: 0.4, ease: "power2.out" },
-      `phase1+=${0.75 * d}`,
     );
+
+  // + 아이콘 4개 — 선이 다 그려진 뒤 왼쪽부터 하나씩 빠르게 등장
+  if (plusEls.length)
+    tl.to(plusEls, {
+      opacity: 0.5,
+      duration: 0.08 * d,
+      stagger: 0.06 * d,
+      ease: "none",
+    });
+
+  tl.addLabel("phase2");
 
   // ── Phase 2: 텍스트 순차 등장 ─────────────────────────────────────────────
   // 각 요소가 이전 요소 등장 완료 후 순서대로 나타남
@@ -979,6 +986,42 @@ function startSquareRotation(squareEls: HTMLElement[]): gsap.core.Timeline {
   return tl;
 }
 
+function startPlusAnimation(plusEls: SVGSVGElement[]): gsap.core.Timeline {
+  const tl = gsap.timeline({ repeat: -1 });
+
+  plusEls.forEach((el, i) => {
+    const lines = el.querySelectorAll("line");
+    const startTime = i * 1.6;
+
+    tl.to(
+      lines,
+      { strokeDasharray: "4 4", duration: 0.2, ease: "none" },
+      startTime,
+    );
+
+    tl.to(
+      el,
+      {
+        rotation: 360,
+        duration: 0.6,
+        ease: "power2.inOut",
+        transformOrigin: "50% 50%",
+      },
+      startTime + 0.5,
+    );
+
+    tl.to(
+      lines,
+      { strokeDasharray: "none", duration: 0.2, ease: "none" },
+      startTime + 1.1,
+    );
+
+    tl.set(el, { rotation: 0 }, startTime + 1.3);
+  });
+
+  return tl;
+}
+
 const ENTRY_DWELL = 500;
 const EXIT_DWELL = 400;
 
@@ -991,6 +1034,7 @@ export default function ProjectsNew() {
   const cardRefsMap = useRef<Map<number, CardRef>>(new Map());
   const activeTlRef = useRef<gsap.core.Timeline | null>(null);
   const squareRotationTlRef = useRef<gsap.core.Timeline | null>(null);
+  const plusRotationTlRef = useRef<gsap.core.Timeline | null>(null);
   const isInSection = useRef(false);
 
   const runCardIn = useCallback((idx: number, fast: boolean) => {
@@ -999,10 +1043,15 @@ export default function ProjectsNew() {
     activeTlRef.current?.kill();
     squareRotationTlRef.current?.kill();
     squareRotationTlRef.current = null;
+    plusRotationTlRef.current?.kill();
+    plusRotationTlRef.current = null;
     activeTlRef.current = buildCardInTl(refs, fast);
     activeTlRef.current.eventCallback("onComplete", () => {
       if (refs.squareEls.length) {
         squareRotationTlRef.current = startSquareRotation(refs.squareEls);
+      }
+      if (refs.plusEls.length) {
+        plusRotationTlRef.current = startPlusAnimation(refs.plusEls);
       }
     });
   }, []);
@@ -1010,6 +1059,8 @@ export default function ProjectsNew() {
   const runCardOut = useCallback((idx: number) => {
     squareRotationTlRef.current?.kill();
     squareRotationTlRef.current = null;
+    plusRotationTlRef.current?.kill();
+    plusRotationTlRef.current = null;
     const refs = cardRefsMap.current.get(idx);
     if (!refs) return;
     const {
@@ -1024,12 +1075,9 @@ export default function ProjectsNew() {
       link3El,
       videoEl,
       squareEls,
-      dotPatternEl,
     } = refs;
     if (squareEls.length)
       gsap.to(squareEls, { opacity: 0, duration: 0.15, overwrite: true });
-    if (dotPatternEl)
-      gsap.to(dotPatternEl, { opacity: 0, duration: 0.2, overwrite: true });
     const all = [
       indexEl,
       titleEl,
