@@ -1144,7 +1144,7 @@ export default function About({
         ref={sub4}
         style={{
           position: "relative",
-          minHeight: "100vh",
+          height: "100vh",
           background: "#2a2a2e",
           overflow: "hidden",
         }}
@@ -1293,10 +1293,9 @@ export default function About({
             bottom: 0,
             left: 0,
             width: "100%",
-            height: "75vh",
-            overflow: "hidden",
             zIndex: 2,
             pointerEvents: "none",
+            lineHeight: 0,
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1304,9 +1303,6 @@ export default function About({
             src="/images/c2026.png"
             alt=""
             style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
               width: "100%",
               height: "auto",
               display: "block",
