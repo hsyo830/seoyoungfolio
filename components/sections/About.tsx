@@ -1201,7 +1201,7 @@ export default function About({
             ref={(el) => {
               linksRef.current[1] = el;
             }}
-            href="https://app.notion.com/p/Portfolio-35efb7a813f88072ac2af3fd6a574392?source=copy_link"
+            href="https://app.notion.com/p/Resume-395fb7a813f8807481fff91a25ce8a9e?source=copy_link"
             target="_blank"
             rel="noopener noreferrer"
             className="contact-link"
