@@ -10,7 +10,8 @@
 
 <br/>
 
-<img width="532" height="870" alt="image" src="여기에_스크린샷_이미지_URL을_붙여넣으세요" />
+<img width="1487" height="851" alt="image" src="https://github.com/user-attachments/assets/a9002835-c956-448d-a060-1ac5b1694dca" />
+
 
 ---
 
