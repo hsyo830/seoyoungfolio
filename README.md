@@ -7,11 +7,14 @@
 [![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel)](https://vercel.com/)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://react.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![GSAP](https://img.shields.io/badge/GSAP-3-88CE02?logo=greensock&logoColor=white)](https://gsap.com/)
+[![Framer Motion](https://img.shields.io/badge/Framer_Motion-11-black?logo=framer)](https://www.framer.com/motion/)
 
 <br/>
 
 <img width="1487" height="851" alt="image" src="https://github.com/user-attachments/assets/a9002835-c956-448d-a060-1ac5b1694dca" />
-
 
 ---
 
@@ -47,7 +50,7 @@
 
 ## 프로젝트 실행 방법
 
-```
+```bash
 # 패키지 설치
 npm install
 # 로컬 개발 서버
@@ -59,16 +62,6 @@ npm run build
 # 프로덕션 서버 실행
 npm run start
 ```
-
-<br>
-
-## GitHub 브랜치 전략
-
-| 브랜치         | 용도          | 비고             |
-| -------------- | ------------- | ---------------- |
-| **main**       | 최종 배포용   | 운영 환경        |
-| **develop**    | 기능 통합용   | 테스트 / 통합    |
-| **feature/\*** | 기능별 작업용 | 개인 작업 브랜치 |
 
 <br>
 
