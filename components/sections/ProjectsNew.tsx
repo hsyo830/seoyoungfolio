@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -1022,20 +1022,16 @@ function startPlusAnimation(plusEls: SVGSVGElement[]): gsap.core.Timeline {
   return tl;
 }
 
-const ENTRY_DWELL = 500;
-const EXIT_DWELL = 400;
-
 export default function ProjectsNew() {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const [activeIdx, setActiveIdx] = useState(-1);
-  const prevIdxRef = useRef(-1);
-  const scrollIdxRef = useRef(-1);
   const cardRefsMap = useRef<Map<number, CardRef>>(new Map());
   const activeTlRef = useRef<gsap.core.Timeline | null>(null);
   const squareRotationTlRef = useRef<gsap.core.Timeline | null>(null);
   const plusRotationTlRef = useRef<gsap.core.Timeline | null>(null);
-  const isInSection = useRef(false);
+  const currentIdxRef = useRef(-1);
+  const isAnimatingRef = useRef(false);
+  const isPinnedRef = useRef(false);
 
   const runCardIn = useCallback((idx: number, fast: boolean) => {
     const refs = cardRefsMap.current.get(idx);
@@ -1100,75 +1096,73 @@ export default function ProjectsNew() {
     });
   }, []);
 
-  useEffect(() => {
-    const section = sectionRef.current;
-    const track = trackRef.current;
-    if (!section || !track) return;
+  const goToCard = useCallback(
+    (nextIdx: number) => {
+      if (isAnimatingRef.current) return;
+      if (nextIdx < 0 || nextIdx >= projects.length) return;
 
-    const dist = (projects.length - 1) * window.innerWidth;
-    const totalScroll = dist + ENTRY_DWELL + EXIT_DWELL;
-    const ENTRY_FRAC = ENTRY_DWELL / totalScroll;
-    const EXIT_FRAC = (totalScroll - EXIT_DWELL) / totalScroll;
+      const prevIdx = currentIdxRef.current;
+      isAnimatingRef.current = true;
+      currentIdxRef.current = nextIdx;
 
-    const proxy = { val: 0 };
+      // 이전 카드 퇴장
+      if (prevIdx >= 0 && prevIdx !== nextIdx) {
+        runCardOut(prevIdx);
+      }
 
-    const ctx = gsap.context(() => {
-      const tween = gsap.to(proxy, {
-        val: 1,
-        ease: "none",
-        paused: true,
-        onUpdate() {
-          if (!isInSection.current) return;
-          const p = proxy.val;
-
-          let x: number;
-          let scrollFrac: number;
-          if (p <= ENTRY_FRAC) {
-            x = 0;
-            scrollFrac = 0;
-          } else if (p >= EXIT_FRAC) {
-            x = -dist;
-            scrollFrac = 1;
-          } else {
-            scrollFrac = (p - ENTRY_FRAC) / (EXIT_FRAC - ENTRY_FRAC);
-            x = -scrollFrac * dist;
-          }
-
-          gsap.set(track, { x });
-
-          const newIdx = Math.max(
-            0,
-            Math.min(
-              Math.floor(scrollFrac * projects.length),
-              projects.length - 1,
-            ),
-          );
-          if (newIdx !== scrollIdxRef.current) {
-            scrollIdxRef.current = newIdx;
-            setActiveIdx(newIdx);
-          }
+      // 트랙 이동 — 무게감 있는 탄력 전환
+      const targetX = -nextIdx * window.innerWidth;
+      gsap.to(trackRef.current, {
+        x: targetX,
+        duration: 0.75,
+        ease: "power3.out",
+        onComplete: () => {
+          isAnimatingRef.current = false;
         },
       });
 
+      // 새 카드 콘텐츠 등장 (이동과 동시에 시작, 선→텍스트 순차 등장 유지)
+      const delay = prevIdx === -1 ? 0 : 0.15; // 첫 진입은 딜레이 없이
+      gsap.delayedCall(delay, () => {
+        runCardIn(nextIdx, prevIdx >= 0); // prevIdx >= 0이면 fast 모드
+      });
+    },
+    [runCardIn, runCardOut],
+  );
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const ctx = gsap.context(() => {
       ScrollTrigger.create({
-        id: "projects-main",
+        id: "projects-pin",
         trigger: section,
         start: "top top",
-        end: `+=${totalScroll}`,
+        end: `+=${projects.length * window.innerHeight}`, // 충분한 pin 공간 (실제 전환은 휠 이벤트로 제어)
         pin: true,
         pinSpacing: true,
-        scrub: 1,
-        animation: tween,
         invalidateOnRefresh: true,
         onEnter() {
-          isInSection.current = true;
-          scrollIdxRef.current = 0;
-          setActiveIdx(0);
+          isPinnedRef.current = true;
+          if (currentIdxRef.current === -1) {
+            goToCard(0);
+          }
+        },
+        onEnterBack() {
+          isPinnedRef.current = true;
+        },
+        onLeave() {
+          isPinnedRef.current = false;
         },
         onLeaveBack() {
-          isInSection.current = false;
-          scrollIdxRef.current = -1;
-          setActiveIdx(-1);
+          isPinnedRef.current = false;
+          // 섹션 위로 나가면 초기화
+          if (currentIdxRef.current >= 0) {
+            runCardOut(currentIdxRef.current);
+          }
+          currentIdxRef.current = -1;
+          gsap.set(trackRef.current, { x: 0 });
         },
       });
 
@@ -1176,21 +1170,53 @@ export default function ProjectsNew() {
     });
 
     return () => ctx.revert();
-  }, []);
+  }, [goToCard, runCardOut]);
 
   useEffect(() => {
-    const prev = prevIdxRef.current;
-    prevIdxRef.current = activeIdx;
-    if (prev === activeIdx) return;
+    const section = sectionRef.current;
+    if (!section) return;
 
-    if (prev >= 0) runCardOut(prev);
+    let wheelDelta = 0;
+    const WHEEL_THRESHOLD = 50; // 이 이상 휠 누적 시 카드 전환
 
-    if (activeIdx >= 0) {
-      const isTransition = prev >= 0;
-      const delay = isTransition ? 0.25 : 0;
-      gsap.delayedCall(delay, () => runCardIn(activeIdx, isTransition));
-    }
-  }, [activeIdx, runCardIn, runCardOut]);
+    const onWheel = (e: WheelEvent) => {
+      if (!isPinnedRef.current) return;
+
+      e.preventDefault(); // 기본 스크롤 방지
+
+      if (isAnimatingRef.current) return; // 전환 중 입력 무시 (lockout)
+
+      wheelDelta += e.deltaY;
+
+      if (Math.abs(wheelDelta) < WHEEL_THRESHOLD) return;
+
+      const direction = wheelDelta > 0 ? 1 : -1;
+      wheelDelta = 0; // 리셋
+
+      const nextIdx = currentIdxRef.current + direction;
+      const pinTrigger = ScrollTrigger.getById("projects-pin");
+
+      if (nextIdx >= projects.length) {
+        // 마지막 카드에서 아래로 → 섹션 퇴장 (pin 해제)
+        isPinnedRef.current = false;
+        if (pinTrigger) pinTrigger.scroll(pinTrigger.end + 1);
+        return;
+      }
+
+      if (nextIdx < 0) {
+        // 첫 카드에서 위로 → 섹션 위로 퇴장
+        isPinnedRef.current = false;
+        if (pinTrigger) pinTrigger.scroll(pinTrigger.start - 1);
+        return;
+      }
+
+      goToCard(nextIdx);
+    };
+
+    // passive: false 필수 (preventDefault 사용하려면)
+    window.addEventListener("wheel", onWheel, { passive: false });
+    return () => window.removeEventListener("wheel", onWheel);
+  }, [goToCard]);
 
   const setCardRef = useCallback(
     (idx: number) => (refs: CardRef) => {
